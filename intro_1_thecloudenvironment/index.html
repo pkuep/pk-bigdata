@@ -1,0 +1,337 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Introduction 1: The Cloud Environment&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="intro_1_thecloudenvironment"
+                  title="Lab &#34;Introduction 1: The Cloud Environment&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Einführung" duration="0">
+        <p>Dies ist unser Use Case, den Sie aus der Einführungsveranstaltung &#34;Effiziente Datenhaltung für Data Science&#34; kennen. Wir werden uns auf einen Ausschnitt daraus fokussieren:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d4cdaee2146b2bf8.png"></p>
+<p><strong>Letztes Update:</strong> 14.06.2020</p>
+<h2 is-upgraded><strong>Effiziente Datenhaltung und Realtime-Analytics</strong></h2>
+<p>Wie in der Überblicksveranstaltung zur &#34;effizienten Datenhaltung für Data Science&#34; erläutert, kommt es bei der konkreten Gestaltung einer Datenhaltungs-Architektur auf die Anforderungen der Analytics-Anwendungsfälle an. </p>
+<h3 is-upgraded><strong>Ausgangspunkt</strong></h3>
+<p>Die Einkaufsvorgänge aus dem Warenkorb liegen uns als PubSub-Stream vor. Jeder Warenkorbeintrag wird uns als Nachricht übermittelt, die folgende Informationen beinhaltet:</p>
+<p class="image-container"><img style="width: 393.50px" src="img\e7a93ca4dcb0b648.png"></p>
+<h3 is-upgraded><strong>Ziel</strong></h3>
+<p>Wir möchten eine effiziente Datenhaltung umsetzen, so dass zum einen ein Realtime-Dashboard die aktuelle Nachfragesituation visualisieren kann und zum anderen die Web-Applikation das aktuell am stärksten nachgefragte Produkt im Webshop hervorheben kann (Empfehlung).</p>
+<h3 is-upgraded><strong>Anwendungsfall 1: Dashboard</strong></h3>
+<p>Das Dashboard soll folgende Informationen beinhalten, die alle 10s aktualisiert werden soll:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\92c9b62155715df9.png"></p>
+<p>Unsere BigQuery-Tabelle muss somit für jede Produktgruppe und Region die Summe der Umsätze berechnen und speichern.</p>
+<h3 is-upgraded><strong>Anwendungsfall 2: Webshop-Integration</strong></h3>
+<p>Der Webshop soll effizient in der Lage sein, das aktuell am meisten nachgefragte (&#34;Trending&#34;) Produkt abzufragen und auf der Website darzustellen:</p>
+<p class="image-container"><img style="width: 367.00px" src="img\edfd3c4c0ec95c62.png"></p>
+<h2 is-upgraded><strong>Was Sie umsetzen werden</strong></h2>
+<p>In diesem Codelab werden Sie eine effiziente Datenhaltung für die dargestellten Anwendungsfälle unter Verwendung von Google BigQuery als ein serverloses Data Warehous umsetzen:</p>
+<ul>
+<li>Sie werden in BigQuery die notwendigen Tabellenstruktur definieren.</li>
+<li>Sie werden mittels SQL einen Realtime-Job aufsetzen, der Inhalte aus dem PubSub-Topic alle 10s in die BigQuery-Tabelle überführt und dabei entsprechend der Anforderungen diese aggregiert.</li>
+<li>Sie werden eine &#34;View&#34; anlegen, die es der Webshop-Applikation ermöglicht, leicht auf die aktuellsten Werte zuzugereifen.</li>
+</ul>
+<aside class="warning"><p><strong>Hinweis:</strong> Sie benötigen für dieses Codelab einen Zugang zur Google Cloud Platform. Einen entsprechenden &#34;Voucher&#34; erhalten Sie zu Beginn der Veranstaltungsreihe.</p>
+</aside>
+<h2 is-upgraded><strong>Was Sie lernen werden</strong></h2>
+<ul>
+<li>Umgang mit Realtime-Datenströmen (PubSub)</li>
+<li>Aggregation von Datenströmen in einer Data Warehouse-Tabelle</li>
+<li>Anlegen einer &#34;View&#34; auf eine Data Warehouse-Tabelle</li>
+</ul>
+<h2 is-upgraded><strong>Was Sie benötigen</strong></h2>
+<ul>
+<li>Neben dem Voucher benötigen Sie einen aktuellen Browser zum Zugriff auf <a href="https://console.cloud.google.com" target="_blank">https://console.cloud.google.com</a> </li>
+<li>SQL-Kenntnisse</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anlegen der Datenstrukturen" duration="8">
+        <h2 is-upgraded><strong>Schema für die historisierende Tabelle &#34;live_sales_history&#34; anlegen</strong></h2>
+<h3 is-upgraded><strong>Überblick</strong></h3>
+<p>Sobald Kauf-Ereignisse auftauchen, sollen diese in 10s-Fenstern gesammelt und in eine Historie überführt werden. Die Datenstruktur und Beispieldaten sehen Sie hier.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\95d135705348507.png"></p>
+<p>Um eine Tabelle zu definieren, müssen wir zunächst ein &#34;Dataset&#34; in unserem Projekt anlegen. Öffnen Sie zunächst in der GCP Konsole BigQuery.</p>
+<p><a href="https://console.cloud.google.com/bigquery" target="_blank"><paper-button class="colored" raised>BigQuery</paper-button></a></p>
+<h3 is-upgraded><strong>Dataset anlegen</strong></h3>
+<p>Wählen Sie im Bereich &#34;Resources&#34; Ihren Projektnamen aus. Sie sollten dann &#34;CREATE DATASET&#34; sehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\e7a74f1b9d7b32c4.png"></p>
+<p>Legen Sie ein Dataset mit der <strong>Dataset ID</strong> &#34;sales_baskets&#34; an. Übernehmen Sie für alle anderen Einstellungen die vorgeschlagenen Standardwerte.</p>
+<p>Das Dataset sollte nun unter &#34;Resources&#34; auftauchen:</p>
+<p class="image-container"><img style="width: 278.13px" src="img\ced9b1784cd3347a.png"></p>
+<h3 is-upgraded><strong>Schema der Historisierungstabelle anlegen</strong></h3>
+<p>Wir bereiten unsere BigQuery-Umgebung nun vor, eine Tabelle aus einem PubSub-Datenstrom zu erzeugen. Dazu müssen wir als erstes das Schema definieren, in dem spezifiziert wird, welche Felder aus den einzelnen PubSub-Nachrichten wie zu interpretieren sind.</p>
+<p>Wechseln Sie die &#34;Query Settings&#34;, so dass wir auf die PubSub-Datenströme zugreifen können:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3b949509daa0a531.png"></p>
+<p class="image-container"><img style="width: 293.84px" src="img\a65f3a6bf103591.png"></p>
+<p>Danach sollte unter &#34;Resources&#34; ein weiterer Eintrag auftauchen, in dem Sie das PubSub-Topic &#34;basket-stream&#34; auswählen können (Sie haben Zugriff auf dieses Topic erhalten):</p>
+<p class="image-container"><img style="width: 250.10px" src="img\12a042e9f9e97562.png"></p>
+<p>Wir möchten nun das Schema definieren. Klicken Sie auf &#34;basket-stream&#34; und dann auf &#34;Edit schema&#34;. Wählen Sie &#34;Edit as text&#34; aus und kopieren Sie folgende Schemadefinition in das Textfeld:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/basket-stream-schema.json" target="_blank"><code>GitHub: basket-stream-schema.json</code></a><strong> </strong></h3>
+<pre><code>[
+      {
+          &#34;description&#34;: &#34;Message processing time&#34;,
+          &#34;name&#34;: &#34;event_timestamp&#34;,
+          &#34;mode&#34;: &#34;REQUIRED&#34;,
+          &#34;type&#34;: &#34;TIMESTAMP&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Message event time&#34;,
+          &#34;name&#34;: &#34;event_time&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Sales basket date&#34;,
+          &#34;name&#34;: &#34;date&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Weekday of sales basket&#34;,
+          &#34;name&#34;: &#34;weekday&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Region of the sales basket&#34;,
+          &#34;name&#34;: &#34;region&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+        {
+          &#34;description&#34;: &#34;State of the sales basket&#34;,
+          &#34;name&#34;: &#34;state&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Age of the customer&#34;,
+          &#34;name&#34;: &#34;age&#34;,
+          &#34;type&#34;: &#34;INT64&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Age group of the customer&#34;,
+          &#34;name&#34;: &#34;age_group&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Basket ID of the transaction&#34;,
+          &#34;name&#34;: &#34;basket_id&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Product code bought in the the transaction&#34;,
+          &#34;name&#34;: &#34;product&#34;,
+          &#34;type&#34;: &#34;INT64&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Product name bought in the transaction&#34;,
+          &#34;name&#34;: &#34;product_name&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Related product group code&#34;,
+          &#34;name&#34;: &#34;product_group&#34;,
+          &#34;type&#34;: &#34;INT64&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Related product group name&#34;,
+          &#34;name&#34;: &#34;product_group_name&#34;,
+          &#34;type&#34;: &#34;STRING&#34;
+      },
+      {
+          &#34;description&#34;: &#34;Sales value of the transaction&#34;,
+          &#34;name&#34;: &#34;sales_value&#34;,
+          &#34;type&#34;: &#34;FLOAT64&#34;
+      }
+]</code></pre>
+<p>Diese Schemadefinition spezifiziert für die einzelnen Felder aus der PubSub-Nachricht (im JSON-Format) die anzuwendenden Datentypen. Wir definieren somit, wie aus einer unstrukturierten Nachricht strukturierte Daten erstellt werden sollen. Dies ist eine zwingende Voraussetzung für das Einspielen in eine relationale DWH-Tabelle.</p>
+<h3 is-upgraded><strong>Ergebnis</strong></h3>
+<p>Ihr Projekt sollte in BigQuery nun wie folgt aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fe254b31bbebd344.png"></p>
+<ol type="1" start="1">
+<li>Sie haben ein Dataset &#34;sales_baskets&#34; definiert.</li>
+<li>Sie haben für den PubSub &#34;basket-stream&#34; ein Schema definiert und somit die Grundlage für das Einspielen von unstrukturierten PubSub-Nachrichten in eine strukturierte Datenbank geschaffen.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Definition der Realtime-SQL Abfrage" duration="4">
+        <h2 is-upgraded>Aufgabe und Vorkenntnisse</h2>
+<p>Wir möchten als nächstes definieren, dass alle eingehenden Nachrichten auf dem PubSub-Topic in einem 10s-Fenster gesammelt, nach bestimmten Kriterien gruppiert und die Umsatzdaten summiert werden. Die folgenden SQL-Voraussetzungen hierfür haben Sie bereits:</p>
+<ol type="1" start="1">
+<li>SELECT columns ...  zur Ausgabe bestimmter Spalten</li>
+<li>GROUP BY columns ... zur Definition der Gruppierungsspalten</li>
+<li>SUM(sales_value) ... zur Aggregation (Summe) der Umsatzdaten</li>
+</ol>
+<p>In einer &#34;normalen&#34; Aggregation auf statischen Daten würden wir somit folgenden SQL-Befehl nutzen, um die Anforderungen umzusetzen:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/known-query-parts.sql" target="_blank"><code>GitHub: known-query-parts.sql</code></a><strong> </strong></h3>
+<pre><code>select
+   region,
+   state,
+   product_name,
+   product_group_name,
+   SUM(sales_value) as interval_sum_of_sales
+from basket-sales-table
+group by region, state, product_name, product_group_name</code></pre>
+<aside class="special"><p><strong>Hinweis: </strong>Die Tabelle &#34;basket-sales-table&#34; existiert nicht und dient hier nur als Platzhalter. Wir werden gleich den entsprechenden Code erstellen, um auf das PubSub-Topic zuzugreifen.</p>
+</aside>
+<h2 is-upgraded>Neue Befehle für das Realtime-Processing</h2>
+<p>Als nächstes möchten wir die notwendigen SQL-Befehle kennenlernen, mit denen Realtime-Datenströme in 10s-Teilbereiche (&#34;Fenster&#34;) aufgeteilt werden können. Dies ermöglicht eine Aggregation pro &#34;Fenster&#34;. Beispielhaft ist die Logik in der folgenden Abbildung dargestellt.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ae59f8f303d193ee.png"></p>
+<p>Die Art der &#34;Zerlegung&#34; des Datenstroms in 10s-breite &#34;Fenster&#34; nennt sich &#34;Tumbling Windows&#34;. Mittels der Anwendung des SQL-Befehls &#34;TUMBLE&#34; auf unser Feld &#34;event_timestamp&#34; (Achtung: dies ist kein Standard-SQL!) können wir ein derartiges Fenster definieren.</p>
+<p>Mittels &#34;TUMBLE_START&#34; können wir zusätzlich das gewünschte Feld &#34;interval_start&#34; in der Ausgabetabelle anlegen lassen.</p>
+<p>Da wir nun auf den echten PubSub-Stream zugreifen möchten, muss im SQL-Statement auch noch der FROM-Ausdruck angepasst werden. </p>
+<p>Kopieren Sie folgendes SQL-Statement in das BigQuery-Eingabefenster:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/create-tumbling-window.sql" target="_blank"><code>GitHub: create-tumbling-window.sql</code></a></h3>
+<pre><code>select 
+   region,
+   state,
+   product_name,
+   product_group_name,
+   TUMBLE_START(&#34;INTERVAL 10 SECOND&#34;) AS interval_start,  -- Intervallstart anzeigen
+   SUM(sales_value) as interval_sum_of_sales
+from pubsub.topic.`pk-hska`.`basket-stream`
+group by region, state, product_name, product_group_name,
+   TUMBLE(event_timestamp, &#34;INTERVAL 10 SECOND&#34;)  -- Tumbling Window Gruppierung</code></pre>
+<p>Bitte führen Sie den Code noch nicht aus. Dies machen wir im nächsten Schritt.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Achten Sie darauf, dass die Projekt- und Tabellennamen in Backticks (`) gesetzt werden. Ansonsten kann der SQL-Interpreter mit den Sonderzeichen - hier ein Bindestrich - nicht umgehen.</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun das Konzept von Tumbling-Windows verstanden.</li>
+<li>Sie haben alles vorbereitet, um auf unserem Webshop-PubSub-Stream eine aggregierende SQL-Abfrage in einem 10s-Fenster auszuführen.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ausführung des Cloud Dataflow SQL-Jobs" duration="3">
+        <h2 is-upgraded><strong>Grundlagen und Skalierung</strong></h2>
+<p>Das von uns definierte SQL-Statement ist kein &#34;Standard-SQL&#34; Statement. Vielmehr ermöglichen uns die Cloud-Anbieter heutzutage, komplexe Cloud-Funktionen mittels SQL-Syntax zu definieren. Genau dies nutzen wir hier, um mittels einfacher SQL-Mittel einen sogenannten Dataflow-Job zu definieren. Wir könnten diesen auch manuell programmieren, müssten uns dazu aber mit der zugrundeliegenden Technologie <a href="https://beam.apache.org/" target="_blank">Apache Beam</a> im Detail auseinandersetzen.</p>
+<p>Der große Vorteil der Dataflow-Jobs ist, dass die Cloud-Umgebung automatisch mehr Ressourcen zur Verfügung stellt, wenn der Datenstrom (ggf. nur temporär) wächst. Diese automatische horizontale Skalierung hilft uns, ohne den Betrieb eines Servers eine skalierende Datenhaltung und damit Effizienz im Sinne der Performance zu erreichen.</p>
+<h2 is-upgraded><strong>Job-Definition </strong></h2>
+<p>Ihr Query-Editor sollte nun so aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\678d649e39df4dd4.png"></p>
+<aside class="special"><p><strong>Hinweis: </strong>Achten Sie darauf, dass der Syntax-Check einen grünen Haken rechts unten anzeigt.</p>
+</aside>
+<p>Sie können nun den Job starten, indem Sie auf &#34;Create Cloud Dataflow job&#34; klicken. Dies bedingt jedoch noch die Eingabe der Job-Parameter, insbesondere wohin das Ergebnis geschrieben werden soll.</p>
+<h2 is-upgraded><strong>Job-Ausführung </strong></h2>
+<p>Sobald Sie auf &#34;Create Cloud Dataflow job&#34; geklickt haben erscheint ein Fenster. Hier können Sie zahlreiche Einstellungen für den Job vornehmen. Wir übernehmen einige Standardeinstellungen, legen jedoch insbesondere fest, dass die Ergebnisse in unser BigQuery Dataset &#34;sales_baskets&#34; in eine neu anzulegende Tabelle &#34;live_sales_history&#34; zu schreiben sind:</p>
+<p class="image-container"><img style="width: 424.80px" src="img\df194a4e340ab60a.png"></p>
+<p>Klicken Sie im Anschluss auf &#34;Create&#34;.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Der Job-Start kann einige Minuten in Anspruch nehmen.</p>
+</aside>
+<h2 is-upgraded><strong>Prüfung des Job-Status</strong></h2>
+<p>Sobald Sie den Job angelegt haben, können Sie auf den Link zur &#34;Job ID&#34; klicken:</p>
+<p class="image-container"><img style="width: 402.50px" src="img\2ecabdf5209c6811.png"></p>
+<p>Dies führt Sie zur Dataflow-Job Statusübersicht. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\65bbea4b0ffdf7f8.png"></p>
+<p>Sobald der Job vollständig läuft können Sie im Webshop simulierte Einkäufe tätigen und beobachten, dass diese in eine neue Tabelle &#34;live_sales_history&#34; geschrieben werden. Wechseln Sie dazu zurück zu BigQuery und führen Sie den nächsten Schritt aus.</p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun mittels SQL einen Dataflow-Job angelegt.</li>
+<li>Sie wissen, wie die Job-Ausführung beobachtet werden kann.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring der Ergebnisse und Anlegen einer View" duration="9">
+        <h2 is-upgraded><strong>Abfrage der Historie</strong></h2>
+<p>Wir möchten nun das Ergebnis der Job-Ausführung beobachten. Wechseln Sie in den BigQuery-Editor. Klicken Sie wieder auf &#34;More&#34; - &#34;Query Settings&#34; und stellen Sie &#34;BigQuery engine&#34; ein (anstelle der zuvor gewählten Cloud Dataflow engine). Alle anderen Parameter können auf den Standardwerten eingestellt bleiben:</p>
+<p class="image-container"><img style="width: 397.50px" src="img\c3b32062807fe340.png"></p>
+<p>Mittels des folgenden SQL-Statements können Sie sich die gesamte Historie anzeigen lassen:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/query-aggregated-sales-history.sql" target="_blank"><code>GitHub: query-aggregated-sales-history.sql</code></a></h3>
+<pre><code>select * from `pk-hska`.sales_baskets.live_sales_history</code></pre>
+<p>Ihr Ergebnis sollte diesem ähneln:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ecce8ceab11e3e4c.png"></p>
+<aside class="special"><p><strong>Hinweis: </strong>Tätigen Sie im Webshop weitere Einkäufe und beobachten Sie, wie die Historie wächst.</p>
+</aside>
+<h2 is-upgraded><strong>Anlegen einer View für den aktuellen Zustand</strong></h2>
+<h3 is-upgraded><strong>SQL-Abfrage des aktuellen Zustands</strong></h3>
+<p>Für einen einfachen Zugriff der Webapplikation sowie des Dashboards auf die aggregierten Daten aus dem aktuellen &#34;Fenster&#34; möchten wir zusätzlich eine sogenannte View mit der Bezeichnung &#34;live_sales&#34; erstellen. Eine View ist keine eigene Tabelle, sondern ein Ausschnitt aus einer anderen Tabelle. </p>
+<p>Zunächst definieren wir eine Abfrage, in der nicht alle Zeilen aus der Historie angezeigt werden, sondern nur die mit dem letzten (=maximalen) Intervall-Datum. Dazu nutzen wir ein &#34;Subselect&#34;:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/query-current-aggregated-sales.sql" target="_blank"><code>GitHub: query-current-aggregated-sales.sql</code></a></h3>
+<pre><code>select * from `pk-hska`.sales_baskets.live_sales_history
+where interval_start = (
+  select max(interval_start) from
+  `pk-hska`.sales_baskets.live_sales_history
+)</code></pre>
+<p>Wenn Sie diese Query ausführen sollten nur noch die Werte aus dem letzten verfügbaren &#34;Fenster&#34; zu sehen sein:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a0d1205d7600143f.png"></p>
+<aside class="special"><p><strong>Hinweis: </strong>Wenn keine Einkäufe im Webshop erfolgen, dann werden auch keine PubSub-Nachrichten versendet und der Dataflow-Job legt keine neuen Werte in der Historie an. Das letzte &#34;Fenster&#34; kann somit in der Vergangenheit liegen.</p>
+</aside>
+<h3 is-upgraded><strong>Speichern der View</strong></h3>
+<p>Um diesen Ausschnitt aus der Historie dauerhaft einfach zur Verfügung zu stellen können wir eine View anlegen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\300338f4413d11e0.png"></p>
+<p>Klicken Sie auf &#34;Save view&#34; und speichern Sie die View</p>
+<p class="image-container"><img style="width: 336.51px" src="img\f6b92f4b29c5fd44.png"></p>
+<h3 is-upgraded><strong>Verwenden der View</strong></h3>
+<p>Mittels folgender Query können Sie (und die Webapplikation und auch das Dashboard) nun komfortabel auf den aktuellen Zustand zugreifen:</p>
+<h3 is-upgraded><a href="https://github.com/pkuep/effiziente-datenhaltung/blob/master/query-view-current-aggregated-sales.sql" target="_blank"><code>GitHub: query-view-current-aggregated-sales.sql</code></a></h3>
+<pre><code>select * from `pk-hska`.sales_baskets.live_sales</code></pre>
+<p>Ihr Query-Editor sollte nun so aussehen.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\254d313b059be5ea.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben mittels Standard-SQL auf eine &#34;live&#34; aktualisierende Datenhistorie zugegriffen.</li>
+<li>Sie haben mittels Subselect den aktuellen Ausschnitt aus der Datenhistorie abgerufen.</li>
+<li>Sie haben diesen Ausschnitt als View für einen komfortablen Zugriff gespeichert.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Herzlichen Glückwunsch" duration="2">
+        <p>Herzlichen Glückwunsch, Sie haben nun aus einem Realtime-Datenstrom eine Historie inklusive Aggregation und Gruppierung angelegt und eine effiziente Datenhaltung umgesetzt. Diese speichert nur die notwendigen, vorberechneten Daten in einem &#34;teuren&#34; Data Warehouse (BigQuery) und ist so vorbereitet, dass sowohl Dashboards als auch der Webshop effizient auf die aktuellen Ergebnisse zugreifen können.</p>
+<p>Bitte führen Sie zum Abschluss noch folgende Schritte aus, um keine unnötigen Kosten entstehen zu lassen.</p>
+<h2 is-upgraded><strong>Beenden des Dataflow-Jobs</strong></h2>
+<p>Klicken Sie in der BigQuery-Konsole auf &#34;Job History&#34; und dann auf &#34;Cloud Dataflow&#34;. Dort sehen Sie den noch laufenden Job:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\75698362c8c9f69f.png"></p>
+<p>Klicken SIe auf die Job-ID und dann nochmals auf den Link zum Job in der Zeile &#34;Job ID&#34;:</p>
+<p class="image-container"><img style="width: 340.60px" src="img\a4111eb46213d16.png"></p>
+<p>Es öffnet sich die Dataflow-Konsole und Sie sollten Ihren Job dort sehen. Klicken Sie auf &#34;STOP&#34; um den Job zu beenden:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d2b63c415ff41fbe.png"></p>
+<p>Wählen Sie im Auswahlmenü &#34;Cancel&#34;:</p>
+<p class="image-container"><img style="width: 255.50px" src="img\893d1ab044afb2e2.png"></p>
+<p>Das Beenden des Jobs dauert wenige Minuten.</p>
+<h2 is-upgraded><strong>Löschen des BigQuery-Datasets</strong></h2>
+<p>Gehen Sie zurück in die BigQuery-Konsole und löschen Sie das Dataset. Klicken Sie dazu in &#34;Resources&#34; auf den Namen des Datasets und dann auf &#34;DELETE DATASET&#34;.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\bdfaaa38e25a81b7.png"></p>
+<aside class="special"><p><strong>Hinweis: </strong>Sie haben nun alle notwendigen Schritte zum &#34;Aufräumen&#34; erledigt und können dieses Codelab beenden.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
