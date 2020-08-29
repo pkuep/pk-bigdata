@@ -1,0 +1,182 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Fundamentals: Data Science Sandbox&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="fundamentals_data_science_sandbox"
+                  title="Lab &#34;Fundamentals: Data Science Sandbox&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is again use case: a simple webshop for which we want to allow data scientists to access the data lake.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a694d14e88b3376b.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Loading example source data into cloud storage and accessing these from a Jupyter Notebook..</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Upload sample data to cloud storage (our sample data lake)</li>
+<li>Setup a big data-ready computation environment (Hadoop in the cloud)</li>
+<li>Reading the data lake using standard Python / pandas (not big data-ready)</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Bucket Creation and Sample Data-Upload" duration="3">
+        <h2 is-upgraded><strong>Creation of a bucket</strong></h2>
+<p>Please go to the storage browser:</p>
+<p class="image-container"><img style="width: 261.50px" src="img\66a2157a94f83404.png"></p>
+<p>Create a bucket:</p>
+<p class="image-container"><img style="width: 509.50px" src="img\5e4ebde523b24e16.png"></p>
+<p>Call it for example &#34;your initals-gcs&#34;:</p>
+<p class="image-container"><img style="width: 386.69px" src="img\ba1532606feb1e92.png"></p>
+<p>Leave all other settings as default. However, please click continue and examine the options (especially the &#34;default storage class&#34; has huge effects on storage costs).</p>
+<p>In the bucket details you can create a new folder called &#34;webshop_datalake&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\75b8e19cf13720ca.png"></p>
+<p>Upload the file &#34;webshop_history.csv&#34; from the folder &#34;Datasets&#34; in the course materials.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\193ed327918261bf.png"></p>
+<p>Your bucket&#39;s details should now look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a95f21635db3ac8.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a bucket which we can use throughout this course.</li>
+<li>You uploaded sample data to the bucket which we&#39;ll examine further in first, a &#34;traditional&#34; non-scalable manner, and second, in a scalable &#34;big data-manner&#34; later on.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
+        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+<p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
+<p class="image-container"><img style="width: 179.84px" src="img\801ef6f5673102fc.png"></p>
+<p>Hit &#34;create cluster&#34;:</p>
+<p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
+<p>You may want to use the following parameters:</p>
+<ul>
+<li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
+<li>Region: leave the default region (us-central1)</li>
+<li>Cluster mode: leave the default mode (1 master, N workers)</li>
+<li>All other settings should also stay in the default</li>
+</ul>
+<p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
+<p class="image-container"><img style="width: 371.50px" src="img\69e032f898dbdd5e.png"></p>
+<p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
+<p class="image-container"><img style="width: 326.50px" src="img\15f2972d984d7c16.png"></p>
+<p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
+<p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
+<p>Leave the rest as default and click on &#34;Create&#34;.</p>
+<p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You configured and started your first big data system, a Hadoop cluster, called &#34;DataProc&#34; in GCP. DataProc is the basis for many big data ingestion, transformation, and processing tasks in GCP.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
+        <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
+<p>Click onto the link to your cluster:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
+<p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\d46eaa11a0986aa0.png"></p>
+<p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Juypter&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
+<p>You should see a Jupyter Notebook environment:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
+<p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
+<h2 is-upgraded><strong>Updating pandas and installing a package for Bucket access</strong></h2>
+<aside class="warning"><p><strong>Please note: </strong>Unfortunately, GCP does not ship an up-to-date version of Python/pandas etc. This doesn&#39;t matter for our purposes in the big data environment, however we need a more current version of pandas to be able to access cloud storage. Thus, we&#39;ll first upgrade / install two packages in our notebook.</p>
+</aside>
+<p>Put these two lines of code into the first cell of your newly created notebook and run the cell (Ctrl-Enter):</p>
+<pre><code>!pip install pandas==0.24.2
+!pip install gcsfs</code></pre>
+<h2 is-upgraded><strong>Accessing the bucket and csv-file</strong></h2>
+<p>Afterwards, you should be able to access the data lake now in another cell (change my bucket &#34;pk-gcs&#34; to your bucket&#39;s name). The &#34;gs://&#34; prefix tells pandas to access a bucket in GCP cloud storage (you&#39;ll see this access pattern often throughout this course!).</p>
+<pre><code>import pandas as pd
+df = pd.read_csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;)
+df.head()</code></pre>
+<h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
+<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Datalake Access&#34;). After executing the cells, your notebooks should look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\274082896ec59f4a.png"></p>
+<h2 is-upgraded><strong>Sample Aggregation</strong></h2>
+<p>A data scientist might now be interested in the mean value of sales per product. This would be the classical way in pandas:</p>
+<pre><code>df.groupby(&#34;product_name&#34;).sales_value.mean()</code></pre>
+<aside class="warning"><p><strong>Please note: </strong>By calling read_csv we loaded the whole file&#39;s values into the memory of the virtual machine which hosts our Jupyter notebook (the master node in our DataProc cluster). This works for small files which fit into memory. However, for &#34;larger-than-memory&#34; (big data) files, this proceeding <strong>won&#39;t work anymore</strong>. Thus, we&#39;ll later learn how to use the cluster to load and process datasets in some kind of &#34;shared cluster memory&#34; which makes use of all worker nodes&#39; memory and is hence scalable to really large amounts of data.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You used a Jupyter Notebook as a sample data science sandbox which allows data scientists to access a data lake.</li>
+<li>We accessed a sample data lake being built in GCP cloud storage (with only one file in it). There are other ways, but this option is one of the most efficient solutions to creating a data lake.</li>
+<li>You did not use a big data processing environment yet, i.e. you might also have downloaded the webshop_history file to your laptop and processed it there in a Jupyter environment. However, your setup is not far away of making use of big data technologies.</li>
+<li>We can now shut down our cluster in order to save money (see next step).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Shutting Down the Cluster" duration="2">
+        <h2 is-upgraded><strong>Reasoning</strong></h2>
+<p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
+<h2 is-upgraded><strong>Saving and closing the notebooks</strong></h2>
+<p>Save your Juypter Notebook:</p>
+<p class="image-container"><img style="width: 368.50px" src="img\8f57859ccfec4e38.png"></p>
+<p>Close all Juypter Notebook browser tabs.</p>
+<aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
+</aside>
+<h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
+<p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
+<p class="image-container"><img style="width: 541.50px" src="img\4f27ebbf007e1184.png"></p>
+<h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
+<p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
+<p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
+<p class="image-container"><img style="width: 233.65px" src="img\152714309fd72e67.png"></p>
+<p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you completed the second lab in our big data journey. This lab was still not really big data related in terms of analytics, but you used technologies that are capable of holding (cloud storage) and processing (DataProc) very large amounts of data for a reasonable price, i.e. efficiently.</p>
+<aside class="special"><p><strong>Hinweis: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
