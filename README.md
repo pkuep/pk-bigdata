@@ -1,8 +1,6 @@
 # Code und Codelabs zur BigData-Veranstaltung
-## Introduction to the Big Data Environment
-[Intro 1](https://pkuep.github.io/pk-bigdata/intro_1_thecloudenvironment){:target="_blank" rel="noopener"}
-
-## Hadoop Fundamentals
+## Fundamentals
+[Simple Analytics Pipeline](https://pkuep.github.io/pk-bigdata/fundamentals_simple_analytics_pipeline){:target="_blank" rel="noopener"}
 
 ## Data Ingestion
 
