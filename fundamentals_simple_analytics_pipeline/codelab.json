@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-08-29T17:13:55Z",
+  "id": "fundamentals_simple_analytics_pipeline",
+  "duration": 23,
+  "title": "Lab \"Fundamentals: Simple Analytics Pipeline\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a data source in a traditional relational database.",
+  "source": "1KTHQeixpsTLILCw672EbYtD_AJPKSPN6XkicQu8F_B4",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "fundamentals_simple_analytics_pipeline"
+}
