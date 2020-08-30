@@ -10,6 +10,8 @@
 
 [HDFS](https://pkuep.github.io/pk-bigdata/fundamentals_hdfs){:target="_blank" rel="noopener"}
 
+[MapReduce](https://pkuep.github.io/pk-bigdata/fundamentals_mapreduce){:target="_blank" rel="noopener"}
+
 ## Data Ingestion
 
 ## Batch Processing

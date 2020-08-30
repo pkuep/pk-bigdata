@@ -3,13 +3,13 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-08-30T20:11:11Z",
-  "id": "fundamentals_hdfs",
-  "duration": 15,
-  "title": "Lab \"Fundamentals: HDFS\"",
+  "updated": "2020-08-30T20:47:16Z",
+  "id": "fundamentals_mapreduce",
+  "duration": 8,
+  "title": "Lab \"Fundamentals: MapReduce\"",
   "authors": "Peer Küppers",
-  "summary": "In this codelab, you'll set up a DataProc cluster and interact with its HDFS system.",
-  "source": "1Q0fqp1dnnbNUnm4ung22cmW8GTkD4_XjDAZGTQ9n1qI",
+  "summary": "In this codelab, you'll use a DataProc cluster to execute a MapReduce job.",
+  "source": "1Ap90DCSzQGsGqhYR5ZrB1iYDfkKM4fDB0BCi0kUBRl0",
   "theme": "fundamentals",
   "status": [
     "published"
@@ -22,5 +22,5 @@
   ],
   "feedback": "https://p-kueppers.com",
   "ga": "None",
-  "url": "fundamentals_hdfs"
+  "url": "fundamentals_mapreduce"
 }
