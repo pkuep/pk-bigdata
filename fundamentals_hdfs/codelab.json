@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-08-30T19:57:30Z",
+  "id": "fundamentals_hdfs",
+  "duration": 15,
+  "title": "Lab \"Fundamentals: HDFS\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a Jupyter Notebook environment which accesses the data lake and performs a simple batch processing step..",
+  "source": "1Q0fqp1dnnbNUnm4ung22cmW8GTkD4_XjDAZGTQ9n1qI",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "fundamentals_hdfs"
+}
