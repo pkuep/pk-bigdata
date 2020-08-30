@@ -4,6 +4,8 @@
 
 [Data Science Sandbox](https://pkuep.github.io/pk-bigdata/fundamentals_data_science_sandbox){:target="_blank" rel="noopener"}
 
+[Data Warehous Example](https://pkuep.github.io/pk-bigdata/fundamentals_data_warehouse_example){:target="_blank" rel="noopener"}
+
 ## Data Ingestion
 
 ## Batch Processing
