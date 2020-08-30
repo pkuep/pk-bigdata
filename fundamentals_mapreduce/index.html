@@ -79,7 +79,9 @@
         }</code></pre>
 <p>The reduce class sums up all the &#34;ones&#34; for each key (i.e. word in the text file) and hence counts the number of occurrences.</p>
 <h2 is-upgraded><strong>Upload of the wordcount.jar to cloud storage</strong></h2>
-<p>The WordCount.java file has already been converted by me to binary Java code in the provided wordcount.jar. This jar-file needs to be accessible by DataProc (jar files are always shipped with job submission, &#34;moving the code to the data&#34;). The most simple way is to just put this file into the bucket &#34;pk-gcs&#34;. Perform this step.</p>
+<p>The WordCount.java file has already been converted by me to binary Java code in the provided wordcount.jar. This jar-file needs to be accessible by DataProc (jar files are always shipped with job submission, &#34;moving the code to the data&#34;). The most simple way is to just put this file into the bucket &#34;pk-gcs&#34; (topmost folder). Perform this step.</p>
+<p>Your bucket should look like this afterwards:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\71e3f68efdaad4ad.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You uploaded the necessary MapReduce code for word counting to cloud storage.</li>
