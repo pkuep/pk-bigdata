@@ -6,6 +6,8 @@
 
 [Data Warehouse Example](https://pkuep.github.io/pk-bigdata/fundamentals_data_warehouse_example){:target="_blank" rel="noopener"}
 
+[Batch Processing](https://pkuep.github.io/pk-bigdata/fundamentals_batch_processing){:target="_blank" rel="noopener"}
+
 ## Data Ingestion
 
 ## Batch Processing
