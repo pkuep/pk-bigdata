@@ -44,32 +44,8 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Bucket Creation and Sample Data-Upload" duration="3">
-        <h2 is-upgraded><strong>Creation of a bucket</strong></h2>
-<p>Please go to the storage browser:</p>
-<p class="image-container"><img style="width: 261.50px" src="img\66a2157a94f83404.png"></p>
-<p>Create a bucket:</p>
-<p class="image-container"><img style="width: 509.50px" src="img\5e4ebde523b24e16.png"></p>
-<p>Call it for example &#34;your initals-gcs&#34;:</p>
-<p class="image-container"><img style="width: 386.69px" src="img\ba1532606feb1e92.png"></p>
-<p>Leave all other settings as default. However, please click continue and examine the options (especially the &#34;default storage class&#34; has huge effects on storage costs).</p>
-<p>In the bucket details you can create a new folder called &#34;webshop_datalake&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\75b8e19cf13720ca.png"></p>
-<p>Upload the file &#34;webshop_history.csv&#34; from the folder &#34;Datasets&#34; in the course materials.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\193ed327918261bf.png"></p>
-<p>Your bucket&#39;s details should now look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a95f21635db3ac8.png"></p>
-<h2 is-upgraded><strong>Results</strong></h2>
-<ol type="1" start="1">
-<li>You created a bucket which we can use throughout this course.</li>
-<li>You uploaded sample data to the bucket which we&#39;ll examine further in first, a &#34;traditional&#34; non-scalable manner, and second, in a scalable &#34;big data-manner&#34; later on.</li>
-</ol>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
-        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+        <h2 is-upgraded><strong>Cluster Creation (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;)</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
 <p class="image-container"><img style="width: 179.84px" src="img\801ef6f5673102fc.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
@@ -88,19 +64,18 @@
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
 <p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
-<p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You configured and started your first big data system, a Hadoop cluster, called &#34;DataProc&#34; in GCP. DataProc is the basis for many big data ingestion, transformation, and processing tasks in GCP.</li>
+<li>You configured and started a Hadoop cluster which is ready for our first batch processing job.</li>
 </ol>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
-        <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
+        <h2 is-upgraded><strong>Opening the Jupyter Notebook  (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;) </strong></h2>
 <p>Click onto the link to your cluster:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
@@ -109,32 +84,53 @@
 <p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
-<p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
+<p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
-<h2 is-upgraded><strong>Updating pandas and installing a package for Bucket access</strong></h2>
-<aside class="warning"><p><strong>Please note: </strong>Unfortunately, GCP does not ship an up-to-date version of Python/pandas etc. This doesn&#39;t matter for our purposes in the big data environment, however we need a more current version of pandas to be able to access cloud storage. Thus, we&#39;ll first upgrade / install two packages in our notebook.</p>
+<aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
 </aside>
-<p>Put these two lines of code into the first cell of your newly created notebook and run the cell (Ctrl-Enter):</p>
-<pre><code>!pip install pandas==0.24.2
-!pip install gcsfs</code></pre>
-<h2 is-upgraded><strong>Accessing the bucket and csv-file</strong></h2>
-<p>Afterwards, you should be able to access the data lake now in another cell (change my bucket &#34;pk-gcs&#34; to your bucket&#39;s name). The &#34;gs://&#34; prefix tells pandas to access a bucket in GCP cloud storage (you&#39;ll see this access pattern often throughout this course!).</p>
-<pre><code>import pandas as pd
-df = pd.read_csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;)
-df.head()</code></pre>
+<h2 is-upgraded>Connecting to the PySpark session and reading the data lake</h2>
+<p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
+<pre><code>sc</code></pre>
+<p>This should be the output: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\19a9618f25082a01.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
+</aside>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
-<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Datalake Access&#34;). After executing the cells, your notebooks should look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\274082896ec59f4a.png"></p>
-<h2 is-upgraded><strong>Sample Aggregation</strong></h2>
-<p>A data scientist might now be interested in the mean value of sales per product. This would be the classical way in pandas:</p>
-<pre><code>df.groupby(&#34;product_name&#34;).sales_value.mean()</code></pre>
-<aside class="warning"><p><strong>Please note: </strong>By calling read_csv we loaded the whole file&#39;s values into the memory of the virtual machine which hosts our Jupyter notebook (the master node in our DataProc cluster). This works for small files which fit into memory. However, for &#34;larger-than-memory&#34; (big data) files, this proceeding <strong>won&#39;t work anymore</strong>. Thus, we&#39;ll later learn how to use the cluster to load and process datasets in some kind of &#34;shared cluster memory&#34; which makes use of all worker nodes&#39; memory and is hence scalable to really large amounts of data.</p>
+<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Batch Processing 1 (Fundamentals)&#34;).</p>
+<h2 is-upgraded><strong>Sample Batch Task (this time calculated in &#34;big data mode&#34; by all nodes in the cluster)</strong></h2>
+<p>A batch job could be to read all csv-files in the webshop_datalake (we only have one file currently stored there) and calculate the average sales value per product. Note that we assume that all files in the webshop_datalake have the same structure.</p>
+<h3 is-upgraded><strong>Connecting to the data lake</strong></h3>
+<p>Let&#39;s start by defining the connection to the data lake for PySpark. Put the following code in a cell and execute it (no output is expected):</p>
+<pre><code># provide spark the link to the webshop history (datalake)
+df = spark.read.csv(&#34;gs://pk-gcs/webshop_datalake/*.csv&#34;, inferSchema=True, header=True)</code></pre>
+<h3 is-upgraded><strong>Batch Processing</strong></h3>
+<p>Next, let&#39;s define our batch processing by making use of one of Spark&#39;s great features: querying big data in a SQL manner. The cell should have a Pandas DataFrame as output.</p>
+<pre><code># create a temporary view on the data that we can simply query by SQL
+df.createOrReplaceTempView(&#34;sales&#34;)
+
+# this is our batch processing - calculate the mean sales_value per product_name
+df_batch_result = spark.sql(&#34;SELECT product_name, mean(sales_value) FROM sales GROUP BY product_name&#34;)
+
+# show results (interactive mode)
+df_batch_result.toPandas()</code></pre>
+<p>Your notebook should now look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\60e8c58936e11340.png"></p>
+<aside class="special"><p><strong>Please note: </strong>This time we did not load the data into the memory of the Jupyter Notebook machine. All processing (although not visible) has been conducted by the worker nodes. If the data volume grows, we could just add more workers and the computation time will stay stable (parallel processing). This is horizontally scalable big data processing.</p>
 </aside>
+<h3 is-upgraded><strong>Creating the Batch View</strong></h3>
+<p>Finally, we don&#39;t want to stay in interactive mode, but write the batch processing results back to the cloud storage.</p>
+<pre><code># write results back to cloud GCS
+df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_per_product&#34;)</code></pre>
+<p>There is no output expected. However, in your bucket, you should see a folder &#34;average_sales_per_product&#34; containing multiple files which hold our batch processing results. We will later discuss why there is not only one results-file (do you already have an idea? Think about parallel processing.). This should be your bucket&#39;s content:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\11bb2729333812f0.png"></p>
+<h3 is-upgraded><strong>Examining the result (downloading one file)</strong></h3>
+<p>When downloading and opening one file (with more than 0 B size!), you&#39;ll see that it contains a partial result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4317faad18ea5e4a.png"></p>
+<p>Thus, batch processing may require a further step to consolidate the results into a &#34;batch view&#34;, e.g. by generating a BigQuery table. We will skip this step, which is however simply possible.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You used a Jupyter Notebook as a sample data science sandbox which allows data scientists to access a data lake.</li>
-<li>We accessed a sample data lake being built in GCP cloud storage (with only one file in it). There are other ways, but this option is one of the most efficient solutions to creating a data lake.</li>
-<li>You did not use a big data processing environment yet, i.e. you might also have downloaded the webshop_history file to your laptop and processed it there in a Jupyter environment. However, your setup is not far away of making use of big data technologies.</li>
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing.</li>
+<li>The code you ran is big data-ready and scalable. If you need more performance, just add more worker nodes in cluster creation and you are ready to process terabytes of data in a batch manner.</li>
 <li>We can now shut down our cluster in order to save money (see next step).</li>
 </ol>
 
@@ -145,9 +141,7 @@ df.head()</code></pre>
         <h2 is-upgraded><strong>Reasoning</strong></h2>
 <p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
 <h2 is-upgraded><strong>Saving and closing the notebooks</strong></h2>
-<p>Save your Juypter Notebook:</p>
-<p class="image-container"><img style="width: 368.50px" src="img\8f57859ccfec4e38.png"></p>
-<p>Close all Juypter Notebook browser tabs.</p>
+<p>Save your Jupyter Notebook. Close all Jupyter Notebook browser tabs.</p>
 <aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
 </aside>
 <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
@@ -163,7 +157,7 @@ df.head()</code></pre>
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="1">
-        <p>Congratulations, you completed the second lab in our big data journey. This lab was still not really big data related in terms of analytics, but you used technologies that are capable of holding (cloud storage) and processing (DataProc) very large amounts of data for a reasonable price, i.e. efficiently.</p>
+        <p>Congratulations, you completed another lab in our big data journey. This lab was the first one in which you got in touch with big data tools and analytics. We will understand the applied technology in detail throughout this course.</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 
