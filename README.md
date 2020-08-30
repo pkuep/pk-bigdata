@@ -8,6 +8,8 @@
 
 [Batch Processing](https://pkuep.github.io/pk-bigdata/fundamentals_batch_processing){:target="_blank" rel="noopener"}
 
+[HDFS](https://pkuep.github.io/pk-bigdata/fundamentals_hdfs){:target="_blank" rel="noopener"}
+
 ## Data Ingestion
 
 ## Batch Processing
