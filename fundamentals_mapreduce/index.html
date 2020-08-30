@@ -28,14 +28,14 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>We now want to apply further &#34;classical&#34; big data technologies in the Hadoop context. Using MapReduce on top HDFS is the second component of Hadoop that we want to get to know in more detail.</p>
+        <p>We now want to apply further &#34;classical&#34; big data technologies in the Hadoop context. Using MapReduce on top of HDFS is the second component of Hadoop that we want to get to know in more detail.</p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Understanding how to execute a MapReduce job in the DataProc environment.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
 <li>Use a big data-ready computation environment (Hadoop in the cloud) from the previous lab (HDFS)</li>
 <li>Submit a MapReduce job via the GCP cloud console</li>
-<li>Check the results in HDFS.</li>
+<li>Check the results in HDFS</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
@@ -47,7 +47,7 @@
         <h2 is-upgraded><strong>Introduction</strong></h2>
 <p>We will not learn how to write MapReduce code in this course. MapReduce is especially not state-of-the-art in big data analytics anymore. However, big data analytics has its roots in MapReduce and many technologies still rely on or extend the fundamental ideas of parallel processing.</p>
 <h2 is-upgraded><strong>Provided code</strong></h2>
-<p>In the course&#39;s library folder, you&#39;ll find a file &#34;wordcount.jar&#34;. This holds the binary Java code of  a MapReduce program that counts the word occurrences in an input text file. This is the &#34;hello world&#34; of big data batch processing.</p>
+<p>In the course&#39;s library folder, you&#39;ll find a file &#34;WordCount.java&#34;. This holds the source code of  a MapReduce program that counts the word occurrences in an input text file. This is the &#34;hello world&#34; of big data batch processing.</p>
 <h3 is-upgraded><strong>Map-Phase</strong></h3>
 <pre><code>public static class TokenizerMapper extends Mapper&lt;Object, Text, Text, IntWritable&gt; {
 
@@ -79,7 +79,7 @@
         }</code></pre>
 <p>The reduce class sums up all the &#34;ones&#34; for each key (i.e. word in the text file) and hence counts the number of occurrences.</p>
 <h2 is-upgraded><strong>Upload of the wordcount.jar to cloud storage</strong></h2>
-<p>The provided wordcount.jar needs to be accessible by DataProc. The most simple way is to just put this file into the bucket &#34;pk-gcs&#34;. Perform this step.</p>
+<p>The WordCount.java file has already been converted by me to binary Java code in the provided wordcount.jar. This jar-file needs to be accessible by DataProc (jar files are always shipped with job submission, &#34;moving the code to the data&#34;). The most simple way is to just put this file into the bucket &#34;pk-gcs&#34;. Perform this step.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You uploaded the necessary MapReduce code for word counting to cloud storage.</li>
