@@ -1,4 +1,4 @@
-# Big data lecture - code & labs
+# Big data lecture - Labs
 ## Fundamentals
 [Simple Analytics Pipeline](https://pkuep.github.io/pk-bigdata/fundamentals_simple_analytics_pipeline){:target="_blank" rel="noopener"}
 
