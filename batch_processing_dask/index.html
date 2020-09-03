@@ -133,9 +133,11 @@ ls</code></pre>
 <p>The most important part for us is the worker configuration:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\27e5e3c8030c36ac.png"></p>
 <p>Here you&#39;ll be able to change your cluster setup when you need more performance for your big data computations.</p>
-<p>Please switch back to the </p>
+<p>Please switch back to the cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\f78b969be98b42a0.png"></p>
+<p>Make sure that you stay in the directory &#34;pk-bigdata-code&#34;, i.e. where the file values.yaml is located.</p>
 <h2 is-upgraded>Deploy Dask to the Cluster</h2>
-<p>Rename pk-dask</p>
+<p>Next, we want Rename pk-dask</p>
 <pre><code>helm install --name pk-dask dask/dask --version 4.4.2 \
 --set scheduler.serviceType=LoadBalancer \
 --set jupyter.serviceType=LoadBalancer \
