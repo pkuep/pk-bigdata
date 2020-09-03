@@ -16,6 +16,8 @@
 
 ## Batch Processing
 
+[Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
+
 ## Data Integration
 
 ## Stream Processing
