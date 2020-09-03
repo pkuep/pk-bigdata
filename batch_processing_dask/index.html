@@ -28,7 +28,7 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product in a scalable (big data) manner.</p>
+        <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product as well as train a simple machine learning model in a scalable (big data) manner using Dask.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\a694d14e88b3376b.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Using data in the data lake for batch processing from a Jupyter Notebook, this time however relying on Dask.</p>
@@ -37,7 +37,7 @@
 <li>Set up a Kubernetes cluster as a generic platform for automating the deployment, scaling, and management of containerized applications (i.e. modern IT architectures)</li>
 <li>Add the tool &#34;helm&#34; to this cluster as a management tool for Kubernetes applications.</li>
 <li>Install the big data processing framework &#34;Dask&#34; to your Kubernetes cluster (via helm).</li>
-<li>Performing a big data-ready and scaling analysis using Python and Dask.</li>
+<li>Performing a big data-ready and scaling analysis as well as machine learning using Python and Dask.</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Be careful to shut down your cluster after completing the lab due to high costs!</p>
 </aside>
@@ -98,7 +98,9 @@ helm init --service-account tiller --history-max 100 --wait</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img\d0a26c04ddcd4e95.png"></p>
 <h2 is-upgraded><strong>Finalize Helm Configuration</strong></h2>
 <p>We (unfortunately) need to add a security patch (in the current version). Please execute the following command:</p>
-<pre><code>kubectl patch deployment tiller-deploy --namespace=kube-system --type=json --patch=&#39;[{&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/command&#34;, &#34;value&#34;: [&#34;/tiller&#34;, &#34;--listen=localhost:44134&#34;]}]&#39;</code></pre>
+<pre><code>kubectl patch deployment tiller-deploy \
+--namespace=kube-system --type=json \
+--patch=&#39;[{&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/command&#34;, &#34;value&#34;: [&#34;/tiller&#34;, &#34;--listen=localhost:44134&#34;]}]&#39;</code></pre>
 <p>Wait a few seconds and execute the following command:</p>
 <pre><code>helm version</code></pre>
 <p>This should show the following output indicating that the helm client and server are running:</p>
@@ -137,13 +139,22 @@ ls</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img\f78b969be98b42a0.png"></p>
 <p>Make sure that you stay in the directory &#34;pk-bigdata-code&#34;, i.e. where the file values.yaml is located.</p>
 <h2 is-upgraded>Deploy Dask to the Cluster</h2>
-<p>Next, we want Rename pk-dask</p>
+<p>Next, we want to finalize our preparations and deploy the dask cluster, i.e. a dask master (scheduler), a Jupyter Notebook, as well as the workers as configured in the values.yaml file. You may want to rename pk-dask to &#34;your initials&#34;-dask in the following code snippet which is to be executed in the cloud shell:</p>
 <pre><code>helm install --name pk-dask dask/dask --version 4.4.2 \
 --set scheduler.serviceType=LoadBalancer \
 --set jupyter.serviceType=LoadBalancer \
 --values values.yaml</code></pre>
+<p>The output should look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9520398a4e80c60e.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a customized dask configuration.</li>
+<li>You deployed dask with this configuration to your running kubernetes cluster.</li>
+<li>You are now ready to access the web interfaces.</li>
+</ol>
 <h2 is-upgraded><strong>Access the Web Interfaces</strong></h2>
 <h3 is-upgraded><strong>Checking the External Load Balancers for Web Access</strong></h3>
+<p>Deployment of dask </p>
 <p class="image-container"><img style="width: 624.00px" src="img\6e51256dbb9d7da9.png"></p>
 <h3 is-upgraded><strong>Dask Status Page</strong></h3>
 <p>Sdflk</p>
@@ -155,7 +166,7 @@ ls</code></pre>
 <aside class="warning"><p><strong>Please note: </strong>If you receive the following error, just click on the jupyter logo and you should be redirected to the correct URL.</p>
 </aside>
 <p class="image-container"><img style="width: 361.50px" src="img\1e6c2416c3b1eedd.png"></p>
-<h2 is-upgraded><strong>Reasoning</strong></h2>
+<h2 is-upgraded><strong>Chang</strong></h2>
 <p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
 <p>XXX</p>
 <p>import gcsfs</p>
@@ -171,6 +182,12 @@ ls</code></pre>
 <p>y = ddf[&#39;sales_value&#39;]</p>
 <p>reg.fit(X, y)</p>
 <p class="image-container"><img style="width: 624.00px" src="img\e5ec175f1782eb2a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Varying the Cluster Size" duration="1">
+        <p>Please make sure to shutdown your cluster due to high costs of our setup.</p>
 
 
       </google-codelab-step>
