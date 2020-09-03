@@ -114,12 +114,26 @@ helm init --service-account tiller --history-max 100 --wait</code></pre>
     
       <google-codelab-step label="Deploying Dask with JupyterHub via Helm to the Cluster" duration="2">
         <h2 is-upgraded><strong>Add and Update Dask Chart to Helm</strong></h2>
-<p>S</p>
 <pre><code>helm repo add dask https://helm.dask.org/
 helm repo update</code></pre>
 <h2 is-upgraded><strong>Configure Dask Scheduler and Worker Nodes</strong></h2>
-<p>values.yaml!</p>
-<pre><code></code></pre>
+<h3 is-upgraded><strong>Background</strong></h3>
+<p>We could already deploy a dask cluster with default parameters. However, in order to be able to configure the cluster in further detail (e.g. number of nodes, additional Python packages we want to use, etc.), we will now learn how to overwrite the default configuration.</p>
+<h3 is-upgraded><strong>Downloading the sample configuration</strong></h3>
+<p>The configuration can be overridden by providing a file &#34;values.yaml&#34;. You can download a suggested configuration file in the cloud shell with the following command:</p>
+<pre><code>git clone https://github.com/pkuep/pk-bigdata-code.git</code></pre>
+<h3 is-upgraded><strong>Checking the configuration file</strong></h3>
+<p>After cloning the GitHub repository, you should be able to access the respective directory and take a look at the configuration file:</p>
+<pre><code>cd pk-bigdata-code
+ls</code></pre>
+<p>This should be the output</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b047df24be04ec0c.png"></p>
+<p>Let&#39;s take a look at the file with the editor. Click on &#34;Open Editor&#34;, browse into the directory pk-bigdata-code and select the file &#34;values.yaml&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4bcb23576f237227.png"></p>
+<p>The most important part for us is the worker configuration:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\27e5e3c8030c36ac.png"></p>
+<p>Here you&#39;ll be able to change your cluster setup when you need more performance for your big data computations.</p>
+<p>Please switch back to the </p>
 <h2 is-upgraded>Deploy Dask to the Cluster</h2>
 <p>Rename pk-dask</p>
 <pre><code>helm install --name pk-dask dask/dask --version 4.4.2 \
