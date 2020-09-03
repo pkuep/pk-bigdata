@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-03T11:15:58Z",
+  "updated": "2020-09-03T11:20:14Z",
   "id": "batch_processing_dask",
   "duration": 20,
   "title": "Lab \"Batch Processing: Dask on Kubernetes\"",
