@@ -279,8 +279,10 @@ reg.fit(X, y)</code></pre>
     
       <google-codelab-step label="Congratulations" duration="1">
         <p>Congratulations, you used fairly complex technologies and a sophisticated setup (kubernetes with helm and dask) to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
-<p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
-<p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
+<aside class="warning"><p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
+</aside>
+<aside class="warning"><p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
+</aside>
 <aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the kubernetes cluster you should use dask via a local installation and use the kubernetes cluster only for deployment and scalability tests.</p>
 </aside>
 <p>Dask is one of the rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
