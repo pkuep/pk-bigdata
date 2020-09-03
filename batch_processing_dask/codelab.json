@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-02T20:56:58Z",
+  "id": "batch_processing_dask",
+  "duration": 20,
+  "title": "Lab \"Batch Processing: Dask on Kubernetes\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a Kubernetes cluster in GCP, add a Kubernetes solution management tool (helm) and deploy a Dask cluster to Kubernetes in order to perform big data processing from Python.",
+  "source": "1S0Weqb88t6PijfNa00AA3Pgo3hzYtUk3Qo6LLVC4n1w",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_processing_dask"
+}
