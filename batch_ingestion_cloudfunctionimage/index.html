@@ -194,6 +194,7 @@ datetime</code></pre>
 <p>You may want to rename and download the JupyterLab Notebook we created (however, it is also available via GitHub):</p>
 <p class="image-container"><img style="width: 356.42px" src="img\1582a950e7a1c6e.png"></p>
 <p>You should also delete or at least shut down your notebook (under &#34;AI Platform&#34;):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1d5041f43b9af8a2.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You finished the lab and performed all necessary clean-up tasks.</li>
@@ -202,15 +203,12 @@ datetime</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Congratulations" duration="1">
-        <p>Congratulations, you used fairly complex technologies and a sophisticated setup (kubernetes with helm and dask) to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
-<aside class="warning"><p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>Congratulations, you set up a state-of-the-art cloud ingestion pipeline using cloud functions and scheduled its execution.</p>
+<aside class="warning"><p><strong>Warning: </strong>Cloud functions are not &#34;auto-scaling&#34; and also not horizontally scaling as other technologies we have explored already and will explore in further detail (e.g. Spark, Apache Beam, Dask). Thus, if you want to scale out (e.g. to 10000 webcams), you might first need to scale vertically (provide the function more RAM) and then horizontally in a manual manner (e.g. by generating 100 cloud functions, each being responsible for the ingestion of 100 webcam images).</p>
 </aside>
-<aside class="warning"><p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
+<aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the notebook instance you should first develop in a local environment (e.g. using Anaconda) and then deploy to a cloud notebook or cloud function. However, accessing resources from outside the project (e.g. a notebook in GCP) is more complex. We will get to know how this works later (service accounts are necessary).</p>
 </aside>
-<aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the kubernetes cluster you should use dask via a local installation and use the kubernetes cluster only for deployment and scalability tests.</p>
-</aside>
-<p>Dask is one of the rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 
