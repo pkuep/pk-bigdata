@@ -13,6 +13,7 @@
 [MapReduce](https://pkuep.github.io/pk-bigdata/fundamentals_mapreduce){:target="_blank" rel="noopener"}
 
 ## Data Ingestion
+[Image to GCS with Cloud Functions](https://pkuep.github.io/pk-bigdata/batch_ingestion_cloudfunctionimage){:target="_blank" rel="noopener"}
 
 ## Batch Processing
 
