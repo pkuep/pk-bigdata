@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>Lab &#34;Batch Ingestion: Ingest RDBMS Source with Data Fusion&#34;</title>
+  <title>Lab &#34;Batch Ingestion: Ingest RDBMS Source with a Cloud Function&#34;</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
@@ -23,7 +23,7 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid="None"
                   id="batch_ingestion_cloudfunctionrdbms"
-                  title="Lab &#34;Batch Ingestion: Ingest RDBMS Source with Data Fusion&#34;"
+                  title="Lab &#34;Batch Ingestion: Ingest RDBMS Source with a Cloud Function&#34;"
                   environment="web"
                   feedback-link="https://p-kueppers.com">
     
@@ -57,43 +57,76 @@
 <h2 is-upgraded><strong>Creating the Notebook and Implementing the Logic</strong></h2>
 <aside class="special"><p><strong>Please note:</strong> You can also download the source code from GitHub. Instructions for this can be found at the end of this section.</p>
 </aside>
+<h3 is-upgraded><strong>Notebook Creation</strong></h3>
 <p>Create a Python 3 notebook:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\44e7bc6b911ba3ac.png"></p>
 <p>Create a cell and insert the following code to install the mysql driver:</p>
 <pre><code>!pip install pymysql</code></pre>
 <p>Import the newly installed package pymysql in another cell:</p>
-<pre><code>Import pymysql</code></pre>
-<p>Now, let&#39;s connect to our webshop cloud SQL database. First, we need to find out the connection string. In the cloud console, navigate to the overview page to find out your connection string:<img style="width: 624.00px" src="img\2a5854ce2b6eab23.png"></p>
-<p>Hit the &#34;Copy&#34; button (see screenshot above).</p>
-<pre><code>filename = f&#34;webcam_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;
-response = requests.get(url)
-file = open(filename, &#34;wb&#34;)
-file.write(response.content)
-file.close()</code></pre>
-<p>When updating the file browser you should see the image (which you can open in JuypterLab):</p>
-<p class="image-container"><img style="width: 248.50px" src="img\84b94d1a57b877a6.png"></p>
-<h2 is-upgraded><strong>Upload image to GCS (only in cloud JupyterLab possible)</strong></h2>
+<pre><code>import pymysql</code></pre>
+<h3 is-upgraded><strong>Finding the Database Server&#39;s IP address</strong></h3>
+<p>Now, let&#39;s connect to our webshop cloud SQL database. First, we need to find out the database&#39;s IP address. Please open another browser tab and navigate to the cloud SQL service. You&#39;ll be able to find out the IP address of your SQL server In the overview page of cloud SQL:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\817521faab9bafe8.png"></p>
+<h3 is-upgraded>Adding the IP address to your JupyterLab cell</h3>
+<p>Hit &#34;Copy&#34; and add the following new cell to your JupyterLab (replace &lt;Copied IP Address&gt; with your server&#39;s address):</p>
+<pre><code>conn = pymysql.connect(host=&#39;&lt;Copied IP Address&gt;&#39;, user=&#39;root&#39;, password=&#39;&#39;, db=&#39;webshop&#39;)
+conn</code></pre>
+<h3 is-upgraded><strong>Allowing database connections from your JupyterLab</strong></h3>
+<p>Since GCP has strict security policies, it is not possible to simply connect to the database. One could set up a secured cloud proxy connection. However, for testing purposes we&#39;ll just allow the JupyterLab machine to connect to the MySQL server. Our cloud function will later be automatically allowed to connect (at least when it is running in the same project).</p>
+<p>Please navigate to the &#34;Notebooks&#34; page in the &#34;AI platform&#34; and click on the instance name:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\eac7d859c0929a4e.png"></p>
+<p>You will be forwarded to &#34;Compute Engine&#34;, GCPs infrastructure as a service product which underlies most of the services we are using. When scrolling down a bit you&#39;ll find the IP address of your Jupyter Lab machine:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\36f98a2f4fe28ac.png"></p>
+<p>Copy the &#34;External IP&#34; to the clipboard.</p>
+<p>Navigate back to the cloud SQL page in the cloud console. Select &#34;Connections&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1a1f321bc9950a47.png"></p>
+<p>Click on &#34;Add Network&#34; and call it &#34;JupyterLab&#34; with the IP address being pasted into &#34;Network&#34;:</p>
+<p class="image-container"><img style="width: 390.84px" src="img\bfa356b6bc360923.png"></p>
+<p>Hit &#34;Done&#34; and then &#34;Save&#34;. JupyterLab should now be listed with its IP address under &#34;Authorized networks&#34;:</p>
+<p class="image-container"><img style="width: 296.21px" src="img\970b0bef09c2cbd7.png"></p>
+<h3 is-upgraded><strong>Connecting to the database from the JupyterLab cell</strong></h3>
+<p>Now navigate back to the JupyterLab and execute the cell you created above in your Jupyter Notebook:</p>
+<pre><code>conn = pymysql.connect(host=&#39;&lt;Copied IP Address&gt;&#39;, user=&#39;root&#39;, password=&#39;&#39;, db=&#39;webshop&#39;)
+conn</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b31a0f106fb4535f.png"></p>
+<h2 is-upgraded><strong>Retrieve all rows from the table &#34;sales&#34;</strong></h2>
+<p>Next, we want to get all rows from the table for visualization purposes:</p>
+<pre><code>with conn.cursor() as cur:
+    cur.execute(&#39;SELECT * FROM sales&#39;)
+    rows = cur.fetchall()
+    sales = &#34;date, weekday, region, age_group, product, product_group, sales_value\n&#34;
+    for row in rows:
+        sales += (f&#39;{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}\n&#39;)
+        
+print(sales)</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\57c8f281ebb32de1.png"></p>
+<h2 is-upgraded><strong>Store table &#34;sales&#34; in cloud storage</strong></h2>
 <p>In case you are working in the cloud JupyterLab, you can access the cloud storage easily with the following code:</p>
 <pre><code>from google.cloud import storage
+filename = f&#34;webshop_sales_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.csv&#34;
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)
 blob = bucket.blob(filename)
-blob.upload_from_string(response.content)</code></pre>
-<p>You should now be able to see this image in the cloud console (under Cloud Storage)</p>
-<p class="image-container"><img style="width: 624.00px" src="img\62d1daef60172108.png"></p>
-<p>The notebook could now be executed, e.g. hourly, in order to create a history of webcam images. However, the notebook is only used for demo purposes and we now want to see how one can deploy such an ingestion logic to a cloud function.</p>
+
+blob.upload_from_string(sales, content_type=&#39;text/csv&#39;)</code></pre>
+<p>You should now be able to see the csv file in the cloud console (under Cloud Storage)</p>
+<p class="image-container"><img style="width: 624.00px" src="img\99cbf91e5b5f2af8.png"></p>
+<p>Downloading and opening the file should show all contents of the table &#34;sales&#34;:</p>
+<p class="image-container"><img style="width: 389.13px" src="img\336aa462fbcbdf45.png"></p>
 <h2 is-upgraded><strong>Downloading the Source Code from GitHub (optional)</strong></h2>
 <p>In the JupyterLab overview page (or via File → New → Terminal), you can open a console:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\660435537bbf90d.png"></p>
 <p>Within the terminal, you can enter the following code to clone the course&#39;s GitHub repository:</p>
 <pre><code>git clone https://github.com/pkuep/pk-bigdata-code.git</code></pre>
-<p>After refreshing the file browser, you should see the folder &#34;pk-bigdata-code&#34; in which you&#39;ll find the source code of this lab (Jupyter Notebooks → batch_ingestion → BigData - Batch Ingestion - Sample Image Retrieval.ipynb):</p>
+<p>After refreshing the file browser, you should see the folder &#34;pk-bigdata-code&#34; in which you&#39;ll find the source code of this lab (Jupyter Notebooks → batch_ingestion → BigData - Batch Ingestion - Sample Cloud SQL Database Extraction.ipynb):</p>
 <p class="image-container"><img style="width: 296.92px" src="img\11e4a126ad02c5b6.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You created a Jupyter Notebook in order to understand the requirements of our ingestion logic: pulling an image via http to the data lake.</li>
-<li>You set up a Notebook environment in the cloud which is capable of accessing different resources in your GCP project, especially cloud storage.</li>
-<li>You pulled a sample image from the webcam and (1) showed it in the notebook, (2) stored it locally on the JupyterLab virtual machine, and (3) stored it on GCS, i.e. the data lake.</li>
+<li>You created a Jupyter Notebook in order to understand the requirements of our ingestion logic: pulling all data from a table via the pymysql connector and pushing these to the data lake.</li>
+<li>You set up a Notebook environment in the cloud which is capable of accessing different resources in your GCP project, especially the cloud SQL server and cloud storage.</li>
+<li>You pulled all data from a sample table and (1) showed it in the notebook and (2) stored it on GCS, i.e. the data lake.</li>
 <li>Next, we want to transfer the logic to a cloud function.</li>
 </ol>
 
@@ -101,48 +134,60 @@ blob.upload_from_string(response.content)</code></pre>
       </google-codelab-step>
     
       <google-codelab-step label="Creating and Developing the Cloud Function" duration="9">
-        <h2 is-upgraded><strong>Creating a cloud function for image retrieval and storage upload</strong></h2>
+        <h2 is-upgraded><strong>Creating a cloud function for SQL extraction and storage upload</strong></h2>
 <p>Please go to cloud functions in the console:</p>
 <p class="image-container"><img style="width: 242.50px" src="img\1b3c6fff6634ebc5.png"></p>
-<p>Create a function. Set the function name to &#34;image_ingestion&#34;. Set &#34;Allow unauthenticated invocations&#34; under &#34;Authentication&#34;. The other parameters can be set as default. First, you&#39;ll need to hit &#34;Save&#34; in the &#34;Trigger&#34; section before being able to continue:</p>
-<p class="image-container"><img style="width: 434.57px" src="img\3def3c9add395fdd.png"></p>
+<p>Create a function. Set the function name to &#34;ingest_webshop&#34;. Set &#34;Allow unauthenticated invocations&#34; under &#34;Authentication&#34;. The other parameters can be set as default. First, you&#39;ll need to hit &#34;Save&#34; in the &#34;Trigger&#34; section before being able to continue:</p>
+<p class="image-container"><img style="width: 317.34px" src="img\e800262c59b02944.png"></p>
 <aside class="special"><p><strong>Please note:</strong> In the advanced section you are able to set the allocated memory for the cloud function (in case you have larger requirements than 256 MB).</p>
 </aside>
-<p>Hit Next. Change the runtime to Python 3.7, change the entry point method (e.g. to ingest_image) and also change the function name in the code editor to, e.g., ingest_image:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\238a7388aa14755b.png"></p>
-<p>You are working in the file &#34;main.py&#34;. This file holds the logic we want to deploy to our cloud function. Let&#39;s transfer the logic of the Jupyter Notebook to our method &#34;ingest_image&#34;:</p>
+<p>Hit Next. Change the runtime to Python 3.7, change the entry point method (e.g. to ingest_image) and also change the function name in the code editor to, e.g., ingest_webshop:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7fec4497db652de6.png"></p>
+<p>You are working in the file &#34;main.py&#34;. This file holds the logic we want to deploy to our cloud function. However, first, we want to get the connection name of our cloud SQL database in order to avoid entering the IP address. Please navigate to the overview page of cloud SQL and copy the connection name to the clipboard:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\735475eb02a74d35.png"></p>
+<p>Next, let&#39;s transfer the logic of the Jupyter Notebook to our method &#34;ingest_webshop&#34;.</p>
 <pre><code>from google.cloud import storage
-import requests
 from datetime import datetime
-
-def ingest_image(request):
-    &#34;&#34;&#34;Pull an image from the webcam and store it in GCS &#34;&#34;&#34;
-
-    # pull the image
-    url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39;
-    filename = f&#34;webcam_fromfunction_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;  # add a timestamp
-    response = requests.get(url)
-
-    # store it in GCS
+import pymysql
+ 
+def ingest_webshop(request):
+    &#34;&#34;&#34; connects to the webshop database, retrieves all rows from the
+        table &#34;sales&#34; and uploads these into a file on GCS
+    &#34;&#34;&#34;
+    # connect to the database - replace &lt;cloud SQL IP&gt; with the IP of your cloud SQL server
+    conn = pymysql.connect(unix_socket=&#39;/cloudsql/pk-bigdata:us-central1:pk-sql&#39;, user=&#39;root&#39;, password=&#39;&#39;, db=&#39;webshop&#39;)
+ 
+    # create a string that holds all rows of the table &#34;sales&#34; in a csv-ready format
+    with conn.cursor() as cur:
+        cur.execute(&#39;SELECT * FROM sales&#39;)
+        rows = cur.fetchall()
+        sales = &#34;date, weekday, region, age_group, product, product_group, sales_value\n&#34;
+        for row in rows:
+            sales += (f&#39;{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}\n&#39;)
+ 
+    # create a filename with a timestamp and store the data in a csv file in the datalake
+    filename = f&#34;webshop_sales_fromfunction_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.csv&#34;
     storage_client = storage.Client()
-    bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)  # replace the bucket name with yours
+    bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)
     blob = bucket.blob(filename)
-    blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)</code></pre>
+ 
+    blob.upload_from_string(sales, content_type=&#39;text/csv&#39;)
+
+</code></pre>
+<aside class="warning"><p><strong>Warning:</strong> Storing credentials like this is not the recommended way of connecting to a database or invoking other services. Usually one sets up a service account for this or the sensitive data is stored in a specific repository (e.g. GCP Secret Manager, see <a href="https://cloud.google.com/secret-manager" target="_blank">https://cloud.google.com/secret-manager</a>). </p>
+</aside>
 <p>Next, we&#39;ll need to specify that our cloud function requires some Python packages. Click on &#34;requirements.txt&#34; and add this code at the end of the file:</p>
 <pre><code>google-cloud-storage
-requests
-datetime</code></pre>
+datetime
+pymysql</code></pre>
 <p>Hit &#34;Deploy&#34; (either from requirements.txt or main.py):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\871b5a4e2f8504e8.png"></p>
-<p>Wait 1-2 minutes until the function is deployed and then click on its name:<img style="width: 624.00px" src="img\14b682c9b4244e94.png"></p>
-<p>Go to the &#34;Testing&#34; section and hit &#34;Test the function&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\af6423456825990f.png"></p>
-<p>The output should be &#34;Ok&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\62a020524426c01.png"></p>
-<p>You can take a look at the log output as well, e.g. to check the function&#39;s performance:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9479586607b42278.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\923da52c81698c84.png"></p>
+<p>Wait 1-2 minutes until the function is deployed and then click on its name:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c33ecf200e5b313b.png"></p>
+<p>Go to the &#34;Testing&#34; section and hit &#34;Test the function&#34;. The output should be &#34;OK&#34;.</p>
+<p class="image-container"><img style="width: 307.50px" src="img\7380da03f13c488a.png"></p>
 <p>You should now see the output in your bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d3c720a9ed3b347.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\7208b53bb64505c.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You transferred the sample logic from the notebook to a cloud function (main.py).</li>
@@ -154,43 +199,24 @@ datetime</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Scheduling the Cloud Function" duration="6">
-        <h2 is-upgraded><strong>Triggering the cloud function manually</strong></h2>
-<p>Within your cloud function&#39;s GCP page, you&#39;ll find the http-Trigger for this function:</p>
-<p>WhenWhen<img style="width: 624.00px" src="img\fad52e7508c6bac5.png"></p>
-<p>When clicking on the URL, you&#39;ll get a simple &#34;OK&#34; message:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6412826a72f39117.png"></p>
-<p>This should have triggered another run of your cloud function.</p>
-<aside class="special"><p><strong>Please note:</strong> Please copy the Trigger URL into the clipboard.</p>
-</aside>
-<h2 is-upgraded><strong>Scheduling cloud function calls </strong></h2>
-<p>Please navigate to the cloud scheduler (under &#34;Tools&#34;) and create a job:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6cc551341cc2fada.png"></p>
-<p>The job could be called &#34;scheduled_webcam_ingest&#34; and let&#39;s set the frequency to once per minute (* * * * *). In &#34;Timezone&#34; you can search for &#34;Germany&#34;. Set the target to &#34;HTTP&#34; and paste your function&#39;s URL. All other settings can stay the default.</p>
-<p class="image-container"><img style="width: 448.23px" src="img\273993972855e955.png"></p>
-<p>You can immediately run the job to test it:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\781ef504799979d9.png"></p>
-<p>You should see the result in your GCS bucket. Now, every minute a further image should be added to the bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\82812e3f518aa658.png"></p>
-<h2 is-upgraded><strong>Results</strong></h2>
-<ol type="1" start="1">
-<li>You now scheduled your cloud function regularly. </li>
-<li>You set up a whole ingestion pipeline using cloud functions and cloud storage as a data lake. This setup is now an &#34;operation-ready&#34; architecture and could be used in productive environments.</li>
-</ol>
+      <google-codelab-step label="Scheduling the Cloud Function" duration="1">
+        <p>We set up a cloud scheduler in the lab &#34;Image to GCS with Cloud Functions&#34; (see <a href="https://pkuep.github.io/pk-bigdata/batch_ingestion_cloudfunctionimage" target="_blank">https://pkuep.github.io/pk-bigdata/batch_ingestion_cloudfunctionimage</a>). The steps to automate this function are the same. Thus, we&#39;ll spare them here.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Cleaning Up" duration="2">
-        <p>Please make sure to delete your scheduled job in the cloud scheduler:</p>
+        <p>Please make sure to delete your scheduled job in the cloud scheduler (if applicable):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\ad75758d9f9a7bb2.png"></p>
-<p>Next, you may want to delete the files in the bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4a822047c84355af.png"></p>
+<p>Next, you may want to delete the files in the bucket.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\996aea9f3c729182.png"></p>
 <p>Next, you should delete the cloud function:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\ee3f0f3111c8ffe1.png"></p>
+<p class="image-container"><img style="width: 424.50px" src="img\ae14c853c5bbbee0.png"></p>
 <p>You may want to rename and download the JupyterLab Notebook we created (however, it is also available via GitHub):</p>
 <p class="image-container"><img style="width: 356.42px" src="img\1582a950e7a1c6e.png"></p>
-<p>You should also delete or at least shut down your notebook (under &#34;AI Platform&#34;):</p>
+<p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\21abda122deede7c.png"></p>
+<p>You should also delete or at least shut down your notebook (under &#34;AI Platform&#34;) - (in the live lecture, please leave your notebook running!):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\1d5041f43b9af8a2.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -202,7 +228,7 @@ datetime</code></pre>
     
       <google-codelab-step label="Congratulations" duration="2">
         <p>Congratulations, you set up a state-of-the-art cloud ingestion pipeline using cloud functions and scheduled its execution.</p>
-<aside class="warning"><p><strong>Warning: </strong>Cloud functions are not &#34;auto-scaling&#34; and also not horizontally scaling as other technologies we have explored already and will explore in further detail (e.g. Spark, Apache Beam, Dask). Thus, if you want to scale out (e.g. to 10000 webcams), you might first need to scale vertically (provide the function more RAM) and then horizontally in a manual manner (e.g. by generating 100 cloud functions, each being responsible for the ingestion of 100 webcam images).</p>
+<aside class="warning"><p><strong>Warning: </strong>Cloud functions are not &#34;auto-scaling&#34; and also not horizontally scaling as other technologies we have explored already and will explore in further detail (e.g. Spark, Apache Beam, Dask). Thus, if you want to scale out (e.g. to a table with 1 billion of rows), you might first need to scale vertically (provide the function more RAM) and then horizontally in a manual manner (e.g. by generating 100 cloud functions, each being responsible for the ingestion of 10 million rows). However, we&#39;ll learn about scaling batch ingestion methods later on.</p>
 </aside>
 <aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the notebook instance you should first develop in a local environment (e.g. using Anaconda) and then deploy to a cloud notebook or cloud function. However, accessing resources from outside the project (e.g. a notebook in GCP) is more complex. We will get to know how this works later (service accounts are necessary).</p>
 </aside>
