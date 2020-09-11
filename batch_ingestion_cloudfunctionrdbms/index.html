@@ -29,14 +29,13 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\66c2ede63e20b30a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\6dc17293e49e37eb.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
-<p>Ingesting unstructured image data into the data lake for batch processing via a (vertically) scalable cloud function.</p>
+<p>Ingesting structured relational data into the data lake for batch processing via a (vertically) scalable cloud function.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
-<li>Take a look at the Python logic to download images via http in Python in a cloud Jupyter notebook.</li>
+<li>Take a look at the Python logic to connect to a cloud SQL server.</li>
 <li>Transfer the Python logic from a local machine to the cloud function.</li>
-<li>Schedule the cloud function for regular execution.</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
 </aside>
@@ -44,7 +43,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Downloading images in Python (example in a notebook)" duration="5">
+      <google-codelab-step label="Connecting to Cloud SQL in Python (example in a notebook)" duration="5">
         <h2 is-upgraded><strong>Creating a cloud-based Jupyter Notebook environment</strong></h2>
 <p>If you don&#39;t have Anaconda and Jupyter Notebook installed        locally on your computer, please create a notebook in GCP&#39;s AI Platform:</p>
 <p class="image-container"><img style="width: 297.50px" src="img\afdfd83a1dd6536e.png"></p>
