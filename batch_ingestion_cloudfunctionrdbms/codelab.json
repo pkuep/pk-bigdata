@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-11T09:27:20Z",
+  "id": "batch_ingestion_cloudfunctionrdbms",
+  "duration": 24,
+  "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with Data Fusion\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a cloud function in GCP and implement an ingestion logic in Python which retrieves a table from a cloud SQL instance and stores the data in the data lake (GCS).",
+  "source": "11JzWbgDpQv6F3v7GkxllI7MH1jC9VYpnY9e8ilU9qFM",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_ingestion_cloudfunctionrdbms"
+}
