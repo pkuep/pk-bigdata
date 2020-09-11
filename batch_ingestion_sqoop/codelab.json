@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-11T13:58:03Z",
+  "id": "batch_ingestion_sqoop",
+  "duration": 19,
+  "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with a Cloud Function\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a sqoop job from o a DataProc cluster that retrieves a table from a cloud SQL instance and stores the data in the data lake (HDFS and GCS).",
+  "source": "10Cx9TeqzR-6gh6V5GgjEAsSKcfU1Ul6RreGuRjfpve8",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_ingestion_sqoop"
+}

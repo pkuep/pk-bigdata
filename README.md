@@ -18,6 +18,8 @@
 
 [RDBMS to GCS with Cloud Functions](https://pkuep.github.io/pk-bigdata/batch_ingestion_cloudfunctionrdbms){:target="_blank" rel="noopener"}
 
+[RDBMS to HDFS/GCS with sqoop](https://pkuep.github.io/pk-bigdata/batch_ingestion_sqoop){:target="_blank" rel="noopener"}
+
 ## Batch Processing
 
 [Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
