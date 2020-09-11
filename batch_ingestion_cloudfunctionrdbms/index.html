@@ -61,10 +61,10 @@
 <p class="image-container"><img style="width: 624.00px" src="img\44e7bc6b911ba3ac.png"></p>
 <p>Create a cell and insert the following code to install the mysql driver:</p>
 <pre><code>!pip install pymysql</code></pre>
-<p>Show the current image of this webcam using the following code in another cell:</p>
-<pre><code>url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39; # image url
-Image(url=url, width=300)  # show image in notebook</code></pre>
-<p>Now, let&#39;s download the current image to the local disk (of our JupyterLab machine):</p>
+<p>Import the newly installed package pymysql in another cell:</p>
+<pre><code>Import pymysql</code></pre>
+<p>Now, let&#39;s connect to our webshop cloud SQL database. First, we need to find out the connection string. In the cloud console, navigate to the overview page to find out your connection string:<img style="width: 624.00px" src="img\2a5854ce2b6eab23.png"></p>
+<p>Hit the &#34;Copy&#34; button (see screenshot above).</p>
 <pre><code>filename = f&#34;webcam_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;
 response = requests.get(url)
 file = open(filename, &#34;wb&#34;)
