@@ -59,10 +59,8 @@
 </aside>
 <p>Create a Python 3 notebook:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\44e7bc6b911ba3ac.png"></p>
-<p>Create a cell and insert the following imports:</p>
-<pre><code>import requests  # will be used to retrieve the image via http / a URL
-from IPython.display import Image  # will be used to show one exemplary image in the notebook
-from datetime import datetime  # will be used to format the filename</code></pre>
+<p>Create a cell and insert the following code to install the mysql driver:</p>
+<pre><code>!pip install pymysql</code></pre>
 <p>Show the current image of this webcam using the following code in another cell:</p>
 <pre><code>url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39; # image url
 Image(url=url, width=300)  # show image in notebook</code></pre>

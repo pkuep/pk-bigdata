@@ -78,12 +78,15 @@
 <p>Hit &#34;Connect using cloud shell&#34;</p>
 <p class="image-container"><img style="width: 624.00px" src="img\a79dad78a27d711e.png"></p>
 <p>In the lower part of the browser window, a shell tab should appear with a command that you can execute by hitting &#34;enter&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\44adab98662806e6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\9305e5a5e0ee735d.png"></p>
 <p>You can copy and paste the following commands (replacing your initials):</p>
 <pre><code>gcloud sql connect pk-sql --user=root --quiet</code></pre>
 <p>Setting up the connection will take some seconds (allowing the access). Just hit enter (since we did not set a root password) when you see this screen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\efec7182490bce38.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\420ab0b62c085631.png"></p>
 <p>Now you&#39;re connected to the database server.</p>
+<h2 is-upgraded><strong>Creating the webshop database</strong></h2>
+<p>First, we need to create a database that will hold the webshop tables. Create the webshop by entering the following command into the shell:</p>
+<pre><code>use webshop;</code></pre>
 <h2 is-upgraded>Switching to the webshop database</h2>
 <p>The following commands require some basic SQL understanding which is required for this course.</p>
 <p>Switch to the webshop database by entering the following command into the shell:</p>
