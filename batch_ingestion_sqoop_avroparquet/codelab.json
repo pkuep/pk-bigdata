@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-12T14:41:24Z",
+  "updated": "2020-09-12T21:35:15Z",
   "id": "batch_ingestion_sqoop_avroparquet",
   "duration": 24,
   "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with Sqoop to Avro/Parquet\"",

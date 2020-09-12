@@ -173,13 +173,25 @@ sales_value float
 
       </google-codelab-step>
     
+      <google-codelab-step label="Reading the Hive Metastore in PySpark" duration="3">
+        <h2 is-upgraded><strong>Closing beeline and opening PySpark</strong></h2>
+<p>Please hit Ctrl-d in the SSH shell of the master node to leave Hive&#39;s CLI and start a PySpark interactive shell by executing &#34;pyspark&#34;.</p>
+<h2 is-upgraded><strong>Querying Hive tables in PySpark</strong></h2>
+<p>PySpark is directly integrated with Hive. Thus, you can query respective tables in the data lake from Spark with the following command:</p>
+<pre><code>df = spark.sql(&#34;select * from sales&#34;)
+df.head()</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b8691a94b7292d92.png"></p>
+<p>We will learn how to use PySpark in detail later. Please close the PySpark shell using exit().</p>
+
+
+      </google-codelab-step>
+    
       <google-codelab-step label="Cleaning Up" duration="2">
         <p>Please make sure to delete your cluster (in the live-lecture, please leave your cluster running):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\44fad481d4497844.png"></p>
 <p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\21abda122deede7c.png"></p>
-<p>Furthermore, please delete the notebook instance (in the live-lecture, please leave that running!):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\629acb0d0f3aec43.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You finished the lab and performed all necessary clean-up tasks.</li>
@@ -189,7 +201,7 @@ sales_value float
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="2">
-        <p>Congratulations, you set up a &#34;big data-traditional&#34; and horizontally scaling ingestion pipeline using a Hadoop cluster with sqoop and stored your data in popular big data formats (Avro and Parquet). You also got a first impression of how to access these file formats from Pandas and PySpark (which you&#39;ll get to know in more detail later).</p>
+        <p>Congratulations, you set up a &#34;big data-traditional&#34; and horizontally scaling ingestion pipeline using a Hadoop cluster with sqoop and stored your data in a popular big data format (Parquet) and used Hive to manage your metadata of the data lake. You also got a first impression of how to access the data lake via Hive from PySpark (which you&#39;ll get to know in more detail later).</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 
