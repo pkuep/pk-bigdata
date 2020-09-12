@@ -20,6 +20,8 @@
 
 [RDBMS to HDFS/GCS with sqoop](https://pkuep.github.io/pk-bigdata/batch_ingestion_sqoop){:target="_blank" rel="noopener"}
 
+[RDBMS to GCS (Avro/Parquet) with sqoop](https://pkuep.github.io/pk-bigdata/batch_ingestion_sqoop_avroparquet){:target="_blank" rel="noopener"}
+
 ## Batch Processing
 
 [Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
