@@ -103,10 +103,16 @@
 </aside>
 <pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --as-parquetfile --hive-import</code></pre>
 <h2 is-upgraded><strong>WORKAROUND: Manual Interaction with Hive and Data Ingestion</strong></h2>
-<p>Due to the mentioned issue we will now start interacting with Hive directly. As stated in the lecture, there exists a command line interface (CLI) for Hive called &#34;beeline&#34;.</p>
+<h3 is-upgraded><strong>Connecting to beeline</strong></h3>
+<p>Due to the mentioned issue we will now start interacting with Hive directly in order to ingest data via &#34;standard SQL&#34; (like in the lab &#34;Simple Analytics Pipeline&#34;). As stated in the lecture, there exists a command line interface (CLI) for Hive called &#34;beeline&#34;.</p>
 <aside class="special"><p><strong>Please note:</strong> There are more sophisticated Hive interfaces, e.g. as part of the Hue interface for Hadoop. We will use this later in the &#34;Data Extraction and Query Languages&#34; part of the course.</p>
 </aside>
-<p>Please connect to the master node via SSH (</p>
+<p>Please open the SSH connection to the master node and execute the following command in order to start Hive&#39;s CLI beeline and connect to our cluster&#39;s Hive metastore (running on the master node &#34;localhost&#34;):</p>
+<pre><code>beeline -u &#34;jdbc:hive2://localhost:10000&#34;</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a9349503da7dd109.png"></p>
+<h3 is-upgraded><strong>Creating a Parquet-based Hive table</strong></h3>
+<p>Using Hive, we can interact with the (structured data in the) data lake via standard SQL. Hive will create respective files in the data lake (just like the sqoop command above would have). Executing the following command will create a folder in our data lake on cloud storage (under &#34;hive-warehouse&#34; called sales and will add a table to the Hive metastore. All data we will ingest will be stored as Parquet files.</p>
 <pre><code>create table sales (
 sales_date date,
 weekday varchar(20),
@@ -115,115 +121,53 @@ age_group varchar(20),
 product_name varchar(30),
 product_group int,
 sales_value float
-);</code></pre>
-<p>Y</p>
+) STORED AS PARQUET;</code></pre>
+<p>The output should be &#34;No rows affected&#34; and when checking your cloud storage bucket&#39;s folder &#34;hive-warehouse&#34; you should see a sales folder:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fc9bfe8d2e720fc7.png"></p>
+<h3 is-upgraded><strong>Ingesting data (manually) into the Hive warehouse</strong></h3>
+<p>After having created the table, we can ingest data - in this workaround manually. Let&#39;s use the same data as in the first lab (i.e. the same as in the cloud SQL database):</p>
+<pre><code>insert into sales values
+(&#39;2020-04-03&#39;, &#39;Friday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 21.5),
+(&#39;2020-04-01&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 4.4),
+(&#39;2020-04-01&#39;, &#39;Wednesday&#39;, &#39;South&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 12.8),
+(&#39;2020-05-28&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;lager&#39;, &#39;2&#39;, 47.1),
+(&#39;2020-06-10&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;grappa&#39;, &#39;3&#39;, 14.4),
+(&#39;2020-06-11&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 13.5),
+(&#39;2020-03-11&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.0),
+(&#39;2020-05-07&#39;, &#39;Thursday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;grappa&#39;, &#39;3&#39;, 17.3),
+(&#39;2020-04-10&#39;, &#39;Friday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;red wine&#39;, &#39;1&#39;, 10.6),
+(&#39;2020-01-24&#39;, &#39;Friday&#39;, &#39;North&#39;, &#39;30-49&#39;, &#39;pils&#39;, &#39;2&#39;, 29.4),
+(&#39;2020-04-13&#39;, &#39;Monday&#39;, &#39;North&#39;, &#39;18-29&#39;, &#39;pils&#39;, &#39;2&#39;, 54.0),
+(&#39;2020-02-26&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.5),
+(&#39;2020-04-11&#39;, &#39;Saturday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;whiskey&#39;, &#39;3&#39;, 45.3),
+(&#39;2020-03-15&#39;, &#39;Sunday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 16.7),
+(&#39;2020-05-15&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;30-49&#39;, &#39;white wine&#39;, &#39;1&#39;, 32.7),
+(&#39;2020-03-04&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;pils&#39;, &#39;2&#39;, 33.2),
+(&#39;2020-05-10&#39;, &#39;Sunday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 5.6),
+(&#39;2020-02-19&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 5.4),
+(&#39;2020-03-04&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 24.2),
+(&#39;2020-05-28&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 13.3),
+(&#39;2020-01-24&#39;, &#39;Friday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 14.9),
+(&#39;2020-02-19&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 34.9),
+(&#39;2020-05-27&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 45.6),
+(&#39;2020-01-23&#39;, &#39;Thursday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 73.0),
+(&#39;2020-03-06&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;30-49&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 5.1),
+(&#39;2020-04-16&#39;, &#39;Thursday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 4.4),
+(&#39;2020-01-17&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 23.2),
+(&#39;2020-01-12&#39;, &#39;Sunday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.0),
+(&#39;2020-01-27&#39;, &#39;Monday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;red wine&#39;, &#39;1&#39;, 30.2),
+(&#39;2020-01-01&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;red wine&#39;, &#39;1&#39;, 33.2);</code></pre>
+<p>Ingestion will take approximately 30s (remember, Hive is based on MapReduce). </p>
 <h2 is-upgraded><strong>Checking the results</strong></h2>
-<p>The sqoop job should show some log entries indicating the connection to the metastore.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\3cbc5691b5f0673.png"></p>
-<p>dits data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
-<pre><code>hadoop fs -ls</code></pre>
-<p>This will show two folders if you executed the previous lab and did not delete the HDFS folder (&#34;sales&#34; and &#34;sales_from_sqoop_parquet&#34;). </p>
-<p class="image-container"><img style="width: 624.00px" src="img\e52df96b1d9da13a.png"></p>
-<p>We can now compare the file sizes of both directories :</p>
-<pre><code>hadoop fs -ls sales/
-hadoop fs -ls sales_from_sqoop_parquet/</code></pre>
-<p> You&#39;ll notice that the Parquet file is larger in size. This is due to the schema which is &#34;shipped&#34; with this file. With larger databases being ingested into the datalake, the compression becomes visible and Parquet files show strongly decreased file sizes.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\fe64abe2802de982.png"></p>
-<h2 is-upgraded><strong>Inspecting the Parquet File</strong></h2>
-<p>Let&#39;s take a quick look at the Parquet file: </p>
-<pre><code>hadoop fs -cat sales_from_sqoop_parquet/*.parquet</code></pre>
-<p>You&#39;ll notice the compression (we can&#39;t read the file contents) but especially the schema which is placed within the file and derived from the RDBMS schema:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6603356bb0290834.png"></p>
+<p>When selecting all data from the sales table, you should see the following output in beeline:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2fe8949e4fa6ddbc.png"></p>
+<p>Checking cloud storage should also show (at least one) file:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\bfa6c2177343bc97.png"></p>
+<p>→ Hive acts as a useful SQL-based interface to our data lake and allows the ingestion of big data (with sqoop in a scaling manner) including metadata in the Hive metastore.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You executed a sqoop (MapReduce) job with a further configuration (HDFS output as Parquetfile).</li>
-<li>This setup is big data ready for heavy workloads, since MapReduce is capable of scaling out (horizontally) and if necessary, you can add worker nodes to your cluster (however, the SQL database might become a bottleneck).</li>
-</ol>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Creating the Sqoop Ingestion Job with Avro Output" duration="3">
-        <h2 is-upgraded><strong>Executing the job</strong></h2>
-<p>Let&#39;s now start the sqoop job with a further parameter &#34;--as-avrodatafile&#34;:</p>
-<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir sales_from_sqoop_avro --as-avrodatafile</code></pre>
-<h2 is-upgraded><strong>Checking the results</strong></h2>
-<p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
-<pre><code>hadoop fs -ls</code></pre>
-<p>This will show three folders if you executed the previous lab and did not delete the HDFS folder (&#34;sales&#34;, &#34;sales_from_sqoop_parquet&#34;, and &#34;sales_from_sqoop_avro&#34;). </p>
-<p class="image-container"><img style="width: 624.00px" src="img\9546d5d1e805d05f.png"></p>
-<p>Instead of comparing the files again, we will now move them to GCS.</p>
-<h2 is-upgraded><strong>Moving data from HDFS to GCS</strong></h2>
-<p>Since we don&#39;t want to store data in HDFS over a long period of time (in order to be able to delete the DataProc cluster), we&#39;ll now move the sqoop results to GCS. We can achieve this by using the following commands:</p>
-<pre><code>hadoop fs -cp sales_from_sqoop_avro gs://pk-gcs/
-hadoop fs -cp sales_from_sqoop_parquet gs://pk-gcs/</code></pre>
-<p>Your bucket should now contain all three directories with our sqoop export data in them:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\bb0ea48e28e5df7e.png"></p>
-<h2 is-upgraded><strong>Results</strong></h2>
-<ol type="1" start="1">
-<li>You executed a sqoop (MapReduce) job with a further configuration (HDFS output as Avrofile).</li>
-<li>You learned how to move files from HDFS to cloud storage via the command line.</li>
-</ol>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Loading Parquet Files in Python" duration="8">
-        <h2 is-upgraded><strong>&#34;Non-big data&#34; load in Pandas</strong></h2>
-<h3 is-upgraded><strong>Creating a Notebook</strong></h3>
-<p>Parquet files show the advantage of the included schema and are especially useful for analytical workloads. However, for testing purposes one often just wants to load a whole file into a Pandas dataframe to check if everything is fine. Let&#39;s do this now.</p>
-<p>Open &#34;AI Platform&#34; → &#34;Notebooks&#34; and create a new instance (e.g. &#34;pk-jupyter&#34;).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\3956e54b5677fcc1.png"></p>
-<p>Open the JupyterLab and create a new Python3 notebook. </p>
-<h3 is-upgraded><strong>Loading the plaintext sqoop output</strong></h3>
-<p>Insert the following code in the first cell:</p>
-<pre><code>import pandas as pd
-df_plain = pd.read_csv(&#34;gs://pk-gcs/sales_from_sqoop/part-m-00000&#34;, header=None)
-print(df_plain.dtypes)
-df_plain.head(3)</code></pre>
-<p>This will load the plaintext output of sqoop and show the first 3 rows. Please notice that we don&#39;t have any schema information (all non-numeric columns are of type &#34;object&#34;).</p>
-<p class="image-container"><img style="width: 395.50px" src="img\688c9db091a3848a.png"></p>
-<h3 is-upgraded><strong>Loading the Parquet sqoop output</strong></h3>
-<p>First, you need to find out the filename of your Parquet file in cloud storage:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\1a165597f5f6acf2.png"></p>
-<p>Copy the filename and Insert the following code into another cell (replacing FILENAME):</p>
-<pre><code>df_parquet = pd.read_parquet(&#34;gs://pk-gcs/sales_from_sqoop_parquet/FILENAME.parquet&#34;)
-df_parquet.head(3)
-</code></pre>
-<p>The Parquet file &#34;shipped&#34; the schema (however, unfortunately the date column is not represented correctly but rather in a timestamp &#34;unix epoch&#34; format):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\8fa830aec622c268.png"></p>
-<p>We can convert this column to a date value using the following command:</p>
-<pre><code>df_parquet[&#39;sales_date&#39;] = pd.to_datetime(df.sales_date, unit=&#39;ms&#39;)</code></pre>
-<p>This way we&#39;ll have the desired column types:</p>
-<p class="image-container"><img style="width: 422.50px" src="img\9fbe1bf5e7f1318a.png"></p>
-<h2 is-upgraded><strong>&#34;Big data&#34; load in PySpark</strong></h2>
-<h3 is-upgraded><strong>Opening a PySpark session</strong></h3>
-<p>Although we have not learned much about Spark yet, we want to take a quick glance at how a Parquet file can be loaded into our cluster&#39;s worker nodes for distributed (big data) processing.</p>
-<p>In the shell you used for executing the sqoop jobs (i.e. the cluster master node), please enter the following command to start an interactive PySpark session:</p>
-<pre><code>pyspark</code></pre>
-<p>After few seconds, you should see the interactive PySpark shell:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9363fda12fb15c44.png"></p>
-<h3 is-upgraded><strong>Directing the cluster towards the Parquet files</strong></h3>
-<p>With the following command, we can tell the spark cluster that there is a Parquet file in our GCS (or also HDFS) and inspect the schema:</p>
-<pre><code>df = spark.read.load(&#34;gs://pk-gcs/sales_from_sqoop_parquet/*.parquet&#34;)
-df</code></pre>
-<p>This should be the output:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\988414435d1fbd6b.png"></p>
-<p>With the following command, we can inspect the first three rows:</p>
-<pre><code>df.head(3)</code></pre>
-<p>This should be the output:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4fd5fd6b1c272dbb.png"></p>
-<p>Please close the interactive PySpark shell with this command:</p>
-<pre><code>exit()</code></pre>
-<p>This should be the output:</p>
-<aside class="special"><p><strong>Please note:</strong> The DataFrame is not loaded into the memory of one node (like in the Jupyter/Pandas case above) but distributed across all worker nodes of the cluster. We&#39;ll learn how Spark works later but should keep in mind that the framework we used here allows big data and distributed processing.</p>
-</aside>
-<aside class="warning"><p><strong>Please note:</strong> We did not work with the Avro files since (1) we are more interested in analytical processing and hence Parquet storage and (2) reading Avro is slightly more complex in both, Pandas and PySpark.</p>
-</aside>
-<h2 is-upgraded><strong>Results</strong></h2>
-<ol type="1" start="1">
-<li>You loaded Parquet files from cloud storage into the memory of a JupyterLab (AI Platform) virtual machine using Pandas.</li>
-<li>You loaded Parquet files from cloud storage into a Spark cluster using the interactive PySpark shell on the DataProc cluster&#39;s master node.</li>
+<li>Instead of executing a sqoop (MapReduce) job with a further configuration (ingestion into the hive warehouse), you learned how to use the Hive CLI beeline to create a table and ingest data using &#34;standard&#34; SQL.</li>
+<li>The sqoop setup would be big data ready for heavy workloads and Hive provides a good meta-layer on top of our data lake.</li>
 </ol>
 
 
