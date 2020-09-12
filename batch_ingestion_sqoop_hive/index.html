@@ -1,0 +1,245 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Ingestion: Ingest RDBMS Source with Sqoop and Hive&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_ingestion_sqoop_hive"
+                  title="Lab &#34;Batch Ingestion: Ingest RDBMS Source with Sqoop and Hive&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <aside class="special"><p><strong>Please note:</strong> The use case and DataProc setup steps are identical to the lab &#34;Batch Ingestion - Ingest RDBMS Source with Sqoop&#34;. If your cluster is still running you can skip the step &#34;Setting up the Hadoop DataProc Cluster&#34;.</p>
+</aside>
+<p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ad078bc75ab86448.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Ingesting structured relational data into the data lake for batch processing via a (horizontally) scalable sqoop (MapReduce) job using the popular big data formats Avro and Parquet.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a DataProc cluster which is capable of executing the sqoop job and act as a data lake (HDFS).</li>
+<li>Learn about initialization actions for Hadoop DataProc clusters and especially use the sqoop initialization action.</li>
+<li>Start a sqoop job to transfer data from cloud SQL to the data lake (HDFS/GCS-based) - this time however storing the files in Parquet instead of plain text.</li>
+<li>Furthermore, you&#39;</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
+</aside>
+<aside class="warning"><p><strong>Prerequisite:</strong> Your cloud SQL server needs to be running for this lab!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Hadoop DataProc Cluster" duration="4">
+        <h2 is-upgraded><strong>Enabling the SQL cloud admin API (for the cloud SQL proxy)</strong></h2>
+<p>For this use case, we need to enable a cloud API that allows the simple connection of different services to cloud SQL databases in GCP. Please enter &#34;cloud sql admin api&#34; in the search bar:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9e9f6b8a57ba7c58.png"></p>
+<p>Please enable this API! We will use it to establish connections from our DataProc cluster&#39;s worker nodes (running the sqoop MapReduce job) to the cloud SQL database (webshop).</p>
+<h2 is-upgraded><strong>Retrieving the cloud SQL connection name</strong></h2>
+<p>Please navigate to your cloud SQL instance which needs to be running and copy the connection name into the clipboard (overview page):</p>
+<p class="image-container"><img style="width: 372.46px" src="img\e6b989b08bab489b.png"></p>
+<p>In my case it is:</p>
+<pre><code>pk-bigdata:us-central1:pk-sql</code></pre>
+<h2 is-upgraded><strong>Creating the DataProc cluster with initialization actions and further settings</strong></h2>
+<h3 is-upgraded><strong>Opening DataProc</strong></h3>
+<p>Please navigate to the DataProc service in the cloud console.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\741474398d09d058.png"></p>
+<p>This time we will NOT (!) create the cluster via the web interface but via the cloud shell since we need some extra options that are not available in the web UI. </p>
+<h3 is-upgraded><strong>Opening the cloud shell and creating the cluster</strong></h3>
+<p>Open a cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\f03b0b841995a748.png"></p>
+<p>Make sure that your project is set correctly. If not, execute the following command with your initials:</p>
+<pre><code>gcloud config set project pk-bigdata</code></pre>
+<p>We will now create a cluster from the command line in order to:</p>
+<ul>
+<li>Set &#34;Initialization actions&#34;. Here we can define shell scripts that are executed when the cluster is set up. The purpose is to automatically install necessary components via these scripts, in our case we want to use sqoop. Luckily, we don&#39;t have to implement these scripts ourselves but can rely on many predefined ones being maintained here: <a href="https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/" target="_blank">https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/</a> </li>
+<li>Set some &#34;metadata&#34; which will be discussed later in the lecture on Hive.</li>
+<li>Set some &#34;scope&#34; properties (not available in the web UI) also being related to Hive, especially that our data lake (warehouse-dir) should be cloud storage and not HDFS.</li>
+</ul>
+<p>Please execute this command in the cloud shell (you may want to replace pk with your initials, make sure that all paths and the connection name to the SQL database copied before are correctly set):</p>
+<pre><code>gcloud dataproc clusters create pk-sqoop --region us-central1 --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse </code></pre>
+<aside class="special"><p><strong>Please note:</strong> In case your cluster should run in another region, you&#39;ll need to adapt the &#34;--region&#34; option as well as the path of the initialization actions (change &#34;us-central1&#34; to your region).</p>
+</aside>
+<aside class="special"><p><strong>Hint:</strong> If you want to find the gcloud command for a cluster setup you did in the GCP console (Web interface), you can always scroll down to the end and click on &#34;Equivalent command line&#34;.</p>
+</aside>
+<p>Cluster creation will take 2-3 minutes.</p>
+<h3 is-upgraded><strong>Connecting to the Hadoop master node</strong></h3>
+<p>When cluster creation is finished, you can select the cluster in the web UI:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a80f5f7db4d71775.png"></p>
+<p>Open a connection to the master node which is able to start sqoop jobs:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5f8b49055e3e4dfb.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the sqoop component for batch ingestion of relational data into our data lake.</li>
+<li>Next, we&#39;ll use the connection to the master node and execute our sqoop data ingestion job.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Sqoop Ingestion Job with Parquet Output" duration="5">
+        <h2 is-upgraded><strong>Executing the job</strong></h2>
+<p>Let&#39;s now start the sqoop job with a further parameter &#34;--as-parquetfile&#34;:</p>
+<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir sales_from_sqoop_parquet --as-parquetfile</code></pre>
+<h2 is-upgraded><strong>Checking the results</strong></h2>
+<p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
+<pre><code>hadoop fs -ls</code></pre>
+<p>This will show two folders if you executed the previous lab and did not delete the HDFS folder (&#34;sales&#34; and &#34;sales_from_sqoop_parquet&#34;). </p>
+<p class="image-container"><img style="width: 624.00px" src="img\e52df96b1d9da13a.png"></p>
+<p>We can now compare the file sizes of both directories :</p>
+<pre><code>hadoop fs -ls sales/
+hadoop fs -ls sales_from_sqoop_parquet/</code></pre>
+<p> You&#39;ll notice that the Parquet file is larger in size. This is due to the schema which is &#34;shipped&#34; with this file. With larger databases being ingested into the datalake, the compression becomes visible and Parquet files show strongly decreased file sizes.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fe64abe2802de982.png"></p>
+<h2 is-upgraded><strong>Inspecting the Parquet File</strong></h2>
+<p>Let&#39;s take a quick look at the Parquet file: </p>
+<pre><code>hadoop fs -cat sales_from_sqoop_parquet/*.parquet</code></pre>
+<p>You&#39;ll notice the compression (we can&#39;t read the file contents) but especially the schema which is placed within the file and derived from the RDBMS schema:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6603356bb0290834.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You executed a sqoop (MapReduce) job with a further configuration (HDFS output as Parquetfile).</li>
+<li>This setup is big data ready for heavy workloads, since MapReduce is capable of scaling out (horizontally) and if necessary, you can add worker nodes to your cluster (however, the SQL database might become a bottleneck).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Sqoop Ingestion Job with Avro Output" duration="3">
+        <h2 is-upgraded><strong>Executing the job</strong></h2>
+<p>Let&#39;s now start the sqoop job with a further parameter &#34;--as-avrodatafile&#34;:</p>
+<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir sales_from_sqoop_avro --as-avrodatafile</code></pre>
+<h2 is-upgraded><strong>Checking the results</strong></h2>
+<p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
+<pre><code>hadoop fs -ls</code></pre>
+<p>This will show three folders if you executed the previous lab and did not delete the HDFS folder (&#34;sales&#34;, &#34;sales_from_sqoop_parquet&#34;, and &#34;sales_from_sqoop_avro&#34;). </p>
+<p class="image-container"><img style="width: 624.00px" src="img\9546d5d1e805d05f.png"></p>
+<p>Instead of comparing the files again, we will now move them to GCS.</p>
+<h2 is-upgraded><strong>Moving data from HDFS to GCS</strong></h2>
+<p>Since we don&#39;t want to store data in HDFS over a long period of time (in order to be able to delete the DataProc cluster), we&#39;ll now move the sqoop results to GCS. We can achieve this by using the following commands:</p>
+<pre><code>hadoop fs -cp sales_from_sqoop_avro gs://pk-gcs/
+hadoop fs -cp sales_from_sqoop_parquet gs://pk-gcs/</code></pre>
+<p>Your bucket should now contain all three directories with our sqoop export data in them:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\bb0ea48e28e5df7e.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You executed a sqoop (MapReduce) job with a further configuration (HDFS output as Avrofile).</li>
+<li>You learned how to move files from HDFS to cloud storage via the command line.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading Parquet Files in Python" duration="8">
+        <h2 is-upgraded><strong>&#34;Non-big data&#34; load in Pandas</strong></h2>
+<h3 is-upgraded><strong>Creating a Notebook</strong></h3>
+<p>Parquet files show the advantage of the included schema and are especially useful for analytical workloads. However, for testing purposes one often just wants to load a whole file into a Pandas dataframe to check if everything is fine. Let&#39;s do this now.</p>
+<p>Open &#34;AI Platform&#34; → &#34;Notebooks&#34; and create a new instance (e.g. &#34;pk-jupyter&#34;).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3956e54b5677fcc1.png"></p>
+<p>Open the JupyterLab and create a new Python3 notebook. </p>
+<h3 is-upgraded><strong>Loading the plaintext sqoop output</strong></h3>
+<p>Insert the following code in the first cell:</p>
+<pre><code>import pandas as pd
+df_plain = pd.read_csv(&#34;gs://pk-gcs/sales_from_sqoop/part-m-00000&#34;, header=None)
+print(df_plain.dtypes)
+df_plain.head(3)</code></pre>
+<p>This will load the plaintext output of sqoop and show the first 3 rows. Please notice that we don&#39;t have any schema information (all non-numeric columns are of type &#34;object&#34;).</p>
+<p class="image-container"><img style="width: 395.50px" src="img\688c9db091a3848a.png"></p>
+<h3 is-upgraded><strong>Loading the Parquet sqoop output</strong></h3>
+<p>First, you need to find out the filename of your Parquet file in cloud storage:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1a165597f5f6acf2.png"></p>
+<p>Copy the filename and Insert the following code into another cell (replacing FILENAME):</p>
+<pre><code>df_parquet = pd.read_parquet(&#34;gs://pk-gcs/sales_from_sqoop_parquet/FILENAME.parquet&#34;)
+df_parquet.head(3)
+</code></pre>
+<p>The Parquet file &#34;shipped&#34; the schema (however, unfortunately the date column is not represented correctly but rather in a timestamp &#34;unix epoch&#34; format):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8fa830aec622c268.png"></p>
+<p>We can convert this column to a date value using the following command:</p>
+<pre><code>df_parquet[&#39;sales_date&#39;] = pd.to_datetime(df.sales_date, unit=&#39;ms&#39;)</code></pre>
+<p>This way we&#39;ll have the desired column types:</p>
+<p class="image-container"><img style="width: 422.50px" src="img\9fbe1bf5e7f1318a.png"></p>
+<h2 is-upgraded><strong>&#34;Big data&#34; load in PySpark</strong></h2>
+<h3 is-upgraded><strong>Opening a PySpark session</strong></h3>
+<p>Although we have not learned much about Spark yet, we want to take a quick glance at how a Parquet file can be loaded into our cluster&#39;s worker nodes for distributed (big data) processing.</p>
+<p>In the shell you used for executing the sqoop jobs (i.e. the cluster master node), please enter the following command to start an interactive PySpark session:</p>
+<pre><code>pyspark</code></pre>
+<p>After few seconds, you should see the interactive PySpark shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9363fda12fb15c44.png"></p>
+<h3 is-upgraded><strong>Directing the cluster towards the Parquet files</strong></h3>
+<p>With the following command, we can tell the spark cluster that there is a Parquet file in our GCS (or also HDFS) and inspect the schema:</p>
+<pre><code>df = spark.read.load(&#34;gs://pk-gcs/sales_from_sqoop_parquet/*.parquet&#34;)
+df</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\988414435d1fbd6b.png"></p>
+<p>With the following command, we can inspect the first three rows:</p>
+<pre><code>df.head(3)</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4fd5fd6b1c272dbb.png"></p>
+<p>Please close the interactive PySpark shell with this command:</p>
+<pre><code>exit()</code></pre>
+<p>This should be the output:</p>
+<aside class="special"><p><strong>Please note:</strong> The DataFrame is not loaded into the memory of one node (like in the Jupyter/Pandas case above) but distributed across all worker nodes of the cluster. We&#39;ll learn how Spark works later but should keep in mind that the framework we used here allows big data and distributed processing.</p>
+</aside>
+<aside class="warning"><p><strong>Please note:</strong> We did not work with the Avro files since (1) we are more interested in analytical processing and hence Parquet storage and (2) reading Avro is slightly more complex in both, Pandas and PySpark.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You loaded Parquet files from cloud storage into the memory of a JupyterLab (AI Platform) virtual machine using Pandas.</li>
+<li>You loaded Parquet files from cloud storage into a Spark cluster using the interactive PySpark shell on the DataProc cluster&#39;s master node.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="2">
+        <p>Please make sure to delete your cluster (in the live-lecture, please leave your cluster running):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\44fad481d4497844.png"></p>
+<p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\21abda122deede7c.png"></p>
+<p>Furthermore, please delete the notebook instance (in the live-lecture, please leave that running!):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\629acb0d0f3aec43.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished the lab and performed all necessary clean-up tasks.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>Congratulations, you set up a &#34;big data-traditional&#34; and horizontally scaling ingestion pipeline using a Hadoop cluster with sqoop and stored your data in popular big data formats (Avro and Parquet). You also got a first impression of how to access these file formats from Pandas and PySpark (which you&#39;ll get to know in more detail later).</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

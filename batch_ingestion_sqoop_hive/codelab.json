@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-12T14:40:23Z",
+  "id": "batch_ingestion_sqoop_hive",
+  "duration": 24,
+  "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with Sqoop and Hive\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a sqoop job from o a DataProc cluster that retrieves a table from a cloud SQL instance and stores the data in the data lake (HDFS) in the popular big data file format \"Parquet\" and imports it into the Hive meta warehouse.",
+  "source": "1tiEdT5orlrUD7NaZdYj1BSnAqd7WSr2U6iyePqqrb8o",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_ingestion_sqoop_hive"
+}
