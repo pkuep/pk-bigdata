@@ -39,7 +39,7 @@
 <li>Set up a DataProc cluster which is capable of executing the sqoop job and act as a data lake (HDFS).</li>
 <li>Learn about initialization actions for Hadoop DataProc clusters and especially use the sqoop initialization action.</li>
 <li>Start a sqoop job to transfer data from cloud SQL to the data lake (HDFS/GCS-based) - this time however storing the files in Parquet instead of plain text.</li>
-<li>Furthermore, you&#39;</li>
+<li>Furthermore, you&#39;ll add information about the ingested data into the Hive meta warehouse.</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
 </aside>
@@ -79,8 +79,6 @@
 <pre><code>gcloud dataproc clusters create pk-sqoop --region us-central1 --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse </code></pre>
 <aside class="special"><p><strong>Please note:</strong> In case your cluster should run in another region, you&#39;ll need to adapt the &#34;--region&#34; option as well as the path of the initialization actions (change &#34;us-central1&#34; to your region).</p>
 </aside>
-<aside class="special"><p><strong>Hint:</strong> If you want to find the gcloud command for a cluster setup you did in the GCP console (Web interface), you can always scroll down to the end and click on &#34;Equivalent command line&#34;.</p>
-</aside>
 <p>Cluster creation will take 2-3 minutes.</p>
 <h3 is-upgraded><strong>Connecting to the Hadoop master node</strong></h3>
 <p>When cluster creation is finished, you can select the cluster in the web UI:</p>
@@ -96,12 +94,16 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Creating the Sqoop Ingestion Job with Parquet Output" duration="5">
+      <google-codelab-step label="Creating the Sqoop Ingestion Job with Parquet Output and Hive Import" duration="5">
         <h2 is-upgraded><strong>Executing the job</strong></h2>
-<p>Let&#39;s now start the sqoop job with a further parameter &#34;--as-parquetfile&#34;:</p>
-<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir sales_from_sqoop_parquet --as-parquetfile</code></pre>
+<p>Let&#39;s now start the sqoop job with a further parameter &#34;--hive-import&#34; (and a parameter --hive-overwrite for testing purposes):</p>
+<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --as-parquetfile --hive-import</code></pre>
+<aside class="special"><p><strong>Please note:</strong> Within cluster creation, we provided some parameters to our Hadoop cluster in order to steer the Hive setup. The parameter &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; sets our cloud SQL server as the database to be used for the Hive metastore (i.e. Hive will create a database &#34;hive-metastore&#34; and store all metadata of our datalake there). The parameter &#34;hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse&#34; specifies that the Hive warehouse (i.e. Hive-based datalake) should be stored in cloud storage. The default location is in HDFS /user/hive which we want to avoid due to HDFS being bound to a DataProc cluster (we strictly want to disconnect long-term storage from computation!).</p>
+</aside>
 <h2 is-upgraded><strong>Checking the results</strong></h2>
-<p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
+<p>The sqoop job should show some log entries indicating the connection to the metastore.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3cbc5691b5f0673.png"></p>
+<p>dits data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
 <pre><code>hadoop fs -ls</code></pre>
 <p>This will show two folders if you executed the previous lab and did not delete the HDFS folder (&#34;sales&#34; and &#34;sales_from_sqoop_parquet&#34;). </p>
 <p class="image-container"><img style="width: 624.00px" src="img\e52df96b1d9da13a.png"></p>
