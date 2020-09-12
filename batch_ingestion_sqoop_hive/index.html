@@ -99,13 +99,14 @@
 <aside class="special"><p><strong>Please note:</strong> Within cluster creation, we provided some parameters to our Hadoop cluster in order to steer the Hive setup. The parameter &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; sets our cloud SQL server as the database to be used for the Hive metastore (i.e. Hive will create a database &#34;hive-metastore&#34; and store all metadata of our datalake there). The parameter &#34;hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse&#34; specifies that the Hive warehouse (i.e. Hive-based datalake) should be stored in cloud storage. The default location is in HDFS /user/hive which we want to avoid due to HDFS being bound to a DataProc cluster (we strictly want to disconnect long-term storage from computation!).</p>
 </aside>
 <p>Let&#39;s now start the sqoop job with a further parameter &#34;--hive-import&#34;:</p>
-<p><strong>Important:</strong> This command will unfortunately not work due to DataProc issues in providing the correct libraries. We will therefore use a workaround below and NOT execute the sqoop job.</p>
+<aside class="warning"><p><strong>Important:</strong> This command will unfortunately not work due to DataProc issues in providing the correct libraries. We will therefore use a workaround below and NOT execute the sqoop job.</p>
+</aside>
 <pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --as-parquetfile --hive-import</code></pre>
 <h2 is-upgraded><strong>WORKAROUND: Manual Interaction with Hive and Data Ingestion</strong></h2>
 <p>Due to the mentioned issue we will now start interacting with Hive directly. As stated in the lecture, there exists a command line interface (CLI) for Hive called &#34;beeline&#34;.</p>
 <aside class="special"><p><strong>Please note:</strong> There are more sophisticated Hive interfaces, e.g. as part of the Hue interface for Hadoop. We will use this later in the &#34;Data Extraction and Query Languages&#34; part of the course.</p>
 </aside>
-<p>Pl</p>
+<p>Please connect to the master node via SSH (</p>
 <pre><code>create table sales (
 sales_date date,
 weekday varchar(20),
