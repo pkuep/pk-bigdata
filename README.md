@@ -24,6 +24,10 @@
 
 [RDBMS to GCS with sqoop and Hive](https://pkuep.github.io/pk-bigdata/batch_ingestion_sqoop_hive){:target="_blank" rel="noopener"}
 
+[Data Fusion](https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion){:target="_blank" rel="noopener"}
+
+
+
 ## Batch Processing
 
 [Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}

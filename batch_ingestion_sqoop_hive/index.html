@@ -183,6 +183,8 @@ df.head()</code></pre>
 <p>This should be the output:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\b8691a94b7292d92.png"></p>
 <p>We will learn how to use PySpark in detail later. Please close the PySpark shell using exit().</p>
+<aside class="warning"><p><strong>Please note:</strong> Since we use our cloud SQL database as Hive metastore and cloud storage as the warehouse directory (instead of HDFS), the data and metadata are persistent and setting up a DataProc cluster exactly as we did (especially with the Hive parameters) will allow accessing the data lake from newly set up clusters. </p>
+</aside>
 
 
       </google-codelab-step>
