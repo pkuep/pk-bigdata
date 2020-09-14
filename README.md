@@ -32,7 +32,9 @@
 
 ## Batch Processing
 
-[PySPark Wordcount](https://pkuep.github.io/pk-bigdata/batch_processing_pyspark_wordcount){:target="_blank" rel="noopener"}
+[PySpark Wordcount](https://pkuep.github.io/pk-bigdata/batch_processing_pyspark_wordcount){:target="_blank" rel="noopener"}
+
+[PySpark SQL, DataFrames and Machine Learning](https://pkuep.github.io/pk-bigdata/batch_processing_pyspark_advanced){:target="_blank" rel="noopener"}
 
 [Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
 

@@ -39,7 +39,7 @@
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
-<aside class="warning"><p><strong>Requirements:</strong> The previous labs on fundamentlas and data ingestion need </p>
+<aside class="warning"><p><strong>Requirements:</strong> The previous labs on fundamentals and data ingestion need to be executed in order to have the analyzed files and data ready in the data lake.</p>
 </aside>
 
 
@@ -76,71 +76,88 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
+      <google-codelab-step label="Accessing the Jupyter Notebook and Connecting to Spark" duration="8">
         <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
 <p>Click onto the link to your cluster:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
 <p class="image-container"><img style="width: 624.00px" src="img\d46eaa11a0986aa0.png"></p>
-<p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Juypter&#34;:</p>
+<p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
 <p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
-<h2 is-upgraded><strong>Updating pandas and installing a package for Bucket access</strong></h2>
-<aside class="warning"><p><strong>Please note: </strong>Unfortunately, GCP does not ship an up-to-date version of Python/pandas etc. This doesn&#39;t matter for our purposes in the big data environment, however we need a more current version of pandas to be able to access cloud storage. Thus, we&#39;ll first upgrade / install two packages in our notebook.</p>
+<aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
 </aside>
-<p>Put these two lines of code into the first cell of your newly created notebook and run the cell (Ctrl-Enter):</p>
-<pre><code>!pip install pandas==0.24.2
-!pip install gcsfs</code></pre>
-<h2 is-upgraded><strong>Accessing the bucket and csv-file</strong></h2>
-<p>Afterwards, you should be able to access the data lake now in another cell (change my bucket &#34;pk-gcs&#34; to your bucket&#39;s name). The &#34;gs://&#34; prefix tells pandas to access a bucket in GCP cloud storage (you&#39;ll see this access pattern often throughout this course!).</p>
-<pre><code>import pandas as pd
-df = pd.read_csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;)
-df.head()</code></pre>
+<h2 is-upgraded><strong>Connecting to the PySpark session and reading the data lake</strong></h2>
+<p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
+<pre><code>sc</code></pre>
+<p>This should be the output: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\19a9618f25082a01.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
+</aside>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
-<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Datalake Access&#34;). After executing the cells, your notebooks should look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\274082896ec59f4a.png"></p>
-<h2 is-upgraded><strong>Sample Aggregation</strong></h2>
-<p>A data scientist might now be interested in the mean value of sales per product. This would be the classical way in pandas:</p>
-<pre><code>df.groupby(&#34;product_name&#34;).sales_value.mean()</code></pre>
-<aside class="warning"><p><strong>Please note: </strong>By calling read_csv we loaded the whole file&#39;s values into the memory of the virtual machine which hosts our Jupyter notebook (the master node in our DataProc cluster). This works for small files which fit into memory. However, for &#34;larger-than-memory&#34; (big data) files, this proceeding <strong>won&#39;t work anymore</strong>. Thus, we&#39;ll later learn how to use the cluster to load and process datasets in some kind of &#34;shared cluster memory&#34; which makes use of all worker nodes&#39; memory and is hence scalable to really large amounts of data.</p>
-</aside>
+<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;BigData - Batch Processing  - PySpark Wordcount&#34;).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2cb5a64093488308.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You used a Jupyter Notebook as a sample data science sandbox which allows data scientists to access a data lake.</li>
-<li>We accessed a sample data lake being built in GCP cloud storage (with only one file in it). There are other ways, but this option is one of the most efficient solutions to creating a data lake.</li>
-<li>You did not use a big data processing environment yet, i.e. you might also have downloaded the webshop_history file to your laptop and processed it there in a Jupyter environment. However, your setup is not far away of making use of big data technologies.</li>
-<li>We can now shut down our cluster in order to save money (see next step).</li>
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing.</li>
+<li>The code you ran is big data-ready and scalable. If you need more performance, just add more worker nodes in cluster creation and you are ready to process terabytes of data in a batch manner.</li>
 </ol>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Shutting Down the Cluster" duration="2">
-        <h2 is-upgraded><strong>Reasoning</strong></h2>
-<p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
-<h2 is-upgraded><strong>Saving and closing the notebooks</strong></h2>
-<p>Save your Juypter Notebook:</p>
-<p class="image-container"><img style="width: 368.50px" src="img\8f57859ccfec4e38.png"></p>
-<p>Close all Jupyter Notebook browser tabs.</p>
-<aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
-</aside>
-<h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
-<p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
+      <google-codelab-step label="&#34;Traditional&#34; PySpark Programming with RDDs" duration="8">
+        <h2 is-upgraded><strong>Uploading a sample text file to GCS</strong></h2>
+<p>Please upload the lorem_ipsum.txt file from the course folder (datasets) to your GCS bucket (e.g. pk-gcs).</p>
+<h2 is-upgraded><strong>Connecting to the text file in GCS</strong></h2>
+<p>The variable &#34;sc&#34; allows you to interact with the Spark cluster. &#34;sc.textFile&#34; lets you tell Spark that there is a file (on GCS) that you want to work with:</p>
+<pre><code># link to text file on GCS
+text = sc.textFile(&#34;gs://pk-gcs/lorem_ipsum.txt&#34;)
+text</code></pre>
+<p>For demo purposes, you can show the file contents in the notebook by &#34;collecting&#34; the RDD, i.e. transferring it to the programming environment (NEVER do this with big data).</p>
+<pre><code>text.collect() # only for demo purposes - remove for job submission</code></pre>
+<p class="image-container"><img style="width: 624.00px" src="img\131704b99194546.png"></p>
+<h2 is-upgraded><strong>Applying the Wordcount logic on RDDs</strong></h2>
+<h3 is-upgraded><strong>Word split</strong></h3>
+<p>The first step in applying wordcount is to split based on the blank spaces between words:</p>
+<pre><code># split each line into words
+words = text.flatMap(lambda line: line.split(&#34; &#34;))
+words.collect()  # only for demo purposes - remove for job submission</code></pre>
+<h3 is-upgraded><strong>Mapping and reducing to count words</strong></h3>
+<p>Next, we want to apply the classical word count logic of MapReduce:</p>
+<pre><code># count the occurrence of each word (classical MapReduce logic)
+wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a,b:a+b)
+wordCounts.collect()</code></pre>
+<p>This should be the result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6616ba13dc9661ac.png"></p>
+<h3 is-upgraded><strong>Job deployment (outlook)</strong></h3>
+<p>The logic we implemented could be transferred to a &#34;real&#34; PySpark job and scheduled regularly:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6fec626f25a16d9a.png"></p>
+<p>We won&#39;t execute this step here.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing to perform the classical word count example using a MapReduce logic.</li>
+</ol>
+<ol type="1" start="3">
+<li>The code you ran is big data-ready and scalable.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Shutting Down the Cluster" duration="1">
+        <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
+<p>Go to the cluster details page and hit &#34;Delete&#34; (in the live lecture, please leave it running):</p>
 <p class="image-container"><img style="width: 541.50px" src="img\4f27ebbf007e1184.png"></p>
-<h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
-<p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
-<p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
-<p class="image-container"><img style="width: 233.65px" src="img\152714309fd72e67.png"></p>
-<p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="1">
-        <p>Congratulations, you completed the second lab in our big data journey. This lab was still not really big data related in terms of analytics, but you used technologies that are capable of holding (cloud storage) and processing (DataProc) very large amounts of data for a reasonable price, i.e. efficiently.</p>
+        <p>Congratulations, you learned how to work with PySpark and the traditional &#34;RDD-based&#34; programming style. We won&#39;t learn how to program with RDDs in detail since there are more sophisticated libraries available for Spark (and PySpark).</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 
