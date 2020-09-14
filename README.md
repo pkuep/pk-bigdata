@@ -26,6 +26,8 @@
 
 [Data Fusion](https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion){:target="_blank" rel="noopener"}
 
+[Data Fusion with BigQuery](https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion_bigquery){:target="_blank" rel="noopener"}
+
 
 
 ## Batch Processing
