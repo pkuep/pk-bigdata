@@ -40,6 +40,8 @@
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
+<aside class="warning"><p><strong>Please note:</strong> Please execute the steps in the lab &#34;HDFS&#34; since this lab relies on the file &#34;lorem_ipsum.txt&#34; being uploaded to the cluster&#39;s HDFS /tmp directory. </p>
+</aside>
 
 
       </google-codelab-step>
@@ -52,7 +54,7 @@
 <p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
-<li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
+<li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
 <li>Region: leave the default region (us-central1)</li>
 <li>Cluster mode: leave the default mode (1 master, N workers)</li>
 <li>All other settings should also stay in the default</li>
@@ -64,6 +66,8 @@
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
 <p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
+<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
+</aside>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
@@ -140,8 +144,15 @@ df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_p
       <google-codelab-step label="Shutting Down the Cluster" duration="2">
         <h2 is-upgraded><strong>Reasoning</strong></h2>
 <p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
-<h2 is-upgraded><strong>Saving and closing the notebooks</strong></h2>
-<p>Save your Jupyter Notebook. Close all Jupyter Notebook browser tabs.</p>
+<h2 is-upgraded><strong>Saving, shutting down, and closing the notebooks</strong></h2>
+<p>Save your Jupyter Notebook. </p>
+<aside class="warning"><p><strong>Important: </strong>We should shut down our running Spark connection in order to free cluster resources (other jobs can be blocked if your Spark session is running). Thus, please execute the following steps in order to make sure that there are no running Spark jobs in the background!</p>
+</aside>
+<p>Open the Jupyter overview site and click on &#34;Running&#34;. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\82b1ad93e917634a.png"></p>
+<p>Click on &#34;Shutdown&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\daaa8edee6eda971.png"></p>
+<p>Now you can close all Jupyter Notebook browser tabs.</p>
 <aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
 </aside>
 <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>

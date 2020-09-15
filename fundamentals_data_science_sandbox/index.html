@@ -76,7 +76,7 @@
 <p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
-<li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
+<li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
 <li>Region: leave the default region (us-central1)</li>
 <li>Cluster mode: leave the default mode (1 master, N workers)</li>
 <li>All other settings should also stay in the default</li>
@@ -88,6 +88,8 @@
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
 <p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
+<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
+</aside>
 <p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
