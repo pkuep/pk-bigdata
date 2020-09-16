@@ -1,0 +1,114 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Query and Extraction: Data Lake Queries from PySpark SQL&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="query_and_extraction_sparksql_datalake_access"
+                  title="Lab &#34;Query and Extraction: Data Lake Queries from PySpark SQL&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7e4c9f2463bcdf08.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Reading from the (structured) data lake in an SQL-like manner and storing the results in a new table.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). SEE PREREQUISITES!</li>
+<li>Open a Jupyter Notebook and access the data lake via SQL (and Hive).</li>
+<li>Writing the ad-hoc query results back to the data lake and Hive-metastore.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
+</aside>
+<aside class="warning"><p><strong>Prerequisites:</strong> We will access data being ingested in the lab &#34;RDBMS to GCS with sqoop and Hive&#34;. The use case and DataProc setup steps are comparable to that lab. We, however, want to also have Jupyter available. Thus, please make sure to have a cluster running including a connection to the Hive metastore and the Jupyter Notebook components available. You can use the following command (the cloud SQL needs to be running)</p>
+</aside>
+<pre><code>gcloud dataproc clusters create pk-hadoop --region us-central1 --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse --enable-component-gateway --optional-components ANACONDA,JUPYTER --project pk-bigdata
+
+</code></pre>
+<p>Cluster creation will take 2-3 minutes.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the Jupyter notebook components being necessary for PySpark..</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Datalake from PySpark" duration="5">
+        <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
+<p>Please open a Jupyter Notebook and save it under &#34;BigData - Query and Extraction - PySpark SQL access to the Data Lake&#34;. </p>
+<h2 is-upgraded><strong>Ad-Hoc Querying</strong></h2>
+<p>As you already know, the variable &#34;spark&#34; allows us to access the Spark cluster via the Spark SQL API. Thus, we can execute our query by simply entering:</p>
+<pre><code># read from data lake (via Hive)
+df = spark.sql(&#34;SELECT region, avg(sales_value) as average_sales FROM sales GROUP BY region&#34;)
+df.toPandas()</code></pre>
+<h2 is-upgraded><strong>Writing the results back to the data lake</strong></h2>
+<p>The following command furthermore allows us to store the results in a newly generated table:</p>
+<pre><code># write to data lake and create a new table
+df.write.mode(&#34;overwrite&#34;).saveAsTable(&#34;sales_statistics_region&#34;)</code></pre>
+<aside class="special"><p><strong>Please note:</strong> You can check if this worked in multiple ways. E.g. using the command line tool beeline on the master node, checking GCS and/or opening the Parquet files in the folder &#34;sales_statistics_region&#34;, or just querying from the notebook using PySpark SQL.</p>
+</aside>
+<h2 is-upgraded><strong>Creating a view in PySpark</strong></h2>
+<p>Comparable to the BigQuery lab, you can also use Spark with Hive to create views. This will result in always up-to-date statistics for our regions, however, querying the view is slower than a persisted table (like sales_statistics_region) we created above.</p>
+<pre><code># create a view
+spark.sql(&#34;CREATE VIEW sales_statistics_region_view AS SELECT region, avg(sales_value) as average_sales FROM sales GROUP BY region&#34;)</code></pre>
+<p>Reading the view:</p>
+<pre><code># read from the view
+df_stat = spark.sql(&#34;SELECT * FROM sales_statistics_region_view&#34;)
+df_stat.toPandas()</code></pre>
+<aside class="warning"><p><strong>Please note:</strong> Both options (views and persistent tables) have different advantages (e.g. slower query vs. up-to-dateness). You&#39;ll need to decide case-by-case in your architecture.</p>
+</aside>
+<p>This is how your notebook should look like now:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1caa3333c83b8208.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You accessed the data lake via SQL and created (1) a new table and (2) a Spark view.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="1">
+        <p>Please do not delete your cluster and SQL instance before completing the next lab!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>You now know how to interact with the data lake from PySpark (we did this before!) and are familiar with generating new tables and views in PySpark.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

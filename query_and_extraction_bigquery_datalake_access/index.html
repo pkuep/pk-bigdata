@@ -29,17 +29,18 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to perform an exemplary ad-hoc query which requires access to the data lake using BigQuery.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\baa1c645f8c6edd5.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\66714eabba2c8076.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Setting up a &#34;federated&#34; connection between BigQuery and the Data Lake and using this connection for ad-hoc queries..</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
 <li>Set up a connection to the data lake from BigQuery</li>
 <li>Use the BigQuery UI to executed standard SQL queries.</li>
+<li>Save your query and create a view.</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
-<aside class="warning"><p><strong>Please note:</strong> We will access data being ingested in the lab &#34;RDBMS to GCS (Avro/Parquet) with sqoop&#34;. Furthermore, we&#39;ll rely on a BigQuery dataset from the lab &#34;Data Warehouse Example&#34;. In case you did not perform these labs, please catch up on that now.</p>
+<aside class="warning"><p><strong>Prerequisite:</strong> We will access data being ingested in the lab &#34;RDBMS to GCS (Avro/Parquet) with sqoop&#34;. Furthermore, we&#39;ll rely on a BigQuery dataset from the lab &#34;Data Warehouse Example&#34;. In case you did not perform these labs, please catch up on that now.</p>
 </aside>
 
 
@@ -90,6 +91,26 @@ GROUP BY region;</code></pre>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You now know how to query structured data in your data lake via BigQuery. </li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Saving Queries and Creating a View" duration="1">
+        <h2 is-upgraded><strong>Saving queries</strong></h2>
+<p>In case of repeating queries, you can save these in BigQuery:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c07ab5bb8184f0a2.png"></p>
+<p>Saving queries can furthermore be shared with other data scientists within the project. You&#39;ll find your saved queries under &#34;Saved queries&#34;.</p>
+<h2 is-upgraded><strong>View generation</strong></h2>
+<p>If you want to have the statistics (&#34;average sales per region&#34;) available for later reuse or inclusion into BI-tools (Data Studio, PowerBI, ...) without the need to calculate them again, you can store your query results as a view. Click on &#34;Save view&#34; and call the view, e.g., sales_statistics_region:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\213667ca9ba822ed.png"></p>
+<p>The view should be shown in your dataset.  </p>
+<p class="image-container"><img style="width: 395.00px" src="img\730236bbb6d03562.png"></p>
+<aside class="special"><p><strong>Please note: </strong>A view is not static but re-calculated when required.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now know how to save queries and store them as views for later re-use in your big data architecture and development teams.</li>
 </ol>
 
 

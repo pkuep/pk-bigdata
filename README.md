@@ -42,4 +42,9 @@
 
 [BigQuery access to the Data Lake](https://pkuep.github.io/pk-bigdata/query_and_extraction_bigquery_datalake_access){:target="_blank" rel="noopener"}
 
+[Spark SQL access to the Data Lake](https://pkuep.github.io/pk-bigdata/query_and_extraction_sparksql_datalake_access){:target="_blank" rel="noopener"}
+
+[RDBMS Integration with sqoop](https://pkuep.github.io/pk-bigdata/query_and_extraction_sqoop_integration_rdbms){:target="_blank" rel="noopener"}
+
+
 ## Stream Processing

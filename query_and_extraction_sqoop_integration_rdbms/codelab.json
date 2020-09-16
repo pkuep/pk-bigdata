@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-16T13:31:49Z",
+  "id": "query_and_extraction_sqoop_integration_rdbms",
+  "duration": 8,
+  "title": "Lab \"Query and Extraction: Extracting Data with sqoop\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll access the data lake and integrate batch processing results back into an RDBMS.",
+  "source": "1wO3g8TzgbTy7dC-W-RSOmYlThM-y6y9DI_HHhGE4v2g",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "query_and_extraction_sqoop_integration_rdbms"
+}

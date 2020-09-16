@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-16T13:30:02Z",
+  "id": "query_and_extraction_sparksql_datalake_access",
+  "duration": 8,
+  "title": "Lab \"Query and Extraction: Data Lake Queries from PySpark SQL\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll access the data lake with a Hive metastore from PySpark SQL and store the ad-hoc query results back to the data lake.",
+  "source": "1D6TxCqGZCdqSBM_7gpXDygAbmgz7OlClUcVRythWtp0",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "query_and_extraction_sparksql_datalake_access"
+}
