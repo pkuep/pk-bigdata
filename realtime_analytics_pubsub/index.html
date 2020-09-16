@@ -151,7 +151,7 @@ topic_path = publisher.topic_path(project_id, topic_id)</code></pre>
 <pre><code>data = &#34;Message from Python&#34;
 data = data.encode(&#34;utf-8&#34;) # data must be a bytestring
     
-future = publisher.publish(topic_path, data) #, origin=&#34;python-sample&#34;, username=&#34;gcp&#34;)
+future = publisher.publish(topic_path, data)
 print(f&#34;Published message with ID {future.result()}&#34;)</code></pre>
 <p>If everything works fine, you should see a message ID as confirmation.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
@@ -202,8 +202,33 @@ with subscriber:
 
       </google-codelab-step>
     
+      <google-codelab-step label="PubSub Scaling" duration="1">
+        <p>Please add the following code to your message sending notebook &#34;PubSub-Access&#34;:</p>
+<pre><code># Public
+project_id_public = &#34;pk-bigdata&#34;
+topic_id_public = &#34;pk-pubsub-public&#34;
+
+# create publisher and topic objects
+publisher_public = pubsub_v1.PublisherClient()
+topic_path_public = publisher_public.topic_path(project_id_public, topic_id_public)
+
+data_public = &#34;My message in public&#34;
+data_public = data_public.encode(&#34;utf-8&#34;) # data must be a bytestring
+    
+future_public = publisher_public.publish(topic_path_public, data_public)
+print(f&#34;Published message with ID {future_public.result()}&#34;)
+</code></pre>
+<p>Change the value of variable data_public and hit send. We&#39;ll use this to show the purpose of systems like PubSub.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You published further messages, this time to a public topic.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
       <google-codelab-step label="Cleaning Up" duration="1">
-        <p>You should de-activate you service account in order to avoid its unauthorized usage. Go to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34; and disable the account:</p>
+        <p>You should de-activate your service account in order to avoid its unauthorized usage. Go to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34; and disable the account:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\b9f1196af0d09c0a.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
