@@ -52,3 +52,5 @@
 
 ## Stream Processing
 
+[Using PubSub from Python and the Service Account Concept](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsub){:target="_blank" rel="noopener"}
+
