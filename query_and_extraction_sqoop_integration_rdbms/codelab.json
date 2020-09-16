@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-16T14:07:53Z",
+  "updated": "2020-09-16T14:58:58Z",
   "id": "query_and_extraction_sqoop_integration_rdbms",
   "duration": 8,
   "title": "Lab \"Query and Extraction: Extracting Data with sqoop\"",
