@@ -1,0 +1,138 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Query and Extraction: Extracting Data with Data Fusion&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="query_and_extraction_datafusion_integration_rdbms"
+                  title="Lab &#34;Query and Extraction: Extracting Data with Data Fusion&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\acfbe12380781210.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Writing data from the data lake back into operational systems, e.g. an RDBMS.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). SEE PREREQUISITES!</li>
+<li>Writing the results of our batch processing back into the source system (RDBMS) using Data Fusion.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
+</aside>
+<aside class="warning"><p><strong>Prerequisites: </strong>The lab &#34;Big Data Course - Codelab - Query and Extraction - RDBMS Integration with sqoop&#34; needs to be executed first in order to set up the RDBMS table &#34;sales_statistics_region&#34;. </p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Pipeline" duration="8">
+        <h2 is-upgraded><strong>Data fusion setup</strong></h2>
+<p>Please set up the data fusion instance in analogy to the lab Data Fusion (<a href="https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion" target="_blank">https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion</a>).</p>
+<h2 is-upgraded><strong>Creating a new &#34;data wrangling&#34; pipeline</strong></h2>
+<p>Please name the pipeline &#34;export_sales_statistics&#34;.</p>
+<h2 is-upgraded><strong>Adding GCS (csv file) as a source</strong></h2>
+<p>Please navigate to the folder &#34;webshop_datalake&#34; and select the csv-file &#34;webshop_history&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b830bb889ab0090b.png"></p>
+<p>We now want to parse this csv-file. First, we need to do the actual parsing:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\77bf5b51fb2beb7c.png"></p>
+<p class="image-container"><img style="width: 319.11px" src="img\5844db7b42929273.png"></p>
+<p>And second, we need to specify the sales_value column to be of numeric type. Please select the properties of the &#34;Wrangler&#34; stage and set the type of the column &#34;sales_value&#34; to &#34;double&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6f5055ab0ddc56ce.png"></p>
+<h2 is-upgraded><strong>Creating the pipeline</strong></h2>
+<p>Please create a pipeline afterwards:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5bf872f79821d81.png"></p>
+<h2 is-upgraded><strong>Adding a &#34;GROUP BY&#34; transformation</strong></h2>
+<p>Hit &#34;Get Schema&#34; once such that your screen looks like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d7209266bdf335a9.png"></p>
+<p>Add the grouping logic as shown in the screenshot.</p>
+<h2 is-upgraded><strong>Adding the RDBMS sink</strong></h2>
+<p>Next, we want to provide the connection to our cloud SQL server as a reference for an external RDBMS. Add a respective &#34;Database&#34; sink:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\bcaa9d4aaa1aa83d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\b40c24bf0281c16.png"></p>
+<p>The properties should be set as follows:</p>
+<ul>
+<li><em>Label</em>: Webshop-Statistics-Sink</li>
+<li><em>Reference name</em>: webshop_statistics_sink</li>
+<li><em>Plugin name</em>: cloudsql-mysql (specified in deploying the driver, see lab <a href="https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion" target="_blank">https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion</a>)</li>
+<li><em>Connection string</em>: jdbc:mysql://google/webshop?cloudSqlInstance=pk-bigdata:us-central1:pk-sql&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory&amp;useSSL=False</li>
+<li><em>Table name</em>: sales_statistics_region</li>
+<li><em>Columns (of the table being exported to)</em>: region + average_sales</li>
+<li><em>Credentials</em>: Username &#34;root&#34;</li>
+<li><em>Password</em>: should not be set</li>
+</ul>
+<p>This is how the screen should look like:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\266e7adc3acf22cc.png"></p>
+<h2 is-upgraded><strong>Saving and exporting the pipeline</strong></h2>
+<p>Please save and then export your pipeline for later use. The pipeline should look similar to this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fc6b7227058c9323.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a pipeline that is capable of integrating our data lake with &#34;traditional&#34; RDBMS.</li>
+<li>You furthermore learned about capabilities of data fusion in terms of Wrangling and Aggregating data. Remember: this is all pushed down to the DataProc cluster and Spark jobs within that → this is big data ready!</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying the Pipeline and Checking the Results" duration="4">
+        <h2 is-upgraded>Pipeline Deployment</h2>
+<p>Please deploy your pipeline:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\66737953421677a4.png"></p>
+<p>Afterwards, you should hit &#34;Run&#34; to execute it. This will take ~5 min.</p>
+<p>When the pipeline run is finished, you should see your successful run:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7127d71a20eca934.png"></p>
+<h2 is-upgraded><strong>Checking the results</strong></h2>
+<p>When switching back to the SQL connection to our RDBMS, we should see that our batch processing results have been correctly calculated and written back to the RDBMS:</p>
+<p class="image-container"><img style="width: 566.00px" src="img\d4988a9873629e57.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You checked if the pipeline run was successful and validated the results in the RDBMS.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="1">
+        <p>Please delete your data fusion instance!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>You now know how extract data from the data lake and integrate &#34;traditional&#34; RDBMS into our big data architecture. Furthermore, you are able to perform batch processing in another tool (Data Fusion). </p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

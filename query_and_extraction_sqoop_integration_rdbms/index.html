@@ -28,19 +28,19 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\ba6b38aa36dc64ee.png"></p>
+        <p>In this use case we want to extract data from our data lake:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2a6487083c0a790c.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
-<p>Reading from the (structured) data lake in an SQL-like manner and storing the results in a new table.</p>
+<p>Writing data from the data lake back into operational systems, e.g. an RDBMS.</p>
+<p>DUE TO TECHNICAL ISSUES, THIS LAB DOES NOT WORK COMPLETELY!</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
 <li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). SEE PREREQUISITES!</li>
-<li>Open a Jupyter Notebook and access the data lake via SQL (and Hive).</li>
-<li>Writing the ad-hoc query results back to the data lake and Hive-metastore.</li>
+<li>Writing the results of our batch processing back into the source system (RDBMS).</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
 </aside>
-<aside class="warning"><p><strong>Prerequisites: The lab </strong>&#34;Big Data Course - Codelab - Query and Extraction - Data Lake Queries from Spark SQL&#34; needs to be executed first. There, we set up a cluster as follows and performed some simple batch computations.</p>
+<aside class="warning"><p><strong>Prerequisites: </strong>The lab &#34;Big Data Course - Codelab - Query and Extraction - Data Lake Queries from Spark SQL&#34; needs to be executed first. There, we set up a cluster as follows and performed some simple batch computations.</p>
 </aside>
 <pre><code>gcloud dataproc clusters create pk-hadoop --region us-central1 --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse --enable-component-gateway --optional-components ANACONDA,JUPYTER --project pk-bigdata</code></pre>
 <p>Cluster creation will take 2-3 minutes.</p>
@@ -53,47 +53,41 @@
       </google-codelab-step>
     
       <google-codelab-step label="Integration of Downstream Systems" duration="5">
-        <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
-<p>Please open a Jupyter Notebook and save it under &#34;BigData - Query and Extraction - PySpark SQL access to the Data Lake&#34;. </p>
-<h2 is-upgraded><strong>Ad-Hoc Querying</strong></h2>
-<p>As you already know, the variable &#34;spark&#34; allows us to access the Spark cluster via the Spark SQL API. Thus, we can execute our query by simply entering:</p>
-<pre><code># read from data lake (via Hive)
-df = spark.sql(&#34;SELECT region, avg(sales_value) as average_sales FROM sales GROUP BY region&#34;)
-df.toPandas()</code></pre>
-<h2 is-upgraded><strong>Writing the results back to the data lake</strong></h2>
-<p>The following command furthermore allows us to store the results in a newly generated table:</p>
-<pre><code># write to data lake and create a new table
-df.write.mode(&#34;overwrite&#34;).saveAsTable(&#34;sales_statistics_region&#34;)</code></pre>
-<aside class="special"><p><strong>Please note:</strong> You can check if this worked in multiple ways. E.g. using the command line tool beeline on the master node, checking GCS and/or opening the Parquet files in the folder &#34;sales_statistics_region&#34;, or just querying from the notebook using PySpark SQL..</p>
+        <h2 is-upgraded><strong>Creating the sales_statistics_region table in the RDBMS</strong></h2>
+<p>First, we need to create the table </p>
+<p>Please open the cloud SQL page in the cloud console and establish a connection to your relational database via the cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3477dca4835d4caf.png"></p>
+<p>First, we need to switch to the webshop database:</p>
+<pre><code>use webshop;</code></pre>
+<p>Afterwards, please create the table as follows such that we can let sqoop push data into it:</p>
+<pre><code>CREATE TABLE sales_statistics_region (
+region VARCHAR(20),
+average_sales FLOAT
+);</code></pre>
+<h2 is-upgraded><strong>Opening the master node&#39;s shell</strong></h2>
+<p>Please navigate to the cluster&#39;s master node and open an SSH connection:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6be416b5cd894456.png"></p>
+<p>This will again be our &#34;entry point&#34; to the sqoop tool (remember: we added it via the initialization action). With the following command, we can write the results back to the SQL server:</p>
+<pre><code>sqoop export --connect jdbc:mysql://localhost/webshop --username root --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
+<p>The parameter &#34;hcatalog-table&#34; determines which table from the data lake should be read. The parameter &#34;table&#34; directs towards the RDBMS&#39;s target table.</p>
+<aside class="warning"><p><strong>Important: </strong>Due to configuration issues of DataProc (especially regarding Parquet), this command will not work. We will not go further into details on this here.</p>
 </aside>
-<h2 is-upgraded><strong>Creating a view in PySpark</strong></h2>
-<p>Comparable to the BigQuery lab, you can also use Spark with Hive to create views. This will result in always up-to-date statistics for our regions, however, querying the view is slower than a persisted table (like sales_statistics_region) we created above.</p>
-<pre><code># create a view
-spark.sql(&#34;CREATE VIEW sales_statistics_region_view AS SELECT region, avg(sales_value) as average_sales FROM sales GROUP BY region&#34;)</code></pre>
-<p>Reading the view:</p>
-<pre><code># read from the view
-df_stat = spark.sql(&#34;SELECT * FROM sales_statistics_region_view&#34;)
-df_stat.toPandas()</code></pre>
-<aside class="warning"><p><strong>Please note:</strong> Both options (views and persistent tables) have different advantages (e.g. slower query vs. up-to-dateness). You&#39;ll need to decide case-by-case in your architecture.</p>
-</aside>
-<p>This is how your notebook should look like now:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\1caa3333c83b8208.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You accessed the data lake via SQL and created (1) a new table and (2) a Spark view.</li>
+<li>You learned how to extract data from the data lake via sqoop and push it back into RDBMS.</li>
 </ol>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Cleaning Up" duration="1">
-        <p>Please do not delete your cluster and SQL instance before completing the next lab!</p>
+        <p>Please do not delete your cluster and SQL instances!</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="2">
-        <p>You now know how to interact with the data lake from PySpark (we did this before!) and are familiar with generating new tables and views in PySpark.</p>
+        <p>You now know how extract data from the data lake and integrate &#34;traditional&#34; RDBMS into our big data architecture.</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 

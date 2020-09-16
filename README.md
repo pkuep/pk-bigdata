@@ -46,5 +46,8 @@
 
 [RDBMS Integration with sqoop](https://pkuep.github.io/pk-bigdata/query_and_extraction_sqoop_integration_rdbms){:target="_blank" rel="noopener"}
 
+[RDBMS Integration with Data Fusion](https://pkuep.github.io/pk-bigdata/query_and_extraction_datafusion_integration_rdbms){:target="_blank" rel="noopener"}
+
+
 
 ## Stream Processing
