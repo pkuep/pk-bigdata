@@ -203,7 +203,8 @@ with subscriber:
       </google-codelab-step>
     
       <google-codelab-step label="PubSub Scaling" duration="1">
-        <p>Please add the following code to your message sending notebook &#34;PubSub-Access&#34;:</p>
+        <p>PK: Allow public access to the topic!</p>
+<p>Please add the following code to your message sending notebook &#34;PubSub-Access&#34;:</p>
 <pre><code># Public
 project_id_public = &#34;pk-bigdata&#34;
 topic_id_public = &#34;pk-pubsub-public&#34;
@@ -228,7 +229,8 @@ print(f&#34;Published message with ID {future_public.result()}&#34;)
       </google-codelab-step>
     
       <google-codelab-step label="Cleaning Up" duration="1">
-        <p>You should de-activate your service account in order to avoid its unauthorized usage. Go to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34; and disable the account:</p>
+        <p>PK: Remove public access to the topic!</p>
+<p>You should de-activate your service account in order to avoid its unauthorized usage. Go to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34; and disable the account:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\b9f1196af0d09c0a.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
