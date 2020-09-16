@@ -38,6 +38,8 @@
 
 [Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
 
-## Data Integration
+## Querying and Data Integration
+
+[BigQuery access to the Data Lake](https://pkuep.github.io/pk-bigdata/query_and_extraction_bigquery_datalake_access){:target="_blank" rel="noopener"}
 
 ## Stream Processing

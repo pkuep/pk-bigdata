@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-16T12:04:22Z",
+  "id": "query_and_extraction_bigquery_datalake_access",
+  "duration": 10,
+  "title": "Lab \"Query and Extraction: Data Lake Queries from BigQuery\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a GCP data fusion instance and create an ingestion job (implicitly running on DataProc) that retrieves a table from a cloud SQL instance and stores the data in the GCS data lake.",
+  "source": "1gqtt_j4eRxW2kVYPG8OvQj10g0TT7ioCSghcujjCDcE",
+  "theme": "batch-ingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Batch Ingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "query_and_extraction_bigquery_datalake_access"
+}

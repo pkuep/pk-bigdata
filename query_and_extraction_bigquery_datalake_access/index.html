@@ -1,0 +1,115 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Query and Extraction: Data Lake Queries from BigQuery&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="query_and_extraction_bigquery_datalake_access"
+                  title="Lab &#34;Query and Extraction: Data Lake Queries from BigQuery&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this use case we want to perform an exemplary ad-hoc query which requires access to the data lake using BigQuery.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\baa1c645f8c6edd5.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Setting up a &#34;federated&#34; connection between BigQuery and the Data Lake and using this connection for ad-hoc queries..</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a connection to the data lake from BigQuery</li>
+<li>Use the BigQuery UI to executed standard SQL queries.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<aside class="warning"><p><strong>Please note:</strong> We will access data being ingested in the lab &#34;RDBMS to GCS (Avro/Parquet) with sqoop&#34;. Furthermore, we&#39;ll rely on a BigQuery dataset from the lab &#34;Data Warehouse Example&#34;. In case you did not perform these labs, please catch up on that now.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up an External Table Pointing to Cloud Storage" duration="4">
+        <h2 is-upgraded><strong>Creating the table</strong></h2>
+<p>Please open &#34;BigQuery&#34; in the cloud console. From previous labs, you should have the &#34;example_dwh&#34; dataset available:</p>
+<p class="image-container"><img style="width: 263.11px" src="img\a3da82776ea1ec08.png"></p>
+<p>Now you can create a new table in that dataset:</p>
+<p class="image-container"><img style="width: 314.71px" src="img\507983e4dbf692fb.png"></p>
+<p>In order to have the schema immediately available, we want to access our sales data in the data lake which have been stored as Parquet files (see lab &#34;RDBMS to GCS (Avro/Parquet) with sqoop&#34;). Please browse to the folder &#34;sales_from_sqoop_parquet&#34; and select the Parquet-file within that folder. The file format should automatically switch to &#34;Parquet&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1f306d2c261e99cb.png"></p>
+<p>Set the table type to &#34;External table&#34;. This avoids BigQuery copying the data from the Parquet file into BigQueries internal representation. There is rather a &#34;live&#34; connection, i.e. when queries are executed in the BigQuery UI, they are transferred to the original environment (i.e. cloud storage and Parquet). </p>
+<aside class="warning"><p><strong>Please note:</strong> External connections are slower regarding query performance. You, however, avoid duplication of data (storage in the data lake and BigQuery table).</p>
+</aside>
+<p>The table name could be &#34;sales_in_datalake&#34;.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a connection from BigQuery to the data lake.</li>
+<li>This connection can now be used for ad-hoc querying the sales table.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Querying the Sales Table" duration="4">
+        <h2 is-upgraded><strong>Creating the Query</strong></h2>
+<p>Select the newly created table and click on &#34;Query table&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a475b49d264a9aa6.png"></p>
+<p>Try to formulate the query &#34;mean sales_value per region&#34; on your own (solution on the next page).</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You queried the data lake using standard SQL from BigQuery.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Solution" duration="1">
+        <h2 is-upgraded><strong>SQL Query</strong></h2>
+<p>This should be your query:</p>
+<pre><code>SELECT region, avg(sales_value)
+FROM `pk-bigdata.example_dwh.sales_in_datalake` 
+GROUP BY region;</code></pre>
+<p>And this should be the result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\972bcc9b1679e426.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now know how to query structured data in your data lake via BigQuery. </li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, now know a further access-mechanism to big data being stored in a data lake.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
