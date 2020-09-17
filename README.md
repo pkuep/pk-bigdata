@@ -54,3 +54,5 @@
 
 [Using PubSub from Python and the Service Account Concept](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsub){:target="_blank" rel="noopener"}
 
+[PubSub to Cloud Storage with DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_cloudstorage){:target="_blank" rel="noopener"}
+

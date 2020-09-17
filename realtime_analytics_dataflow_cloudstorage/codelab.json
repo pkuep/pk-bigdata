@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-17T08:43:50Z",
+  "id": "realtime_analytics_dataflow_cloudstorage",
+  "duration": 14,
+  "title": "Lab \"Realtime Analytics: PubSub to Cloud Storage with DataFlow\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll learn how to create an automatically scaling Ingestion pipeline using GCP's DataFlow technology. You'll historize PubSub-messages to cloud storage by using a template.",
+  "source": "1H5qCQ8fs-QEC6LRn0csY3doZ4SZihcYKG7fPhlbLpuE",
+  "theme": "realtime-analytics",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Realtime Analytics"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "realtime_analytics_dataflow_cloudstorage"
+}

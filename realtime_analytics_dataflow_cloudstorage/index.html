@@ -1,0 +1,152 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Realtime Analytics: PubSub to Cloud Storage with DataFlow&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="realtime_analytics_dataflow_cloudstorage"
+                  title="Lab &#34;Realtime Analytics: PubSub to Cloud Storage with DataFlow&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this lab, we want to get to know the messaging system PubSub as a representative of message brokers like Apache Kafka. </p>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Create an automatically scaling job in DataFlow that is capable of historizing a PubSub-topic to cloud storage (using a template). Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
+<li>Deploy the job and inspect the results</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Used Topic" duration="1">
+        <h2 is-upgraded><strong>Relying on the example topic &#34;pk-topic&#34;</strong></h2>
+<p>We will be using the same topic as in the last lab (Using PubSub from Python and the Service Account Concept).</p>
+<h2 is-upgraded><strong>Publishing sample messages</strong></h2>
+<p>You may already want to push some messages to the topic (they will be in the pipeline when our job starts):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9054760e0da09791.png"></p>
+<p>Let&#39;s publish this simple message every 10s, 20 times:</p>
+<p class="image-container"><img style="width: 285.01px" src="img\6270c5e3b8a2bc14.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You identified the topic you want to rely on and published some sample messags to it.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a DataFlow Ingestion Job" duration="5">
+        <h2 is-upgraded>Job creation</h2>
+<p>Please open &#34;DataFlow&#34; → &#34;Jobs&#34; in the cloud console:</p>
+<p class="image-container"><img style="width: 468.00px" src="img\a6525764cd6a0f3f.png"></p>
+<p>We will start with a job from a template. Please create a new job:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fdddb9c7c4b2314e.png"></p>
+<p>The following settings are recommended:</p>
+<ul>
+<li><em>Job name</em>: pk-ingest-pubsub</li>
+<li><em>Location</em>: us-central1</li>
+<li><em>Dataflow template</em>: Pub/Sub to Text Files on Cloud Storage</li>
+<li><em>Input Pub/Sub topic</em>: projects/pk-bigdata/topics/pk-pubsub</li>
+<li><em>Output file directory on cloud storage</em>: gs://pk-gcs/dataflow_history_pubsub/</li>
+<li><em>Output filename prefix</em>: pubsub-topic</li>
+<li><em>Temporary location</em>: gs://pk-gcs/dataflow_temp</li>
+</ul>
+<p>All other parameters can stay default. This should be the input form:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\275401c488743ab2.png"></p>
+<p>Please note that the history will be created in 5-minute windows. </p>
+<aside class="warning"><p><strong>Warning:</strong> The costs for DataFlow are pretty high (see the job creation input form). Be careful to stop your jobs in the project phase!</p>
+</aside>
+<p>Click on &#34;Run Job&#34;.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now have a rough understanding of the service account concept and know how to create these. </li>
+<li>You know how to create JSON key files and download one for our newly created account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Checking Job Execution and the PubSub-Historization" duration="5">
+        <h2 is-upgraded>Job Setup</h2>
+<p>Setting up the job takes a few minutes. </p>
+<aside class="special"><p><strong>Remember</strong>: an automatically scaling and big data- and realtime-ready infrastructure is set up in the background.</p>
+</aside>
+<p>When the job is running, you should see a similar screen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7545479787bac07e.png"></p>
+<h2 is-upgraded><strong>Pushing messages into the topic</strong></h2>
+<p>Please send some messages from either the UI or via a Jupyter Notebook to the topic.</p>
+<h2 is-upgraded><strong>Checking the Job Graph and Job Metrics</strong></h2>
+<p>You should see that your job processes messages in the &#34;Job Graph&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4d4a7e96ccb0d519.png"></p>
+<p>Under &#34;Job Metrics&#34; you can check that one worker is required for this job and it should be running:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4869e53b8fcc3795.png"></p>
+<p>In case of higher workloads, DataFlow will automatically scale up (if you allow this in the job configuration).</p>
+<h2 is-upgraded><strong>Checking cloud storage</strong></h2>
+<p>When the first 5-minute window is finished, you should see a folder in your GCS bucket:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d5f1a9a3e42b5a57.png"></p>
+<p>It should contain a file with a timestamp:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\cc2dc325ff589e38.png"></p>
+<p>The file should contain the message data (one line per message):</p>
+<p class="image-container"><img style="width: 53.25px" src="img\9da91e68d402ebd3.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You checked the execution of a realtime job in DataFlow.</li>
+<li>You inspected the results of the job.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="1">
+        <h2 is-upgraded><strong>Stopping the job </strong></h2>
+<p>In order to avoid unnecessary costs you should stop jobs in DataFlow when they are not in use:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a4f23150a020ac3c.png"></p>
+<p>You can select &#34;Cancel&#34; In the popup window to make sure that the job is immediately stopped:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\df5df368ed7ebab6.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished this lab by shutting down the running job in DataFlow..</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>You are now able to make use of a big data-ready realtime processing framework in the cloud. DataFlow can be used for various scenarios (we&#39;ll take a look at specifying jobs in an SQL-based manner later). However, natively programming DataFlow (=Apache Beam) is pretty tough but is also very powerful in terms of creating auto-scaling pipelines.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
