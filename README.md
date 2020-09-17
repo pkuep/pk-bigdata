@@ -56,3 +56,5 @@
 
 [PubSub to Cloud Storage with DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_cloudstorage){:target="_blank" rel="noopener"}
 
+[PubSub Analytics with SQL-based DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_sql){:target="_blank" rel="noopener"}
+

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>Lab &#34;Realtime Analytics: PubSub to Cloud Storage with DataFlow&#34;</title>
+  <title>Lab &#34;Realtime Analytics: PubSub Data Aggregation with SQL and DataFlow&#34;</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
@@ -22,21 +22,18 @@
 <body>
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid="None"
-                  id="realtime_analytics_dataflow_cloudstorage"
-                  title="Lab &#34;Realtime Analytics: PubSub to Cloud Storage with DataFlow&#34;"
+                  id="realtime_analytics_dataflow_sql"
+                  title="Lab &#34;Realtime Analytics: PubSub Data Aggregation with SQL and DataFlow&#34;"
                   environment="web"
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>In this lab, we want to make use of the PubSub service and learn how to create a history of messages in our data lake. This is the flow of data:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a3a30ec85f6dc114.png"></p>
-<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. </p>
-</aside>
-<aside class="warning"><p><strong>Requirements:</strong> The lab &#34;Using PubSub from Python and the Service Account Concept&#34; needs to be conducted since we&#39;ll rely on the topic created there.</p>
+        <p>In this lab, we want to get to know the messaging system PubSub as a representative of message brokers like Apache Kafka. </p>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
-<li>Create an automatically scaling job in DataFlow that is capable of analyzing messages in a PubSub-topic in a scalable real-time manner. We&#39;ll rely on the &#34;tumbling window&#34; method and process the messages as micro-batches using the SQL-like syntax for DataFlow. This results in respectively executable jobs that can scale automatically to heavier workloads. Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
+<li>Create an automatically scaling job in DataFlow that is capable of historizing a PubSub-topic to cloud storage (using a template). Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
 <li>Deploy the job and inspect the results</li>
 </ul>
 
@@ -45,10 +42,12 @@
     
       <google-codelab-step label="Used Topic" duration="1">
         <h2 is-upgraded><strong>Relying on the example topic &#34;pk-topic&#34;</strong></h2>
-<p>We will be using the same topic as in the last lab (Using PubSub from Python and the Service Account Concept). However, this time we&#39;ll need to utilize a fixed schema (i.e. message structure) in order to allow DataFlow the conversion of messages to analyzable data.</p>
-<h2 is-upgraded><strong>Message format</strong></h2>
-<h2 is-upgraded><strong>Publishing sample messages </strong></h2>
-<p>You may already want to push some messages to the topic varying the &#34;product&#34; and &#34;sales&#34; values (they will be in the pipeline when our job starts):</p>
+<p>We will be using the same topic as in the last lab (Using PubSub from Python and the Service Account Concept).</p>
+<h2 is-upgraded><strong>Publishing sample messages</strong></h2>
+<p>You may already want to push some messages to the topic (they will be in the pipeline when our job starts):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9054760e0da09791.png"></p>
+<p>Let&#39;s publish this simple message every 10s, 20 times:</p>
+<p class="image-container"><img style="width: 285.01px" src="img\6270c5e3b8a2bc14.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You identified the topic you want to rely on and published some sample messags to it.</li>
