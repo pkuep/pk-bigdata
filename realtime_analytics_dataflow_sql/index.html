@@ -28,91 +28,125 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>In this lab, we want to get to know the messaging system PubSub as a representative of message brokers like Apache Kafka. </p>
+        <p>In this lab, we want to make use of the PubSub service and learn how to analyze data in a realtime manner using a job in DataFlow being specified in SQL. We want to store the average sales in BigQuery. This is the flow of data: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\cc0fbf74008010b8.png"></p>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
-<li>Create an automatically scaling job in DataFlow that is capable of historizing a PubSub-topic to cloud storage (using a template). Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
-<li>Deploy the job and inspect the results</li>
+<li>Create an automatically scaling job in DataFlow that is capable of analyzing PubSub-topic with a pre-defined message format (product name and sales value) in a realtime manner. </li>
+<li>The analytics results shall be stored in a BigQuery table &#34;average_sales_10s&#34;.</li>
+<li>We will be using SQL-based DataFlow pipelines. Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
+<li>We will deploy the job and inspect the results.</li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Used Topic" duration="1">
-        <h2 is-upgraded><strong>Relying on the example topic &#34;pk-topic&#34;</strong></h2>
-<p>We will be using the same topic as in the last lab (Using PubSub from Python and the Service Account Concept).</p>
+      <google-codelab-step label="Topic Creation" duration="3">
+        <h2 is-upgraded><strong>Creation of a new topic &#34;pk-topic-sales&#34;</strong></h2>
+<p>Please create a new topic called &#34;&lt;initials&gt;-topic-sales&#34;. We&#39;ll use this topic for our &#34;sales-value&#34; messages..</p>
 <h2 is-upgraded><strong>Publishing sample messages</strong></h2>
-<p>You may already want to push some messages to the topic (they will be in the pipeline when our job starts):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9054760e0da09791.png"></p>
-<p>Let&#39;s publish this simple message every 10s, 20 times:</p>
-<p class="image-container"><img style="width: 285.01px" src="img\6270c5e3b8a2bc14.png"></p>
+<p>You may already want to push some messages to the new topic (they will be in the pipeline when our job starts). Let&#39;s publish one simple message with the following content:</p>
+<pre><code>{&#34;product&#34;:&#34;water&#34;, &#34;sales&#34;:20.3}</code></pre>
+<p class="image-container"><img style="width: 203.18px" src="img\b29cd59fc150c32e.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You identified the topic you want to rely on and published some sample messags to it.</li>
+<li>You created a new topic and published some a sample message to it.</li>
 </ol>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Creating a DataFlow Ingestion Job" duration="5">
-        <h2 is-upgraded>Job creation</h2>
-<p>Please open &#34;DataFlow&#34; → &#34;Jobs&#34; in the cloud console:</p>
-<p class="image-container"><img style="width: 468.00px" src="img\a6525764cd6a0f3f.png"></p>
-<p>We will start with a job from a template. Please create a new job:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\fdddb9c7c4b2314e.png"></p>
-<p>The following settings are recommended:</p>
-<ul>
-<li><em>Job name</em>: pk-ingest-pubsub</li>
-<li><em>Location</em>: us-central1</li>
-<li><em>Dataflow template</em>: Pub/Sub to Text Files on Cloud Storage</li>
-<li><em>Input Pub/Sub topic</em>: projects/pk-bigdata/topics/pk-pubsub</li>
-<li><em>Output file directory on cloud storage</em>: gs://pk-gcs/dataflow_history_pubsub/</li>
-<li><em>Output filename prefix</em>: pubsub-topic</li>
-<li><em>Temporary location</em>: gs://pk-gcs/dataflow_temp</li>
-</ul>
-<p>All other parameters can stay default. This should be the input form:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\275401c488743ab2.png"></p>
-<p>Please note that the history will be created in 5-minute windows. </p>
+      <google-codelab-step label="Specifying the Schema of the Sink (BigQuery Table)" duration="5">
+        <h2 is-upgraded><strong>Switching to BigQuery (SQL editor for DataFlow)</strong></h2>
+<p>Please open &#34;DataFlow&#34; → &#34;Jobs&#34; in the cloud console. There you can switch to BigQuery by clicking on &#34;Create Job from SQL&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1222b1ac383b21b1.png"></p>
+<p>Make sure, that you are working with the &#34;Cloud Dataflow engine&#34; (see screenshot).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7231b13fbc84922.png"></p>
+<p>If this is not shown, please click on &#34;More&#34; and &#34;Query settings&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4222d936b3830f67.png"></p>
+<p>Select the &#34;Cloud Dataflow engine&#34; and click on &#34;Save&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a3f606dafa148bf7.png"></p>
+<h2 is-upgraded><strong>Adding the PubSub topic as data source to BigQuery</strong></h2>
+<p>Next, we need to add the PubSub topic as a source to our BigQuery/DataFlow environment. Click on &#34;Add data&#34; and then select &#34;Cloud Dataflow sources&#34;:</p>
+<p class="image-container"><img style="width: 361.01px" src="img\83a59b452cf6940e.png"></p>
+<p>Here we can select cloud storage as well as cloud PubSub topics as input data. Since we want to add an analytical stream processing job, we&#39;ll select our pubsub topic we used before:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8155533c2f4ccc0d.png"></p>
+<h2 is-upgraded><strong>Specifying the schema of the data source (i.e. messages)</strong></h2>
+<p>Next, we need to specify the message format such that Dataflow is able to parse the messages and interpret the fields in it correctly. Thus, we&#39;ll add a schema to the PubSub data source. First, select the topic under data sources:</p>
+<p class="image-container"><img style="width: 298.50px" src="img\7d3f02403d81f2a1.png"></p>
+<p>Second, click on &#34;Edit schema&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5c2fb9f6834c91e6.png"></p>
+<p>Add the two fields &#34;product&#34; as string and &#34;sales&#34; as integer. Don&#39;t remove the timestamp, since this is delivered per message by default:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\68687d3712d0d3e7.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You added a source to your BigQuery environment: the PubSub topic.</li>
+<li>You specified its schema, i.e. the format of the messages is now fixed.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a DataFlow Realtime Analytics Job using SQL" duration="6">
+        <h2 is-upgraded>Query definition</h2>
+<p>Please click on &#34;Query Topic&#34;. The following query allows you to group by product and start of the 10 second tumbling windows. The aggregation function is &#34;average of sales&#34;:</p>
+<pre><code>SELECT 
+    product,  -- we want to aggregate the sales per product (and tumbling window, see next line)
+    TUMBLE_START(&#34;INTERVAL 10 SECOND&#34;) AS interval_start,  -- show the start timestamp of the tumbling window
+    AVG(sales) AS average_sales
+
+FROM pubsub.topic.`pk-bigdata`.`pk-pubsub-sales`
+GROUP BY product, TUMBLE(event_timestamp, &#34;INTERVAL 10 SECOND&#34;)  -- tumbling window grouping</code></pre>
+<p>It is important that your query is syntactically correct, indicated by the green arrow on the right side. Click on &#34;Create Cloud Dataflow job&#34; afterwards:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6bf2dd9dc2985f7f.png"></p>
+<h2 is-upgraded><strong>Output specification: BigQuery table</strong></h2>
+<p>You should now be able to specify where the stream processing results should be written to. We can select either PubSub (which is very useful for productive environments!) or BigQuery (which we&#39;ll use since it provides also a long-term history of our realtime analytics results). We&#39;ll select the same dataset we used throughout the course (example_dwh) and call the table &#34;average_sales_10s&#34;:</p>
+<p class="image-container"><img style="width: 479.75px" src="img\7befc3855cf2d874.png"></p>
+<p>Click on &#34;Create&#34;.</p>
+<aside class="warning"><p><strong>Important:</strong> The target table needs to be empty (or not existing) if we choose &#34;Write if empty&#34;. In case you want to re-run the job, please empty the table first (e.g. using the BigQuery SQL editor with the BigQuery engine: DELETE FROM &lt;table&gt; WHERE 1=1 (this is a workaround to clear the table!).</p>
+</aside>
 <aside class="warning"><p><strong>Warning:</strong> The costs for DataFlow are pretty high (see the job creation input form). Be careful to stop your jobs in the project phase!</p>
 </aside>
-<p>Click on &#34;Run Job&#34;.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You now have a rough understanding of the service account concept and know how to create these. </li>
-<li>You know how to create JSON key files and download one for our newly created account.</li>
+<li>You learned how to set up Dataflow jobs using SQL.</li>
+<li>You know how to add &#34;realtime syntax&#34; to the SQL query for specifying tumbling windows.</li>
+<li>You created a job and specified that the output should be a BigQuery table.</li>
 </ol>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Checking Job Execution and the PubSub-Historization" duration="5">
-        <h2 is-upgraded>Job Setup</h2>
-<p>Setting up the job takes a few minutes. </p>
+      <google-codelab-step label="Checking Job Execution and the Realtime-Analytics Results" duration="5">
+        <h2 is-upgraded>Job Monitoring</h2>
+<p>Setting up the job takes a few minutes. Click on the Job-ID to open the monitoring site for the job:</p>
+<p><img style="width: 624.00px" src="img\dd0ac0502b943df8.png">When the job is running, the output should look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\97e18a007ceaea4b.png"></p>
+<h2 is-upgraded><strong>Job Debugging and Checking the Logs</strong></h2>
+<p>In case something goes wrong in job setup, you can always check the logs of Dataflow:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\449cfcf2e5b5ecee.png"></p>
+<p>The output will be helpful if you need to debug your query.</p>
 <aside class="special"><p><strong>Remember</strong>: an automatically scaling and big data- and realtime-ready infrastructure is set up in the background.</p>
 </aside>
-<p>When the job is running, you should see a similar screen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\7545479787bac07e.png"></p>
-<h2 is-upgraded><strong>Pushing messages into the topic</strong></h2>
-<p>Please send some messages from either the UI or via a Jupyter Notebook to the topic.</p>
-<h2 is-upgraded><strong>Checking the Job Graph and Job Metrics</strong></h2>
-<p>You should see that your job processes messages in the &#34;Job Graph&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4d4a7e96ccb0d519.png"></p>
-<p>Under &#34;Job Metrics&#34; you can check that one worker is required for this job and it should be running:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4869e53b8fcc3795.png"></p>
-<p>In case of higher workloads, DataFlow will automatically scale up (if you allow this in the job configuration).</p>
-<h2 is-upgraded><strong>Checking cloud storage</strong></h2>
-<p>When the first 5-minute window is finished, you should see a folder in your GCS bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d5f1a9a3e42b5a57.png"></p>
-<p>It should contain a file with a timestamp:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cc2dc325ff589e38.png"></p>
-<p>The file should contain the message data (one line per message):</p>
-<p class="image-container"><img style="width: 53.25px" src="img\9da91e68d402ebd3.png"></p>
+<h2 is-upgraded><strong>Adding messages to the topic</strong></h2>
+<p>Please send some messages to the topic &#34;pk-pubsub&#34; with the following format (varying the product and sales values):</p>
+<pre><code>{&#34;product&#34;:&#34;water&#34;, &#34;sales&#34;:20.3}</code></pre>
+<h2 is-upgraded><strong>Checking the BigQuery table</strong></h2>
+<p>When the job is correctly running and you pushed some messages to the topic, you should see a new table in our dataset &#34;average_sales_10s&#34;. Please click on the table name:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c0b5deff44c4ea6a.png"></p>
+<p>Afterwards, we need to get back to the BigQuery engine in order to be able to query this new table. Click on &#34;Query settings&#34; under &#34;More&#34;. Select &#34;BigQuery engine&#34; and leave all other parameters on default:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6fbec6bc20fc6f48.png"></p>
+<p>Click Save and afterwards on &#34;Query table&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d622f2326270d45f.png"></p>
+<p>When querying all rows (just add a * to the query) you should see some of the realtime calculation results being historized in the table &#34;average_sales_10s&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7a37f688eb241aac.png"></p>
+<p>Check if further results are calculated when you publish more messages.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You checked the execution of a realtime job in DataFlow.</li>
-<li>You inspected the results of the job.</li>
+<li>You inspected the results of the job by querying the output table.</li>
 </ol>
 
 
@@ -121,19 +155,26 @@
       <google-codelab-step label="Cleaning Up" duration="1">
         <h2 is-upgraded><strong>Stopping the job </strong></h2>
 <p>In order to avoid unnecessary costs you should stop jobs in DataFlow when they are not in use:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a4f23150a020ac3c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\6a4da955df9090e4.png"></p>
 <p>You can select &#34;Cancel&#34; In the popup window to make sure that the job is immediately stopped:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\df5df368ed7ebab6.png"></p>
+<p class="image-container"><img style="width: 469.50px" src="img\df5df368ed7ebab6.png"></p>
+<h2 is-upgraded><strong>Emptying the output table (optional)</strong></h2>
+<p>If you want to re-run the job with our parameterization (write-if-empty), you should empty or delete the table &#34;average_sales_10s&#34;.</p>
+<p>Unfortunately, you cannot just empty the table with this code:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\f5c24bc821b22e9b.png"></p>
+<p>BigQuery requires a WHERE statement. The following workaround (adding a &#34;WHERE 1=1&#34;) solves this issue:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9f4599f8b23f094c.png"></p>
+<p>Alternatively, you can select &#34;append&#34; in the job output definition.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You finished this lab by shutting down the running job in DataFlow..</li>
+<li>You finished this lab by shutting down the running job in DataFlow and clearing the output table.</li>
 </ol>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="2">
-        <p>You are now able to make use of a big data-ready realtime processing framework in the cloud. DataFlow can be used for various scenarios (we&#39;ll take a look at specifying jobs in an SQL-based manner later). However, natively programming DataFlow (=Apache Beam) is pretty tough but is also very powerful in terms of creating auto-scaling pipelines.</p>
+        <p>You are now able to make use of a big data-ready realtime processing framework in the cloud. DataFlow can be used for various scenarios using the SQL-like syntax. However, natively programming DataFlow (=Apache Beam) is pretty tough but is also very powerful in terms of creating auto-scaling pipelines.</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 

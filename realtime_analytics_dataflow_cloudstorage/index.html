@@ -28,7 +28,7 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>In this lab, we want to make use of the PubSub service and learn how to create a history of messages in our data lake. This is the flow of data:</p>
+        <p>In this lab, we want to make use of the PubSub service and learn how to create a history of messages in our data lake using a DataFlow template. This is the flow of data:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\a3a30ec85f6dc114.png"></p>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. </p>
 </aside>
@@ -37,7 +37,7 @@
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
 <li>Create an automatically scaling job in DataFlow that is capable of analyzing messages in a PubSub-topic in a scalable real-time manner. We&#39;ll rely on the &#34;tumbling window&#34; method and process the messages as micro-batches using the SQL-like syntax for DataFlow. This results in respectively executable jobs that can scale automatically to heavier workloads. Please note: we won&#39;t learn how to code DataFlow pipelines ourselves since the technology behind (Apache Beam) is pretty complex.</li>
-<li>Deploy the job and inspect the results</li>
+<li>We will deploy the job and inspect the results.</li>
 </ul>
 
 
@@ -51,7 +51,7 @@
 <p>You may already want to push some messages to the topic varying the &#34;product&#34; and &#34;sales&#34; values (they will be in the pipeline when our job starts):</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You identified the topic you want to rely on and published some sample messags to it.</li>
+<li>You identified the topic you want to rely on and published some sample messages to it.</li>
 </ol>
 
 
@@ -124,10 +124,10 @@
 <p>In order to avoid unnecessary costs you should stop jobs in DataFlow when they are not in use:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\a4f23150a020ac3c.png"></p>
 <p>You can select &#34;Cancel&#34; In the popup window to make sure that the job is immediately stopped:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\df5df368ed7ebab6.png"></p>
+<p class="image-container"><img style="width: 362.50px" src="img\df5df368ed7ebab6.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You finished this lab by shutting down the running job in DataFlow..</li>
+<li>You finished this lab by shutting down the running job in DataFlow.</li>
 </ol>
 
 
