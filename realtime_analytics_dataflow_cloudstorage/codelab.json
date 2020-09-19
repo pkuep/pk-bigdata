@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-17T14:03:45Z",
+  "updated": "2020-09-19T12:58:57Z",
   "id": "realtime_analytics_dataflow_cloudstorage",
   "duration": 14,
   "title": "Lab \"Realtime Analytics: PubSub to Cloud Storage with DataFlow\"",

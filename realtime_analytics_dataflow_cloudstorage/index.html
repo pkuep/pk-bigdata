@@ -58,7 +58,14 @@
       </google-codelab-step>
     
       <google-codelab-step label="Creating a DataFlow Ingestion Job" duration="5">
-        <h2 is-upgraded>Job creation</h2>
+        <h2 is-upgraded><strong>Service account rights</strong></h2>
+<p>Please open &#34;IAM &amp; Admin&#34; → &#34;IAM&#34; in the cloud console. Find the user xxx_dataflow_xxx:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ddcf1658a8df2b77.png"></p>
+<p>Edit the user&#39;s privileges and add the role &#34;Project&#34; → &#34;Editor&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9a2a956bbda846ee.png"></p>
+<p>This should be the result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\a4531220f45925cd.png"></p>
+<h2 is-upgraded>Job creation</h2>
 <p>Please open &#34;DataFlow&#34; → &#34;Jobs&#34; in the cloud console:</p>
 <p class="image-container"><img style="width: 468.00px" src="img\a6525764cd6a0f3f.png"></p>
 <p>We will start with a job from a template. Please create a new job:</p>
