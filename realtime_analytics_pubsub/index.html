@@ -210,7 +210,7 @@ project_id_public = &#34;pk-bigdata&#34;
 topic_id_public = &#34;pk-pubsub-public&#34;
 
 # create publisher and topic objects
-publisher_public = pubsub_v1.PublisherClient()
+publisher_public = pubsub_v1.PublisherClient(credentials=credentials)
 topic_path_public = publisher_public.topic_path(project_id_public, topic_id_public)
 
 data_public = &#34;My message in public&#34;
