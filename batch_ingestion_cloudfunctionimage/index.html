@@ -81,7 +81,7 @@ file.close()</code></pre>
 storage_client = storage.Client()
 bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)
 blob = bucket.blob(filename)
-blob.upload_from_string(response.content)</code></pre>
+blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)</code></pre>
 <p>You should now be able to see this image in the cloud console (under Cloud Storage)</p>
 <p class="image-container"><img style="width: 624.00px" src="img\62d1daef60172108.png"></p>
 <p>The notebook could now be executed, e.g. hourly, in order to create a history of webcam images. However, the notebook is only used for demo purposes and we now want to see how one can deploy such an ingestion logic to a cloud function.</p>
