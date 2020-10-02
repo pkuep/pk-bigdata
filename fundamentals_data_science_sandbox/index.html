@@ -119,6 +119,9 @@
 <p>Put these two lines of code into the first cell of your newly created notebook and run the cell (Ctrl-Enter):</p>
 <pre><code>!pip install pandas==0.24.2
 !pip install gcsfs</code></pre>
+<aside class="warning"><p><strong>Important: </strong>Your Jupyter Notebook instance needs to be restarted once after the installation procedure is finished. Please click on &#34;Kernel&#34; and &#34;Restart&#34; (see screenshot below). This will take ~10 seconds. Afterwards, you can create a new cell and continue with this lab (see next step &#34;Accessing the bucket and csv-file&#34;)..</p>
+</aside>
+<p class="image-container"><img style="width: 624.00px" src="img\acf0f6de02d4c9e.png"></p>
 <h2 is-upgraded><strong>Accessing the bucket and csv-file</strong></h2>
 <p>Afterwards, you should be able to access the data lake now in another cell (change my bucket &#34;pk-gcs&#34; to your bucket&#39;s name). The &#34;gs://&#34; prefix tells pandas to access a bucket in GCP cloud storage (you&#39;ll see this access pattern often throughout this course!).</p>
 <pre><code>import pandas as pd
