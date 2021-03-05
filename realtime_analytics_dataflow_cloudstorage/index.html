@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this lab, we want to make use of the PubSub service and learn how to create a history of messages in our data lake using a DataFlow template. This is the flow of data:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a3a30ec85f6dc114.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a3a30ec85f6dc114.png"></p>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. </p>
 </aside>
 <aside class="warning"><p><strong>Requirements:</strong> The lab &#34;Using PubSub from Python and the Service Account Concept&#34; needs to be conducted since we&#39;ll rely on the topic created there.</p>
@@ -60,16 +60,16 @@
       <google-codelab-step label="Creating a DataFlow Ingestion Job" duration="5">
         <h2 is-upgraded><strong>Service account rights</strong></h2>
 <p>Please open &#34;IAM &amp; Admin&#34; → &#34;IAM&#34; in the cloud console. Find the user xxx_dataflow_xxx:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\ddcf1658a8df2b77.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ddcf1658a8df2b77.png"></p>
 <p>Edit the user&#39;s privileges and add the role &#34;Project&#34; → &#34;Editor&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9a2a956bbda846ee.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9a2a956bbda846ee.png"></p>
 <p>This should be the result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a4531220f45925cd.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a4531220f45925cd.png"></p>
 <h2 is-upgraded>Job creation</h2>
 <p>Please open &#34;DataFlow&#34; → &#34;Jobs&#34; in the cloud console:</p>
-<p class="image-container"><img style="width: 468.00px" src="img\a6525764cd6a0f3f.png"></p>
+<p class="image-container"><img style="width: 468.00px" src="img\\a6525764cd6a0f3f.png"></p>
 <p>We will start with a job from a template. Please create a new job:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\fdddb9c7c4b2314e.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fdddb9c7c4b2314e.png"></p>
 <p>The following settings are recommended:</p>
 <ul>
 <li><em>Job name</em>: pk-ingest-pubsub</li>
@@ -81,7 +81,7 @@
 <li><em>Temporary location</em>: gs://pk-gcs/dataflow_temp</li>
 </ul>
 <p>All other parameters can stay default. This should be the input form:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\275401c488743ab2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\275401c488743ab2.png"></p>
 <p>Please note that the history will be created in 5-minute windows. </p>
 <aside class="warning"><p><strong>Warning:</strong> The costs for DataFlow are pretty high (see the job creation input form). Be careful to stop your jobs in the project phase!</p>
 </aside>
@@ -101,22 +101,22 @@
 <aside class="special"><p><strong>Remember</strong>: an automatically scaling and big data- and realtime-ready infrastructure is set up in the background.</p>
 </aside>
 <p>When the job is running, you should see a similar screen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\7545479787bac07e.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7545479787bac07e.png"></p>
 <h2 is-upgraded><strong>Pushing messages into the topic</strong></h2>
 <p>Please send some messages from either the UI or via a Jupyter Notebook to the topic.</p>
 <h2 is-upgraded><strong>Checking the Job Graph and Job Metrics</strong></h2>
 <p>You should see that your job processes messages in the &#34;Job Graph&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4d4a7e96ccb0d519.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4d4a7e96ccb0d519.png"></p>
 <p>Under &#34;Job Metrics&#34; you can check that one worker is required for this job and it should be running:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4869e53b8fcc3795.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4869e53b8fcc3795.png"></p>
 <p>In case of higher workloads, DataFlow will automatically scale up (if you allow this in the job configuration).</p>
 <h2 is-upgraded><strong>Checking cloud storage</strong></h2>
 <p>When the first 5-minute window is finished, you should see a folder in your GCS bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d5f1a9a3e42b5a57.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d5f1a9a3e42b5a57.png"></p>
 <p>It should contain a file with a timestamp:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cc2dc325ff589e38.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cc2dc325ff589e38.png"></p>
 <p>The file should contain the message data (one line per message):</p>
-<p class="image-container"><img style="width: 53.25px" src="img\9da91e68d402ebd3.png"></p>
+<p class="image-container"><img style="width: 53.25px" src="img\\9da91e68d402ebd3.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You checked the execution of a realtime job in DataFlow.</li>
@@ -129,9 +129,9 @@
       <google-codelab-step label="Cleaning Up" duration="1">
         <h2 is-upgraded><strong>Stopping the job </strong></h2>
 <p>In order to avoid unnecessary costs you should stop jobs in DataFlow when they are not in use:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a4f23150a020ac3c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a4f23150a020ac3c.png"></p>
 <p>You can select &#34;Cancel&#34; In the popup window to make sure that the job is immediately stopped:</p>
-<p class="image-container"><img style="width: 362.50px" src="img\df5df368ed7ebab6.png"></p>
+<p class="image-container"><img style="width: 362.50px" src="img\\df5df368ed7ebab6.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You finished this lab by shutting down the running job in DataFlow.</li>

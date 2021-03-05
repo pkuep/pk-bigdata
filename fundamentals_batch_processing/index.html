@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product in a scalable (big data) manner.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a694d14e88b3376b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a694d14e88b3376b.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Using data in the data lake for batch processing from a Jupyter Notebook.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -49,9 +49,9 @@
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
         <h2 is-upgraded><strong>Cluster Creation (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;)</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
-<p class="image-container"><img style="width: 179.84px" src="img\801ef6f5673102fc.png"></p>
+<p class="image-container"><img style="width: 179.84px" src="img\\801ef6f5673102fc.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
-<p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
+<p class="image-container"><img style="width: 532.50px" src="img\\89e4a9b7da699038.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
@@ -60,11 +60,11 @@
 <li>All other settings should also stay in the default</li>
 </ul>
 <p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\69e032f898dbdd5e.png"></p>
+<p class="image-container"><img style="width: 371.50px" src="img\\69e032f898dbdd5e.png"></p>
 <p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\15f2972d984d7c16.png"></p>
+<p class="image-container"><img style="width: 326.50px" src="img\\15f2972d984d7c16.png"></p>
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
+<p class="image-container"><img style="width: 359.55px" src="img\\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
 <aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
 </aside>
@@ -81,22 +81,22 @@
       <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
         <h2 is-upgraded><strong>Opening the Jupyter Notebook  (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;) </strong></h2>
 <p>Click onto the link to your cluster:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4806c31a55aa9dda.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\d46eaa11a0986aa0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d46eaa11a0986aa0.png"></p>
 <p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d4dfe42b266e0669.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5cfeb1d19296a5d7.png"></p>
 <p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cee2642280acf2fb.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
 </aside>
 <h2 is-upgraded>Connecting to the PySpark session and reading the data lake</h2>
 <p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
 <pre><code>sc</code></pre>
 <p>This should be the output: </p>
-<p class="image-container"><img style="width: 624.00px" src="img\19a9618f25082a01.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\19a9618f25082a01.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
 </aside>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
@@ -118,7 +118,7 @@ df_batch_result = spark.sql(&#34;SELECT product_name, mean(sales_value) FROM sal
 # show results (interactive mode)
 df_batch_result.toPandas()</code></pre>
 <p>Your notebook should now look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\60e8c58936e11340.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\60e8c58936e11340.png"></p>
 <aside class="special"><p><strong>Please note: </strong>This time we did not load the data into the memory of the Jupyter Notebook machine. All processing (although not visible) has been conducted by the worker nodes. If the data volume grows, we could just add more workers and the computation time will stay stable (parallel processing). This is horizontally scalable big data processing.</p>
 </aside>
 <h3 is-upgraded><strong>Creating the Batch View</strong></h3>
@@ -126,10 +126,10 @@ df_batch_result.toPandas()</code></pre>
 <pre><code># write results back to cloud GCS
 df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_per_product&#34;)</code></pre>
 <p>There is no output expected. However, in your bucket, you should see a folder &#34;average_sales_per_product&#34; containing multiple files which hold our batch processing results. We will later discuss why there is not only one results-file (do you already have an idea? Think about parallel processing.). This should be your bucket&#39;s content:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\11bb2729333812f0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\11bb2729333812f0.png"></p>
 <h3 is-upgraded><strong>Examining the result (downloading one file)</strong></h3>
 <p>When downloading and opening one file (with more than 0 B size!), you&#39;ll see that it contains a partial result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4317faad18ea5e4a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4317faad18ea5e4a.png"></p>
 <p>Thus, batch processing may require a further step to consolidate the results into a &#34;batch view&#34;, e.g. by generating a BigQuery table. We will skip this step, which is however simply possible.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -149,19 +149,19 @@ df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_p
 <aside class="warning"><p><strong>Important: </strong>We should shut down our running Spark connection in order to free cluster resources (other jobs can be blocked if your Spark session is running). Thus, please execute the following steps in order to make sure that there are no running Spark jobs in the background!</p>
 </aside>
 <p>Open the Jupyter overview site and click on &#34;Running&#34;. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\82b1ad93e917634a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\82b1ad93e917634a.png"></p>
 <p>Click on &#34;Shutdown&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\daaa8edee6eda971.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\daaa8edee6eda971.png"></p>
 <p>Now you can close all Jupyter Notebook browser tabs.</p>
 <aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
 </aside>
 <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
 <p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
-<p class="image-container"><img style="width: 541.50px" src="img\4f27ebbf007e1184.png"></p>
+<p class="image-container"><img style="width: 541.50px" src="img\\4f27ebbf007e1184.png"></p>
 <h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
 <p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
 <p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
-<p class="image-container"><img style="width: 233.65px" src="img\152714309fd72e67.png"></p>
+<p class="image-container"><img style="width: 233.65px" src="img\\152714309fd72e67.png"></p>
 <p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
 
 

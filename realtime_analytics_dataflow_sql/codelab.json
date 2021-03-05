@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-17T14:00:53Z",
+  "updated": "2020-10-02T15:14:44Z",
   "id": "realtime_analytics_dataflow_sql",
   "duration": 22,
   "title": "Lab \"Realtime Analytics: PubSub Data Aggregation with SQL and DataFlow\"",

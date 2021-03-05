@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>This is again our use case: a simple webshop for which we want to allow data scientists to access the data lake.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a694d14e88b3376b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a694d14e88b3376b.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Loading example source data into cloud storage and accessing these from a Jupyter Notebook..</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -47,18 +47,18 @@
       <google-codelab-step label="Bucket Creation and Sample Data-Upload" duration="3">
         <h2 is-upgraded><strong>Creation of a bucket</strong></h2>
 <p>Please go to the storage browser:</p>
-<p class="image-container"><img style="width: 261.50px" src="img\66a2157a94f83404.png"></p>
+<p class="image-container"><img style="width: 261.50px" src="img\\66a2157a94f83404.png"></p>
 <p>Create a bucket:</p>
-<p class="image-container"><img style="width: 509.50px" src="img\5e4ebde523b24e16.png"></p>
+<p class="image-container"><img style="width: 509.50px" src="img\\5e4ebde523b24e16.png"></p>
 <p>Call it for example &#34;your initals-gcs&#34;:</p>
-<p class="image-container"><img style="width: 386.69px" src="img\ba1532606feb1e92.png"></p>
+<p class="image-container"><img style="width: 386.69px" src="img\\ba1532606feb1e92.png"></p>
 <p>Leave all other settings as default. However, please click continue and examine the options (especially the &#34;default storage class&#34; has huge effects on storage costs).</p>
 <p>In the bucket details you can create a new folder called &#34;webshop_datalake&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\75b8e19cf13720ca.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\75b8e19cf13720ca.png"></p>
 <p>Upload the file &#34;webshop_history.csv&#34; from the folder &#34;Datasets&#34; in the course materials.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\193ed327918261bf.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\193ed327918261bf.png"></p>
 <p>Your bucket&#39;s details should now look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a95f21635db3ac8.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a95f21635db3ac8.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a bucket which we can use throughout this course.</li>
@@ -71,9 +71,9 @@
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
         <h2 is-upgraded><strong>Cluster Creation</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
-<p class="image-container"><img style="width: 179.84px" src="img\801ef6f5673102fc.png"></p>
+<p class="image-container"><img style="width: 179.84px" src="img\\801ef6f5673102fc.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
-<p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
+<p class="image-container"><img style="width: 532.50px" src="img\\89e4a9b7da699038.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
@@ -82,11 +82,11 @@
 <li>All other settings should also stay in the default</li>
 </ul>
 <p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\69e032f898dbdd5e.png"></p>
+<p class="image-container"><img style="width: 371.50px" src="img\\69e032f898dbdd5e.png"></p>
 <p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\15f2972d984d7c16.png"></p>
+<p class="image-container"><img style="width: 326.50px" src="img\\15f2972d984d7c16.png"></p>
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
+<p class="image-container"><img style="width: 359.55px" src="img\\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
 <aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
 </aside>
@@ -104,15 +104,15 @@
       <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
         <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
 <p>Click onto the link to your cluster:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4806c31a55aa9dda.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\d46eaa11a0986aa0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d46eaa11a0986aa0.png"></p>
 <p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Juypter&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d4dfe42b266e0669.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5cfeb1d19296a5d7.png"></p>
 <p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cee2642280acf2fb.png"></p>
 <h2 is-upgraded><strong>Updating pandas and installing a package for Bucket access</strong></h2>
 <aside class="warning"><p><strong>Please note: </strong>Unfortunately, GCP does not ship an up-to-date version of Python/pandas etc. This doesn&#39;t matter for our purposes in the big data environment, however we need a more current version of pandas to be able to access cloud storage. Thus, we&#39;ll first upgrade / install two packages in our notebook.</p>
 </aside>
@@ -121,7 +121,7 @@
 !pip install gcsfs</code></pre>
 <aside class="warning"><p><strong>Important: </strong>Your Jupyter Notebook instance needs to be restarted once after the installation procedure is finished. Please click on &#34;Kernel&#34; and &#34;Restart&#34; (see screenshot below). This will take ~10 seconds. Afterwards, you can create a new cell and continue with this lab (see next step &#34;Accessing the bucket and csv-file&#34;)..</p>
 </aside>
-<p class="image-container"><img style="width: 624.00px" src="img\acf0f6de02d4c9e.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\acf0f6de02d4c9e.png"></p>
 <h2 is-upgraded><strong>Accessing the bucket and csv-file</strong></h2>
 <p>Afterwards, you should be able to access the data lake now in another cell (change my bucket &#34;pk-gcs&#34; to your bucket&#39;s name). The &#34;gs://&#34; prefix tells pandas to access a bucket in GCP cloud storage (you&#39;ll see this access pattern often throughout this course!).</p>
 <pre><code>import pandas as pd
@@ -129,7 +129,7 @@ df = pd.read_csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;)
 df.head()</code></pre>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
 <p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Datalake Access&#34;). After executing the cells, your notebooks should look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\274082896ec59f4a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\274082896ec59f4a.png"></p>
 <h2 is-upgraded><strong>Sample Aggregation</strong></h2>
 <p>A data scientist might now be interested in the mean value of sales per product. This would be the classical way in pandas:</p>
 <pre><code>df.groupby(&#34;product_name&#34;).sales_value.mean()</code></pre>
@@ -151,17 +151,17 @@ df.head()</code></pre>
 <p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
 <h2 is-upgraded><strong>Saving and closing the notebooks</strong></h2>
 <p>Save your Juypter Notebook:</p>
-<p class="image-container"><img style="width: 368.50px" src="img\8f57859ccfec4e38.png"></p>
+<p class="image-container"><img style="width: 368.50px" src="img\\8f57859ccfec4e38.png"></p>
 <p>Close all Jupyter Notebook browser tabs.</p>
 <aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
 </aside>
 <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
 <p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
-<p class="image-container"><img style="width: 541.50px" src="img\4f27ebbf007e1184.png"></p>
+<p class="image-container"><img style="width: 541.50px" src="img\\4f27ebbf007e1184.png"></p>
 <h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
 <p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
 <p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
-<p class="image-container"><img style="width: 233.65px" src="img\152714309fd72e67.png"></p>
+<p class="image-container"><img style="width: 233.65px" src="img\\152714309fd72e67.png"></p>
 <p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
 
 

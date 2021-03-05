@@ -31,7 +31,7 @@
         <aside class="special"><p><strong>Please note:</strong> The use case and DataProc setup steps are identical to the lab &#34;Batch Ingestion - Ingest RDBMS Source with Sqoop&#34;. If your cluster is still running you can skip the step &#34;Setting up the Hadoop DataProc Cluster&#34;.</p>
 </aside>
 <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\69e9256cfc3989fa.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\69e9256cfc3989fa.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Ingesting structured relational data into the data lake for batch processing via a (horizontally) scalable sqoop (MapReduce) job using the popular big data formats Avro and Parquet.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -52,21 +52,21 @@
       <google-codelab-step label="Setting up the Hadoop DataProc Cluster" duration="4">
         <h2 is-upgraded><strong>Enabling the SQL cloud admin API (for the cloud SQL proxy)</strong></h2>
 <p>For this use case, we need to enable a cloud API that allows the simple connection of different services to cloud SQL databases in GCP. Please enter &#34;cloud sql admin api&#34; in the search bar:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9e9f6b8a57ba7c58.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9e9f6b8a57ba7c58.png"></p>
 <p>Please enable this API! We will use it to establish connections from our DataProc cluster&#39;s worker nodes (running the sqoop MapReduce job) to the cloud SQL database (webshop).</p>
 <h2 is-upgraded><strong>Retrieving the cloud SQL connection name</strong></h2>
 <p>Please navigate to your cloud SQL instance which needs to be running and copy the connection name into the clipboard (overview page):</p>
-<p class="image-container"><img style="width: 372.46px" src="img\e6b989b08bab489b.png"></p>
+<p class="image-container"><img style="width: 372.46px" src="img\\e6b989b08bab489b.png"></p>
 <p>In my case it is:</p>
 <pre><code>pk-bigdata:us-central1:pk-sql</code></pre>
 <h2 is-upgraded><strong>Creating the DataProc cluster with initialization actions and further settings</strong></h2>
 <h3 is-upgraded><strong>Opening DataProc</strong></h3>
 <p>Please navigate to the DataProc service in the cloud console.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\741474398d09d058.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\741474398d09d058.png"></p>
 <p>This time we will NOT (!) create the cluster via the web interface but via the cloud shell since we need some extra options that are not available in the web UI. </p>
 <h3 is-upgraded><strong>Opening the cloud shell and creating the cluster</strong></h3>
 <p>Open a cloud shell:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\f03b0b841995a748.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f03b0b841995a748.png"></p>
 <p>Make sure that your project is set correctly. If not, execute the following command with your initials:</p>
 <pre><code>gcloud config set project pk-bigdata</code></pre>
 <p>We will now create a cluster from the command line in order to:</p>
@@ -82,9 +82,9 @@
 <p>Cluster creation will take 2-3 minutes.</p>
 <h3 is-upgraded><strong>Connecting to the Hadoop master node</strong></h3>
 <p>When cluster creation is finished, you can select the cluster in the web UI:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a80f5f7db4d71775.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a80f5f7db4d71775.png"></p>
 <p>Open a connection to the master node which is able to start sqoop jobs:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5f8b49055e3e4dfb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5f8b49055e3e4dfb.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the sqoop component for batch ingestion of relational data into our data lake.</li>
@@ -110,7 +110,7 @@
 <p>Please open the SSH connection to the master node and execute the following command in order to start Hive&#39;s CLI beeline and connect to our cluster&#39;s Hive metastore (running on the master node &#34;localhost&#34;):</p>
 <pre><code>beeline -u &#34;jdbc:hive2://localhost:10000&#34;</code></pre>
 <p>This should be the output:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a9349503da7dd109.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a9349503da7dd109.png"></p>
 <h3 is-upgraded><strong>Creating a Parquet-based Hive table</strong></h3>
 <p>Using Hive, we can interact with the (structured data in the) data lake via standard SQL. Hive will create respective files in the data lake (just like the sqoop command above would have). Executing the following command will create a folder in our data lake on cloud storage (under &#34;hive-warehouse&#34; called sales and will add a table to the Hive metastore. All data we will ingest will be stored as Parquet files.</p>
 <pre><code>create table sales (
@@ -123,7 +123,7 @@ product_group int,
 sales_value float
 ) STORED AS PARQUET;</code></pre>
 <p>The output should be &#34;No rows affected&#34; and when checking your cloud storage bucket&#39;s folder &#34;hive-warehouse&#34; you should see a sales folder:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\fc9bfe8d2e720fc7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fc9bfe8d2e720fc7.png"></p>
 <h3 is-upgraded><strong>Ingesting data (manually) into the Hive warehouse</strong></h3>
 <p>After having created the table, we can ingest data - in this workaround manually. Let&#39;s use the same data as in the first lab (i.e. the same as in the cloud SQL database):</p>
 <pre><code>insert into sales values
@@ -160,9 +160,9 @@ sales_value float
 <p>Ingestion will take approximately 30s (remember, Hive is based on MapReduce). </p>
 <h2 is-upgraded><strong>Checking the results</strong></h2>
 <p>When selecting all data from the sales table, you should see the following output in beeline:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\2fe8949e4fa6ddbc.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2fe8949e4fa6ddbc.png"></p>
 <p>Checking cloud storage should also show (at least one) file:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\bfa6c2177343bc97.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bfa6c2177343bc97.png"></p>
 <p>→ Hive acts as a useful SQL-based interface to our data lake and allows the ingestion of big data (with sqoop in a scaling manner) including metadata in the Hive metastore.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -181,7 +181,7 @@ sales_value float
 <pre><code>df = spark.sql(&#34;select * from sales&#34;)
 df.head()</code></pre>
 <p>This should be the output:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\b8691a94b7292d92.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b8691a94b7292d92.png"></p>
 <p>We will learn how to use PySpark in detail later. Please close the PySpark shell using exit().</p>
 <aside class="warning"><p><strong>Please note:</strong> Since we use our cloud SQL database as Hive metastore and cloud storage as the warehouse directory (instead of HDFS), the data and metadata are persistent and setting up a DataProc cluster exactly as we did (especially with the Hive parameters) will allow accessing the data lake from newly set up clusters. </p>
 </aside>
@@ -191,9 +191,9 @@ df.head()</code></pre>
     
       <google-codelab-step label="Cleaning Up" duration="2">
         <p>Please make sure to delete your cluster:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\44fad481d4497844.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\44fad481d4497844.png"></p>
 <p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\21abda122deede7c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\21abda122deede7c.png"></p>
 <p><strong>Preparation: please set up the cloud data fusion instance now (see next lab </strong><a href="https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion" target="_blank"><strong>https://pkuep.github.io/pk-bigdata/batch_ingestion_datafusion</strong></a><strong>)!</strong></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">

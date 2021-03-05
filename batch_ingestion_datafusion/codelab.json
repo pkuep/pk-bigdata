@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-14T12:04:07Z",
+  "updated": "2021-03-05T20:15:09Z",
   "id": "batch_ingestion_datafusion",
   "duration": 33,
   "title": "Lab \"Batch Ingestion: Cloud Data Fusion\"",

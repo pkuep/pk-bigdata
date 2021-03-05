@@ -48,9 +48,9 @@
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
         <h2 is-upgraded><strong>Cluster Creation</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
-<p class="image-container"><img style="width: 179.84px" src="img\801ef6f5673102fc.png"></p>
+<p class="image-container"><img style="width: 179.84px" src="img\\801ef6f5673102fc.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
-<p class="image-container"><img style="width: 532.50px" src="img\89e4a9b7da699038.png"></p>
+<p class="image-container"><img style="width: 532.50px" src="img\\89e4a9b7da699038.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
@@ -59,11 +59,11 @@
 <li>All other settings should also stay in the default</li>
 </ul>
 <p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\69e032f898dbdd5e.png"></p>
+<p class="image-container"><img style="width: 371.50px" src="img\\69e032f898dbdd5e.png"></p>
 <p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\15f2972d984d7c16.png"></p>
+<p class="image-container"><img style="width: 326.50px" src="img\\15f2972d984d7c16.png"></p>
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\48fdafacf4871f7f.png"> </p>
+<p class="image-container"><img style="width: 359.55px" src="img\\48fdafacf4871f7f.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
 <p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
@@ -79,27 +79,27 @@
       <google-codelab-step label="Accessing the Jupyter Notebook and Connecting to Spark" duration="8">
         <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
 <p>Click onto the link to your cluster:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4806c31a55aa9dda.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4806c31a55aa9dda.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\d46eaa11a0986aa0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d46eaa11a0986aa0.png"></p>
 <p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d4dfe42b266e0669.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d4dfe42b266e0669.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5cfeb1d19296a5d7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5cfeb1d19296a5d7.png"></p>
 <p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cee2642280acf2fb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cee2642280acf2fb.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
 </aside>
 <h2 is-upgraded><strong>Connecting to the PySpark session and reading the data lake</strong></h2>
 <p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
 <pre><code>sc</code></pre>
 <p>This should be the output: </p>
-<p class="image-container"><img style="width: 624.00px" src="img\19a9618f25082a01.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\19a9618f25082a01.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
 </aside>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
 <p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;BigData - Batch Processing  - PySpark Wordcount&#34;).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\2cb5a64093488308.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2cb5a64093488308.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You used a Jupyter Notebook as an interactive big data tool for batch processing.</li>
@@ -119,7 +119,7 @@ text = sc.textFile(&#34;gs://pk-gcs/lorem_ipsum.txt&#34;)
 text</code></pre>
 <p>For demo purposes, you can show the file contents in the notebook by &#34;collecting&#34; the RDD, i.e. transferring it to the programming environment (NEVER do this with big data).</p>
 <pre><code>text.collect() # only for demo purposes - remove for job submission</code></pre>
-<p class="image-container"><img style="width: 624.00px" src="img\131704b99194546.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\131704b99194546.png"></p>
 <h2 is-upgraded><strong>Applying the Wordcount logic on RDDs</strong></h2>
 <h3 is-upgraded><strong>Word split</strong></h3>
 <p>The first step in applying wordcount is to split based on the blank spaces between words:</p>
@@ -132,10 +132,10 @@ words.collect()  # only for demo purposes - remove for job submission</code></pr
 wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a,b:a+b)
 wordCounts.collect()</code></pre>
 <p>This should be the result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6616ba13dc9661ac.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6616ba13dc9661ac.png"></p>
 <h3 is-upgraded><strong>Job deployment (outlook)</strong></h3>
 <p>The logic we implemented could be transferred to a &#34;real&#34; PySpark job and scheduled regularly:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6fec626f25a16d9a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6fec626f25a16d9a.png"></p>
 <p>We won&#39;t execute this step here.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -151,7 +151,7 @@ wordCounts.collect()</code></pre>
       <google-codelab-step label="Shutting Down the Cluster" duration="1">
         <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
 <p>Go to the cluster details page and hit &#34;Delete&#34; (in the live lecture, please leave it running):</p>
-<p class="image-container"><img style="width: 541.50px" src="img\4f27ebbf007e1184.png"></p>
+<p class="image-container"><img style="width: 541.50px" src="img\\4f27ebbf007e1184.png"></p>
 
 
       </google-codelab-step>

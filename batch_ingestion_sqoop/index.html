@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract).</p>
-<p class="image-container"><img style="width: 624.00px" src="img\fe41063ebfd85f68.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fe41063ebfd85f68.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Ingesting structured relational data into the data lake for batch processing via a (horizontally) scalable sqoop (MapReduce) job.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -49,21 +49,21 @@
       <google-codelab-step label="Setting up the Hadoop DataProc Cluster" duration="7">
         <h2 is-upgraded><strong>Enabling the SQL cloud admin API (for the cloud SQL proxy)</strong></h2>
 <p>For this use case, we need to enable a cloud API that allows the simple connection of different services to cloud SQL databases in GCP. Please enter &#34;cloud sql admin api&#34; in the search bar:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9e9f6b8a57ba7c58.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9e9f6b8a57ba7c58.png"></p>
 <p>Please enable this API! We will use it to establish connections from our DataProc cluster&#39;s worker nodes (running the sqoop MapReduce job) to the cloud SQL database (webshop).</p>
 <h2 is-upgraded><strong>Retrieving the cloud SQL connection name</strong></h2>
 <p>Please navigate to your cloud SQL instance which needs to be running and copy the connection name into the clipboard (overview page):</p>
-<p class="image-container"><img style="width: 372.46px" src="img\e6b989b08bab489b.png"></p>
+<p class="image-container"><img style="width: 372.46px" src="img\\e6b989b08bab489b.png"></p>
 <p>In my case it is:</p>
 <pre><code>pk-bigdata:us-central1:pk-sql</code></pre>
 <h2 is-upgraded><strong>Creating the DataProc cluster with initialization actions and further settings</strong></h2>
 <h3 is-upgraded><strong>Opening DataProc</strong></h3>
 <p>Please navigate to the DataProc service in the cloud console.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\741474398d09d058.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\741474398d09d058.png"></p>
 <p>This time we will NOT (!) create the cluster via the web interface but via the cloud shell since we need some extra options that are not available in the web UI. </p>
 <h3 is-upgraded><strong>Opening the cloud shell and creating the cluster</strong></h3>
 <p>Open a cloud shell:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\f03b0b841995a748.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f03b0b841995a748.png"></p>
 <p>Make sure that your project is set correctly. If not, execute the following command with your initials:</p>
 <pre><code>gcloud config set project pk-bigdata</code></pre>
 <p>We will now create a cluster from the command line in order to:</p>
@@ -82,9 +82,9 @@
 <p>Cluster creation will take 2-3 minutes.</p>
 <h3 is-upgraded><strong>Connecting to the Hadoop master node</strong></h3>
 <p>When cluster creation is finished, you can select the cluster in the web UI:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a80f5f7db4d71775.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a80f5f7db4d71775.png"></p>
 <p>Open a connection to the master node which is able to start sqoop jobs:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5f8b49055e3e4dfb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5f8b49055e3e4dfb.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the sqoop component for batch ingestion of relational data into our data lake.</li>
@@ -98,12 +98,12 @@
       <google-codelab-step label="Creating the Sqoop Ingestion Job" duration="4">
         <h2 is-upgraded><strong>Executing the job (with HDFS import)</strong></h2>
 <p>Please open the SSH connection to the master node:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\3a68a55eb7b315d0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3a68a55eb7b315d0.png"></p>
 <p>The following command starts the sqoop job (the &#34;--m 1&#34; option is necessary since there is no primary key defined on our table).</p>
 <pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1</code></pre>
 <p>You now should see a lot of output since a MapReduce (horizontally scaling!) job is running and retrieving the data from the relational database.</p>
 <p>When finished, the output should look like this:</p>
-<h2 is-upgraded><img style="width: 624.00px" src="img\e778167886928a8d.png"></h2>
+<h2 is-upgraded><img style="width: 624.00px" src="img\\e778167886928a8d.png"></h2>
 <p>We ingested 30 rows into our data lake.</p>
 <h2 is-upgraded><strong>Checking the results</strong></h2>
 <p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
@@ -113,16 +113,16 @@
 <p>With this command you&#39;ll be able to take a look at the data being extracted from the RDBMS:</p>
 <pre><code>hadoop fs -cat sales/part-m-00000</code></pre>
 <p>This should be the output:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\6ac27ae8ae569662.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6ac27ae8ae569662.png"></p>
 <h2 is-upgraded><strong>Executing the job (with GCS import)</strong></h2>
 <p>In order to import the relational data into our GCS-based data lake, we need to set the target directory explicitly to avoid HDFS. This command will ingest the input from our database into a GCS bucket (pk-gcs) and therein a folder &#34;sales_from_sqoop&#34; (make sure to change your initials if applicable):</p>
 <pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir gs://pk-gcs/sales_from_sqoop</code></pre>
 <p>This should yield the same shell output, however your GCS bucket should now contain folder &#34;sales_from_sqoop&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\2694e508e2b7fd1d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2694e508e2b7fd1d.png"></p>
 <p>The folder contains the same files as the HDFS folder sqoop created in our first job run.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\e0c37d190f1573a9.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e0c37d190f1573a9.png"></p>
 <p>We could set an autoscaling policy to let our DataProc cluster scale-up if necessary:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\53043d92467f0a55.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\53043d92467f0a55.png"></p>
 <p>This is, however, not part of our lecture.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -135,9 +135,9 @@
     
       <google-codelab-step label="Cleaning Up" duration="2">
         <p>Please make sure to delete your cluster (in the live-lecture, please leave your cluster running):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\44fad481d4497844.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\44fad481d4497844.png"></p>
 <p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\21abda122deede7c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\21abda122deede7c.png"></p>
 <p>You may also want to clean up your GCS bucket. However, especially in the live lecture please leave the files in place.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">

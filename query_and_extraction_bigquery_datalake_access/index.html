@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to perform an exemplary ad-hoc query which requires access to the data lake using BigQuery.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\66714eabba2c8076.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\66714eabba2c8076.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Setting up a &#34;federated&#34; connection between BigQuery and the Data Lake and using this connection for ad-hoc queries..</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -49,11 +49,11 @@
       <google-codelab-step label="Setting up an External Table Pointing to Cloud Storage" duration="4">
         <h2 is-upgraded><strong>Creating the table</strong></h2>
 <p>Please open &#34;BigQuery&#34; in the cloud console. From previous labs, you should have the &#34;example_dwh&#34; dataset available:</p>
-<p class="image-container"><img style="width: 263.11px" src="img\a3da82776ea1ec08.png"></p>
+<p class="image-container"><img style="width: 263.11px" src="img\\a3da82776ea1ec08.png"></p>
 <p>Now you can create a new table in that dataset:</p>
-<p class="image-container"><img style="width: 314.71px" src="img\507983e4dbf692fb.png"></p>
+<p class="image-container"><img style="width: 314.71px" src="img\\507983e4dbf692fb.png"></p>
 <p>In order to have the schema immediately available, we want to access our sales data in the data lake which have been stored as Parquet files (see lab &#34;RDBMS to GCS (Avro/Parquet) with sqoop&#34;). Please browse to the folder &#34;sales_from_sqoop_parquet&#34; and select the Parquet-file within that folder. The file format should automatically switch to &#34;Parquet&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\1f306d2c261e99cb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1f306d2c261e99cb.png"></p>
 <p>Set the table type to &#34;External table&#34;. This avoids BigQuery copying the data from the Parquet file into BigQueries internal representation. There is rather a &#34;live&#34; connection, i.e. when queries are executed in the BigQuery UI, they are transferred to the original environment (i.e. cloud storage and Parquet). </p>
 <aside class="warning"><p><strong>Please note:</strong> External connections are slower regarding query performance. You, however, avoid duplication of data (storage in the data lake and BigQuery table).</p>
 </aside>
@@ -70,7 +70,7 @@
       <google-codelab-step label="Querying the Sales Table" duration="4">
         <h2 is-upgraded><strong>Creating the Query</strong></h2>
 <p>Select the newly created table and click on &#34;Query table&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\a475b49d264a9aa6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a475b49d264a9aa6.png"></p>
 <p>Try to formulate the query &#34;mean sales_value per region&#34; on your own (solution on the next page).</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -87,7 +87,7 @@
 FROM `pk-bigdata.example_dwh.sales_in_datalake` 
 GROUP BY region;</code></pre>
 <p>And this should be the result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\972bcc9b1679e426.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\972bcc9b1679e426.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You now know how to query structured data in your data lake via BigQuery. </li>
@@ -99,13 +99,13 @@ GROUP BY region;</code></pre>
       <google-codelab-step label="Saving Queries and Creating a View" duration="1">
         <h2 is-upgraded><strong>Saving queries</strong></h2>
 <p>In case of repeating queries, you can save these in BigQuery:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\c07ab5bb8184f0a2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c07ab5bb8184f0a2.png"></p>
 <p>Saving queries can furthermore be shared with other data scientists within the project. You&#39;ll find your saved queries under &#34;Saved queries&#34;.</p>
 <h2 is-upgraded><strong>View generation</strong></h2>
 <p>If you want to have the statistics (&#34;average sales per region&#34;) available for later reuse or inclusion into BI-tools (Data Studio, PowerBI, ...) without the need to calculate them again, you can store your query results as a view. Click on &#34;Save view&#34; and call the view, e.g., sales_statistics_region:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\213667ca9ba822ed.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\213667ca9ba822ed.png"></p>
 <p>The view should be shown in your dataset.  </p>
-<p class="image-container"><img style="width: 395.00px" src="img\730236bbb6d03562.png"></p>
+<p class="image-container"><img style="width: 395.00px" src="img\\730236bbb6d03562.png"></p>
 <aside class="special"><p><strong>Please note: </strong>A view is not static but re-calculated when required.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
