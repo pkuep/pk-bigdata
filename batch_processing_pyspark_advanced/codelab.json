@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-14T15:57:03Z",
+  "updated": "2021-03-06T07:43:29Z",
   "id": "batch_processing_pyspark_advanced",
   "duration": 28,
   "title": "Lab \"Batch Processing: PySpark SQL, DataFrames, and Machine Learning\"",
