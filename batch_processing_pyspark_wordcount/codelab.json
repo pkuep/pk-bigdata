@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2021-03-06T07:59:41Z",
+  "updated": "2021-03-06T08:00:15Z",
   "id": "batch_processing_pyspark_wordcount",
   "duration": 22,
   "title": "Lab \"Batch Processing: PySpark Wordcount\"",

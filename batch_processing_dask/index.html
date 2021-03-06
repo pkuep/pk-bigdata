@@ -227,6 +227,12 @@ y = ddf[&#39;sales_value&#39;]
 reg.fit(X, y)</code></pre>
 <p>After executing the model training, you can check your worker&#39;s progress (your output may vary):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\e5ec175f1782eb2a.png"></p>
+<p>Afterwards, you can use the model for predictions:</p>
+<pre><code>import pandas as pd
+pred_df = pd.DataFrame([[10],[20],[30],[40],[50],[60]])
+pred_ddf = dd.from_pandas(pred_df, npartitions=1)
+reg.predict(pred_ddf).compute()
+</code></pre>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You successfully performed Python-based big data analytics with a dask cluster. Congratulations!</li>
