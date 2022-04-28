@@ -46,9 +46,9 @@
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
         <h2 is-upgraded><strong>Cluster Creation (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;)</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
-<p class="image-container"><img style="width: 179.84px" src="img\\801ef6f5673102fc.png"></p>
+<p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
-<p class="image-container"><img style="width: 532.50px" src="img\\89e4a9b7da699038.png"></p>
+<p class="image-container"><img style="width: 532.50px" src="img\\ae1bce8437c10990.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
@@ -57,11 +57,11 @@
 <li>All other settings should also stay in the default</li>
 </ul>
 <p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\\69e032f898dbdd5e.png"></p>
+<p class="image-container"><img style="width: 371.50px" src="img\\7a6fbcabe95b3274.png"></p>
 <p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\\15f2972d984d7c16.png"></p>
+<p class="image-container"><img style="width: 326.50px" src="img\\a5729b94c3c8ef5b.png"></p>
 <p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\\48fdafacf4871f7f.png"> </p>
+<p class="image-container"><img style="width: 359.55px" src="img\\b1d43fd4f5049925.png"> </p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
@@ -76,29 +76,29 @@
       <google-codelab-step label="Accessing HDFS from the shell" duration="8">
         <h2 is-upgraded><strong>Connecting to the cluster&#39;s master node </strong></h2>
 <p>HDFS is running in our cluster. Unlike cloud storage, this service is tightly bound to the DataProc instance and especially &#34;gone&#34; when we delete the cluster. Thus, we&#39;ll only use HDFS for one-time demonstration purposes. Our &#34;long-term&#34; data lake for example will be based on cloud storage, since this can be accessed by all services in GCP.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4806c31a55aa9dda.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fecef524aa90829.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d46eaa11a0986aa0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\221f964cc442eb76.png"></p>
 <aside class="special"><p><strong>Important</strong>: We&#39;ll use the master node as an intermediary to access HDFS and upload a text file to it. The reason for this is that GCP copes for security a lot and it is not simple to access our DataProc cluster and its HDFS from outside the GCP project. The master node is of course able to access HDFS, since it is managed by this node (the NameNode service is running on the master node). Thus, our workaround is that we connect to the master node via SSH (i.e. get a terminal shell on the master node) and interact with the HDFS from there.</p>
 </aside>
 <p>Click on &#34;SSH&#34; next to the master node. A window should pop up and after a few seconds, you should be connected to the Hadoop master node machine&#39;s shell.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\37c10e026705d6af.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9874f4e3fd504183.png"></p>
 <aside class="warning"><p><strong>Important: </strong>We&#39;ll use the master node&#39;s shell now only as an &#34;access point&#34; to the cluster&#39;s HDFS. This means that especially the files we will be uploading to HDFS are not stored on the master node (except for intermediate upload purposes), but in a distributed manner in our Hadoop cluster.</p>
 </aside>
 <h2 is-upgraded>Listing the top-most directory in our cluster HDFS</h2>
 <p>All commands to interact with the cluster are started with &#34;hadoop fs&#34;. You can list the top-most directory (&#34;/&#34;) of our HDFS with this command, showing three directories (hadoop, tmp, and user)</p>
 <pre><code>hadoop fs -ls /</code></pre>
 <p>This should be the output: </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f4689ba6a59778d6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9133cf34a8fdfe8d.png"></p>
 <h2 is-upgraded>Uploading a text file</h2>
 <p>Our goal is to upload the text file &#34;lorem_ipsum.txt&#34; located in the datasets folder (in the course materials) to HDFS.</p>
 <aside class="warning"><p><strong>Please note: </strong>Usually, one would ingest source data directly from source tables into HDFS (via an ETL tool like sqoop, Data Fusion, etc. - we&#39;ll discuss this later). This proceeding via the master node is just for demo purposes.</p>
 </aside>
 <h3 is-upgraded><strong>Upload a text file to the master virtual machine</strong></h3>
 <p>Let&#39;s start our workaround and first upload the file to the master node. Go to the pop up window containing the shell, click on the small gear icon and select &#34;Upload file&#34;.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\91934f7f39f03634.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8ba18e187234bcf8.png"></p>
 <p>Select lorem_ipsum.txt on your local machine which you downloaded from the course materials folder. When finished, you can enter &#34;ls&#34; in the shell and check if the file shows up:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\e378c5443676fbde.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ef18c883309c966d.png"></p>
 <h3 is-upgraded><strong>Load the text file from the master into HDFS</strong></h3>
 <p>Next, let&#39;s upload the file to the HDFS temporary directory &#34;/tmp&#34;:</p>
 <pre><code>hadoop fs -put lorem_ipsum.txt /tmp</code></pre>
@@ -108,7 +108,7 @@
 <p>You can take a look at the last lines of the file with this command (it is a normal text file with some made-up text):</p>
 <pre><code>hadoop fs -cat /tmp/lorem_ipsum.txt</code></pre>
 <p>Your shell should look like this: </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\251bda9eb3ec0526.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bb168b3527f51906.png"></p>
 <p>You can close the SSH window now.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -124,14 +124,14 @@
       <google-codelab-step label="Browsing the Filesystem via the NameNode WebUI" duration="2">
         <h2 is-upgraded><strong>Connecting to the NameNode&#39;s WebUI</strong></h2>
 <p>Navigate in the GCP cloud console to the DataProc cluster&#39;s tab &#34;Web interfaces&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9a477d1e6510d9e6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6c819c0d64c8f02d.png"></p>
 <p>Select HDFS NameNode. The WebUI of the NameNode is opened (which is running on the master node of our cluster):</p>
 <p>There, you can show for example how many active DataNodes participate in our HDFS cluster:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f980e092d4acc41a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c7e1678250b1e4f0.png"></p>
 <p>Under Utilities you&#39;ll find a (rudimentary) browsing tool for the HDFS filesystem:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\b1367a4cf6fec328.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5d9bf882172d8029.png"></p>
 <p>You should see the uploaded file &#34;lorem_ipsum.txt&#34; there also:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\2dc079a25abef2ef.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6792fd125bbc18e8.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>The WebUI has an upload button, however this function does not work. Therefore, we used the SSH workaround above. </p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>

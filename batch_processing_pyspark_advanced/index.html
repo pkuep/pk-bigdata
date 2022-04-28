@@ -58,7 +58,7 @@
       <google-codelab-step label="Accessing the Jupyter Notebook and Connecting to Spark" duration="1">
         <h2 is-upgraded><strong>See previous Lab</strong></h2>
 <p>Please create a Jupyter Notebook (PySpark) on GCS and call it &#34;BigData - Batch Processing - PySpark SQL, DataFrames, and ML&#34;.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\cee2642280acf2fb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b2d133db982c2d76.png"></p>
 <h2 is-upgraded><strong>Connecting to the PySpark session and reading the data lake</strong></h2>
 <p>Check if you are connected to the Spark master via the &#34;spark context&#34; variable sc:</p>
 <pre><code>sc</code></pre>
@@ -75,12 +75,12 @@
       <google-codelab-step label="PySpark Programming with SQL" duration="8">
         <h2 is-upgraded><strong>Connecting to a csv file in GCS (creating the DataFrame)</strong></h2>
 <p>The variable &#34;sc&#34; allows you to interact with the Spark cluster in an &#34;RDD-manner&#34;. There is another variable &#34;spark&#34; that also allows interaction with the cluster (the so called SparkSession) &#34;spark&#34; in the &#34;DataFrame-manner&#34;:</p>
-<p class="image-container"><img style="width: 98.43px" src="img\\a2db26bf1b6f0f0c.png"></p>
+<p class="image-container"><img style="width: 98.43px" src="img\\b93e8fae8e15a26d.png"></p>
 <p>This variable can be utilized to use the higher-level functions of Spark, especially Spark SQL and DataFrames. Let&#39;s create an entry point to our data lake for our Spark application:</p>
 <pre><code># provide spark the link to the webshop history (datalake)
 df = spark.read.csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;, inferSchema=True, header=True)  # network communication necessary</code></pre>
 <p>We use the DataFrame environment here which you can check by executing a cell with just &#34;df&#34; in it:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4d9cae634d9da59e.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\583741fb30e7410e.png"></p>
 <h2 is-upgraded><strong>Registering a temporary table</strong></h2>
 <p>In order to be able to use SQL, we need to register a temporary table (if you access a table in the Hive metastore, this is not necessary; see the respective labs on Hive, sqoop, and data ingestion)</p>
 <pre><code># create a temporary view on the data that we can simply query by SQL
@@ -91,7 +91,7 @@ df.createOrReplaceTempView(&#34;sales&#34;)</code></pre>
 # we use &#34;toPandas&#34; for a better visualization (instead of collect)
 spark.sql(&#34;SELECT product_name, mean(sales_value) FROM sales GROUP BY product_name&#34;).toPandas()</code></pre>
 <p>This should be the result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\99422c5a753f99f5.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\660e510be5435b16.png"></p>
 <h2 is-upgraded><strong>Your Analytical Task</strong></h2>
 <p>Please write and execute a SQL-statement that allows to compare the average sales value between the age_groups ‘18-29&#39; and ‘30-49&#39; for the products &#34;red wine&#34; and &#34;pils&#34; (order the output by product_name).</p>
 <h2 is-upgraded><strong>Results</strong></h2>
@@ -133,7 +133,7 @@ va = VectorAssembler(inputCols=[&#39;age&#39;,&#39;product&#39;],outputCol=&#39;
 df_ml = va.transform(df).select(&#39;features&#39;,&#39;sales_value&#39;)
 df_ml.toPandas().head()</code></pre>
 <p>This should be the output:</p>
-<p class="image-container"><img style="width: 421.36px" src="img\\9e45b23f2035a128.png"></p>
+<p class="image-container"><img style="width: 421.36px" src="img\\17ed81d10f8d785d.png"></p>
 <h3 is-upgraded><strong>Train-test-split</strong></h3>
 <p>The train-test-split can be done as follows:</p>
 <pre><code># split the data into training and test sets (20% held out for testing)
@@ -201,7 +201,7 @@ print(&#34;Root Mean Squared Error (RMSE) on test data (with weekday column) = %
       <google-codelab-step label="Shutting Down the Cluster" duration="1">
         <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
 <p>Go to the cluster details page and hit &#34;Delete&#34; (in the live lecture, please leave it running):</p>
-<p class="image-container"><img style="width: 541.50px" src="img\\4f27ebbf007e1184.png"></p>
+<p class="image-container"><img style="width: 541.50px" src="img\\677e2f89b3bae352.png"></p>
 
 
       </google-codelab-step>

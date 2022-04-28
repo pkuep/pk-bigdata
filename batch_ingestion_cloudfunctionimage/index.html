@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to store the regularly updated image of a webcam in our data lake (based on GCS) in order to, e.g., let a machine learning algorithm identify whether it&#39;s cloudy or not. We want to achieve this task in a scalable manner, i.e. be able to add potentially thousands of webcams and still be able to guarantee performance. See <a href="https://www.livebeaches.com/webcams/san-francisco-observatory-webcam/" target="_blank">https://www.livebeaches.com/webcams/san-francisco-observatory-webcam/</a> and check the webcam.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\66c2ede63e20b30a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7e6940fa7de82839.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Ingesting unstructured image data into the data lake for batch processing via a (vertically) scalable cloud function.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -47,19 +47,19 @@
       <google-codelab-step label="Downloading images in Python (example in a notebook)" duration="5">
         <h2 is-upgraded><strong>Creating a cloud-based Jupyter Notebook environment</strong></h2>
 <p>If you don&#39;t have Anaconda and Jupyter Notebook installed        locally on your computer, please create a notebook in GCP&#39;s AI Platform:</p>
-<p class="image-container"><img style="width: 297.50px" src="img\\afdfd83a1dd6536e.png"></p>
+<p class="image-container"><img style="width: 297.50px" src="img\\fc8e2eb73a38e689.png"></p>
 <p>Create a new instance:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\df0d653650992f11.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6040461327321012.png"></p>
 <p>Choose &#34;Python 2 and 3&#34; and choose a name for your notebook instance:</p>
-<p class="image-container"><img style="width: 351.45px" src="img\\de7d3f7c995be0a9.png"></p>
+<p class="image-container"><img style="width: 351.45px" src="img\\ee1e4b8138cadfc4.png"></p>
 <p>Wait until the instance is created. It should take less than a minute.</p>
 <p>Open the JupyterLab:</p>
-<p class="image-container"><img style="width: 459.50px" src="img\\d68acb8a26d97be1.png"></p>
+<p class="image-container"><img style="width: 459.50px" src="img\\c2de928406b99f76.png"></p>
 <h2 is-upgraded><strong>Creating the Notebook and Implementing the Logic</strong></h2>
 <aside class="special"><p><strong>Please note:</strong> You can also download the source code from GitHub. Instructions for this can be found at the end of this section.</p>
 </aside>
 <p>Create a Python 3 notebook:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\44e7bc6b911ba3ac.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ffd13e1e9cc54eb8.png"></p>
 <p>Create a cell and insert the following imports:</p>
 <pre><code>import requests  # will be used to retrieve the image via http / a URL
 from IPython.display import Image  # will be used to show one exemplary image in the notebook
@@ -74,7 +74,7 @@ file = open(filename, &#34;wb&#34;)
 file.write(response.content)
 file.close()</code></pre>
 <p>When updating the file browser you should see the image (which you can open in JuypterLab):</p>
-<p class="image-container"><img style="width: 248.50px" src="img\\84b94d1a57b877a6.png"></p>
+<p class="image-container"><img style="width: 248.50px" src="img\\ec187e36b6bbb816.png"></p>
 <h2 is-upgraded><strong>Upload image to GCS (only in cloud JupyterLab possible)</strong></h2>
 <p>In case you are working in the cloud JupyterLab, you can access the cloud storage easily with the following code:</p>
 <pre><code>from google.cloud import storage
@@ -83,15 +83,15 @@ bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)
 blob = bucket.blob(filename)
 blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)</code></pre>
 <p>You should now be able to see this image in the cloud console (under Cloud Storage)</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\62d1daef60172108.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f8f13e2871c8f5b5.png"></p>
 <p>The notebook could now be executed, e.g. hourly, in order to create a history of webcam images. However, the notebook is only used for demo purposes and we now want to see how one can deploy such an ingestion logic to a cloud function.</p>
 <h2 is-upgraded><strong>Downloading the Source Code from GitHub (optional)</strong></h2>
 <p>In the JupyterLab overview page (or via File → New → Terminal), you can open a console:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\660435537bbf90d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\38739a36d994dcca.png"></p>
 <p>Within the terminal, you can enter the following code to clone the course&#39;s GitHub repository:</p>
 <pre><code>git clone https://github.com/pkuep/pk-bigdata-code.git</code></pre>
 <p>After refreshing the file browser, you should see the folder &#34;pk-bigdata-code&#34; in which you&#39;ll find the source code of this lab (Jupyter Notebooks → batch_ingestion → BigData - Batch Ingestion - Sample Image Retrieval.ipynb):</p>
-<p class="image-container"><img style="width: 296.92px" src="img\\11e4a126ad02c5b6.png"></p>
+<p class="image-container"><img style="width: 296.92px" src="img\\fe6c10d5fe7ae115.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a Jupyter Notebook in order to understand the requirements of our ingestion logic: pulling an image via http to the data lake.</li>
@@ -106,13 +106,13 @@ blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)</cod
       <google-codelab-step label="Creating and Developing the Cloud Function" duration="9">
         <h2 is-upgraded><strong>Creating a cloud function for image retrieval and storage upload</strong></h2>
 <p>Please go to cloud functions in the console:</p>
-<p class="image-container"><img style="width: 242.50px" src="img\\1b3c6fff6634ebc5.png"></p>
+<p class="image-container"><img style="width: 242.50px" src="img\\d504328825265033.png"></p>
 <p>Create a function. Set the function name to &#34;image_ingestion&#34;. Set &#34;Allow unauthenticated invocations&#34; under &#34;Authentication&#34;. The other parameters can be set as default. First, you&#39;ll need to hit &#34;Save&#34; in the &#34;Trigger&#34; section before being able to continue:</p>
-<p class="image-container"><img style="width: 434.57px" src="img\\3def3c9add395fdd.png"></p>
+<p class="image-container"><img style="width: 434.57px" src="img\\dc78da1e99584ba1.png"></p>
 <aside class="special"><p><strong>Please note:</strong> In the advanced section you are able to set the allocated memory for the cloud function (in case you have larger requirements than 256 MB).</p>
 </aside>
 <p>Hit Next. Change the runtime to Python 3.7, change the entry point method (e.g. to ingest_image) and also change the function name in the code editor to, e.g., ingest_image:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\238a7388aa14755b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ca2394f9e78ff12c.png"></p>
 <p>You are working in the file &#34;main.py&#34;. This file holds the logic we want to deploy to our cloud function. Let&#39;s transfer the logic of the Jupyter Notebook to our method &#34;ingest_image&#34;:</p>
 <pre><code>from google.cloud import storage
 import requests
@@ -130,22 +130,25 @@ def ingest_image(request):
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(&#34;pk-gcs&#34;)  # replace the bucket name with yours
     blob = bucket.blob(filename)
-    blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)</code></pre>
+    blob.upload_from_string(response.content, content_type=&#39;image/png&#39;)
+
+    return &#39;Success&#39;
+</code></pre>
 <p>Next, we&#39;ll need to specify that our cloud function requires some Python packages. Click on &#34;requirements.txt&#34; and add this code at the end of the file:</p>
 <pre><code>google-cloud-storage
 requests
 datetime</code></pre>
 <p>Hit &#34;Deploy&#34; (either from requirements.txt or main.py):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\871b5a4e2f8504e8.png"></p>
-<p>Wait 1-2 minutes until the function is deployed and then click on its name:<img style="width: 624.00px" src="img\\14b682c9b4244e94.png"></p>
+<p>Wait 1-2 minutes until the function is deployed and then click on its name:<img style="width: 624.00px" src="img\\9c2baadaa3a4a0e4.png"></p>
 <p>Go to the &#34;Testing&#34; section and hit &#34;Test the function&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\af6423456825990f.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4014e65d2682301e.png"></p>
 <p>The output should be &#34;Ok&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\62a020524426c01.png"></p>
 <p>You can take a look at the log output as well, e.g. to check the function&#39;s performance:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\9479586607b42278.png"></p>
 <p>You should now see the output in your bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d3c720a9ed3b347.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\247db39bde5f77f.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You transferred the sample logic from the notebook to a cloud function (main.py).</li>
@@ -160,21 +163,21 @@ datetime</code></pre>
       <google-codelab-step label="Scheduling the Cloud Function" duration="6">
         <h2 is-upgraded><strong>Triggering the cloud function manually</strong></h2>
 <p>Within your cloud function&#39;s GCP page, you&#39;ll find the http-Trigger for this function:</p>
-<p>WhenWhen<img style="width: 624.00px" src="img\\fad52e7508c6bac5.png"></p>
+<p>WhenWhen<img style="width: 624.00px" src="img\\4b7b041129c0720.png"></p>
 <p>When clicking on the URL, you&#39;ll get a simple &#34;OK&#34; message:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\6412826a72f39117.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d287ac004f8ad33c.png"></p>
 <p>This should have triggered another run of your cloud function.</p>
 <aside class="special"><p><strong>Please note:</strong> Please copy the Trigger URL into the clipboard.</p>
 </aside>
 <h2 is-upgraded><strong>Scheduling cloud function calls </strong></h2>
 <p>Please navigate to the cloud scheduler (under &#34;Tools&#34;) and create a job:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\6cc551341cc2fada.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1015d0d8d6aac851.png"></p>
 <p>The job could be called &#34;scheduled_webcam_ingest&#34; and let&#39;s set the frequency to once per minute (* * * * *). In &#34;Timezone&#34; you can search for &#34;Germany&#34;. Set the target to &#34;HTTP&#34; and paste your function&#39;s URL. All other settings can stay the default.</p>
-<p class="image-container"><img style="width: 448.23px" src="img\\273993972855e955.png"></p>
+<p class="image-container"><img style="width: 448.23px" src="img\\3973c40bb965779d.png"></p>
 <p>You can immediately run the job to test it:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\781ef504799979d9.png"></p>
 <p>You should see the result in your GCS bucket. Now, every minute a further image should be added to the bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\82812e3f518aa658.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\395f64d3ef54549e.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You now scheduled your cloud function regularly. </li>
@@ -186,15 +189,15 @@ datetime</code></pre>
     
       <google-codelab-step label="Cleaning Up" duration="2">
         <p>Please make sure to delete your scheduled job in the cloud scheduler:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\ad75758d9f9a7bb2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b8a5636659fd5994.png"></p>
 <p>Next, you may want to delete the files in the bucket:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4a822047c84355af.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4ee74dabb51d1ef4.png"></p>
 <p>Next, you should delete the cloud function:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\ee3f0f3111c8ffe1.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e942582dcc46caf9.png"></p>
 <p>You may want to rename and download the JupyterLab Notebook we created (however, it is also available via GitHub):</p>
-<p class="image-container"><img style="width: 356.42px" src="img\\1582a950e7a1c6e.png"></p>
+<p class="image-container"><img style="width: 356.42px" src="img\\168dce8c3eccf55.png"></p>
 <p>You should also delete or at least shut down your notebook (under &#34;AI Platform&#34;):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\1d5041f43b9af8a2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2da8e67d6f9afaf7.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You finished the lab and performed all necessary clean-up tasks.</li>

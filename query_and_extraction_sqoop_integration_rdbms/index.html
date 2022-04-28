@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Introduction" duration="0">
         <p>In this use case we want to extract data from our data lake:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\15475175775f2213.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\74b3d1ebf9ffa90.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Writing data from the data lake back into operational systems, e.g. an RDBMS.</p>
 <p>DUE TO TECHNICAL ISSUES, THIS LAB DOES NOT WORK COMPLETELY!</p>
@@ -66,7 +66,7 @@ average_sales FLOAT
 );</code></pre>
 <h2 is-upgraded><strong>Opening the master node&#39;s shell</strong></h2>
 <p>Please navigate to the cluster&#39;s master node and open an SSH connection:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\6be416b5cd894456.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a64e86bda4c2944b.png"></p>
 <p>This will again be our &#34;entry point&#34; to the sqoop tool (remember: we added it via the initialization action). With the following command, we can write the results back to the SQL server:</p>
 <pre><code>sqoop export --connect jdbc:mysql://localhost/webshop --username root --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
 <p>The parameter &#34;hcatalog-table&#34; determines which table from the data lake should be read. The parameter &#34;table&#34; directs towards the RDBMS&#39;s target table.</p>
