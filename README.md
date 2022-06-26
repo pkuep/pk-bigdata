@@ -56,5 +56,7 @@
 
 [PubSub to Cloud Storage with DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_cloudstorage){:target="_blank" rel="noopener"}
 
-[PubSub Analytics with SQL-based DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_sql){:target="_blank" rel="noopener"}
+[PubSubLite Streaming Analytics with Spark Streaming](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsublite_spark_streaming){:target="_blank" rel="noopener"}
+
+[PubSub Analytics with SQL-based DataFlow (GCP product not available anymore)](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_sql){:target="_blank" rel="noopener"}
 

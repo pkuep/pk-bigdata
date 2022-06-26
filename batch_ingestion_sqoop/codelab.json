@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-18T10:06:10Z",
+  "updated": "2022-05-04T19:47:24Z",
   "id": "batch_ingestion_sqoop",
   "duration": 15,
   "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with Sqoop\"",

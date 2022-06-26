@@ -74,6 +74,8 @@
 <p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
 <p class="image-container"><img style="width: 532.50px" src="img\\ae1bce8437c10990.png"></p>
+<p>Select &#34;Cluster on Compute Engine&#34;:</p>
+<p class="image-container"><img style="width: 454.00px" src="img\\7bc7bd3baabd0f74.png"></p>
 <p>You may want to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
@@ -81,14 +83,12 @@
 <li>Cluster mode: leave the default mode (1 master, N workers)</li>
 <li>All other settings should also stay in the default</li>
 </ul>
-<p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\\7a6fbcabe95b3274.png"></p>
-<p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\\a5729b94c3c8ef5b.png"></p>
-<p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\\b1d43fd4f5049925.png"> </p>
+<p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) select Jupyter Notebook under &#34;Optional Components&#34;:</p>
+<p class="image-container"><img style="width: 543.00px" src="img\\9982ce5d557468c2.png"></p>
+<p>Scroll down to the &#34;Optional components&#34; and select &#34;Jupyter Notebook&#34;:</p>
+<p class="image-container"><img style="width: 305.00px" src="img\\f05ab22c8930ff2d.png"></p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
-<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
+<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes under the &#34;Configure nodes&#34; section.</p>
 </aside>
 <p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
