@@ -61,13 +61,13 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dask Programming - Part 1" duration="12">
-        <h2 is-upgraded><strong>Reading Data from GCS into a Dask DataFrame</strong></h2>
+      <google-codelab-step label="Dask Programming - Part 1 (yarn-based, simple analytics)" duration="12">
+        <p><strong>Setup</strong></p>
 <p>First, open the DataProc cluster&#39;s web interface and create a new &#34;pure Python&#34; Jupyter Notebook.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\d3b8482427ddcb6a.png"></p>
 <p class="image-container"><img style="width: 199.45px" src="img\\e6650f86ca6f2a55.png"></p>
 <p>Call this notebook &#34;Dask Batch Processing&#34; and save it. </p>
-<h3 is-upgraded><strong>Package Imports</strong></h3>
+<h2 is-upgraded><strong>Package Imports</strong></h2>
 <p>Next, import the following two packages (copy &amp; paste into the first cell):</p>
 <pre><code>import gcsfs
 import dask.dataframe as dd</code></pre>
@@ -89,7 +89,7 @@ client = Client(cluster)</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img\\7d49e5658e01f90d.png"></p>
 <p>Under &#34;Manual Scaling&#34;, you can edit the number of workers (you&#39;ll have three workers available in the default configuration since the master is also treated as a worker in Dask):</p>
 <p class="image-container"><img style="width: 513.00px" src="img\\715ed9c39ebe4ee9.png"></p>
-<h3 is-upgraded><strong>DataFrame Definition</strong></h3>
+<h2 is-upgraded><strong>DataFrame Definition</strong></h2>
 <p>Now it&#39;s time to inform your workers about the location of the source data you want to analyze:</p>
 <pre><code>ddf = dd.read_csv(&#39;gcs://pk-gcs/webshop_datalake/webshop_history.csv&#39;)
 ddf</code></pre>
@@ -108,28 +108,75 @@ ddf</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dask Programming - Part 2 (including the scheduler)" duration="12">
+      <google-codelab-step label="Dask Programming - Part 2 (dask scheduler, machine learning)" duration="12">
         <h2 is-upgraded><strong>Setup of a new DataProc instance</strong></h2>
-<p>We will now use Dask in a slightly different way by relying on its &#34;standalone&#34; scheduler, i.e. the dask master and worker connections and resource allocation will not be handled by YARN but by Dask internally. This allows us to use the insightful Dask Dashboard.</p>
-<h3 is-upgraded><strong>Checking the Dask Dashboard XXX</strong></h3>
-<p>When switching over to the dask dashboard, you&#39;ll notice that the cluster worked. In the dashboard, we can observe the parallel computation (in this case it&#39;s not too heavily parallelized; your output may vary depending on the cluster configuration):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\1e4bb0920070c15f.png"></p>
-<h3 is-upgraded><strong>Machine Learning with Dask</strong></h3>
-<p>Dask provides some implementations of popular machine learning algorithms. Let&#39;s execute a very simple training of a model which is able to predict the sales_values based on the age of a customer. Copy &amp; paste this to a new cell:</p>
-<pre><code>import dask_lightgbm.core as dlgbm
-reg = dlgbm.LGBMRegressor()
+<p>We will now use Dask in a slightly different way by relying on its &#34;standalone&#34; scheduler, i.e. the dask master and worker connections and resource allocation will not be handled by YARN but by Dask internally. This allows us to use the insightful Dask Dashboard. Furthermore, we will install some machine learning packages on our master/worker nodes in order to be able to train complex models.</p>
+<p>Please delete the currently running cluster now.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b447dfc2d08c608d.png"></p>
+<p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://pk-bigdata-material/dask.sh --metadata dask-runtime=standalone --optional-components JUPYTER --enable-component-gateway</code></pre>
+<p>In this case, we use a slightly adapted version of the initialization action we used before. </p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Opening the Dask Dashboard</strong></h2>
+<p>The &#34;standalone&#34; version of the dask scheduler provides a dashboard that shows the distributed computations of our cluster nodes. However, we cannot access this dashboard directly, since it is protected by GCP&#39;s / your project&#39;s firewall. Thus, we&#39;ll now establish a SSH connection from our cloud shell to the DataProc master node, set up port forwarding and connect to the web interface via this secure connection.</p>
+<h3 is-upgraded><strong>Connecting to the dask master node from the cloud shell (SSH)</strong></h3>
+<p>Please open the cloud shell. The following command will establish the SSH tunnel from this machine to the cluster&#39;s master node and forward the relevant port (8787) via this connection.</p>
+<aside class="warning"><p><strong>Please note: </strong>It may happen that you are working in a different zone instead of us-central1-a. Please go to DataProc → &#34;VM instances&#34; → click on pk-dask-cluster-m → check the &#34;Zone&#34; value.</p>
+</aside>
+<pre><code>gcloud compute ssh pk-dask-cluster-m --zone us-central1-a -- -NL 8787:localhost:8787 -4</code></pre>
+<p>This should result in a &#34;blocking&#34; shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d851985891ee978b.png"></p>
+<h3 is-upgraded><strong>Opening the Dashboard</strong></h3>
+<p>Now that our cloud shell is forwarding the relevant port (8787) from its virtual machine to our master node, we can make use of the &#34;web preview&#34; feature. First, you&#39;ll need to set the port from 8080 to 8787:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\aaf4ca8eacc7cc59.png"></p>
+<p>Afterwards, select &#34;Preview on port 8787&#34;:</p>
+<p class="image-container"><img style="width: 276.00px" src="img\\fb64cca389e2e38e.png"></p>
+<p>You should see a new tab with the Dask dashboard (which is empty so far)0:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f6471263ae076f6e.png"></p>
+<p>Please detach the tab and go back to DataProc overview and open a Jupyter Lab.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\22e01be33e6cd4d0.png"></p>
+<p>Create a new notebook &#34;machine_learning_with_dask&#34;.</p>
+<h2 is-upgraded><strong>Training a Machine Learning Model</strong></h2>
+<p>The following code will import all necessary packages and create a connection to the dask master node such that we can start distributed computations:</p>
+<pre><code>import gcsfs
+import dask.dataframe as dd
+from dask.distributed import Client
+import dask.array as da
+import numpy as np
+
+client = Client(&#34;localhost:8786&#34;)
+
+ddf = dd.read_csv(&#39;gcs://pk-gcs/webshop_datalake/webshop_history.csv&#39;)
+</code></pre>
+<p>Dask provides some implementations of popular machine learning algorithms. Let&#39;s execute a very simple training of an xgboost model which is able to predict the sales_values based on the age of a customer. Copy &amp; paste this to a new cell:</p>
+<pre><code>from dask_ml.xgboost import XGBRegressor
+reg = XGBRegressor()
 
 X = ddf[[&#39;age&#39;]]
 y = ddf[&#39;sales_value&#39;]
-reg.fit(X, y)</code></pre>
-<p>After executing the model training, you can check your worker&#39;s progress (your output may vary):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9645a0b2c12c33b.png"></p>
+reg.fit(X, y)
+</code></pre>
+<p><em>Please note: we are not using the newly recommended way of accessing xgboost from dask; our architecture does not allow to install the most recent xgboost version which is why we rely on the &#34;old way of xgboost/dask training&#34;).</em></p>
+<p>After executing the cell, you can check your worker&#39;s progress in the dask dashboard (your output may vary):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a32320b1bd623fcd.png"></p>
 <p>Afterwards, you can use the model for predictions:</p>
 <pre><code>import pandas as pd
-pred_df = pd.DataFrame([[10],[20],[30],[40],[50],[60]])
+pred_df = pd.DataFrame([[10],[20],[30],[40],[50],[60]], columns=[&#39;age&#39;])
 pred_ddf = dd.from_pandas(pred_df, npartitions=1)
-reg.predict(pred_ddf).compute()
-</code></pre>
+reg.predict(pred_ddf).compute()</code></pre>
+<h2 is-upgraded><strong>Training a Machine Learning Model on a larger Dataset</strong></h2>
+<p>We can show the possibilities of parallelization better when using a larger dataset than our simple one. The following code block contains random sampling of some training data that can be used for training:</p>
+<pre><code>num_obs = 1e5
+num_features = 10
+X = da.random.random(size=(num_obs, num_features), chunks=(1000, num_features))
+y = da.random.random(size=(num_obs, 1), chunks=(1000, 1))
+reg = XGBRegressor()
+
+reg.fit(X, y)</code></pre>
+<p>Take a look at the dask dashboard. We should now see parallelization of the training process (in this case three workers):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7f5d56379efe4e50.png"></p>
+<p>Save your notebook such that you can access it after cluster deletion.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You successfully performed Python-based big data analytics with a dask cluster. Congratulations!</li>
@@ -139,31 +186,22 @@ reg.predict(pred_ddf).compute()
 
       </google-codelab-step>
     
-      <google-codelab-step label="Varying the Cluster Size" duration="1">
-        <p>Now we want to add a further worker node and observe the cluster&#39;s performance. Open the file &#34;values.yaml&#34; in the cloud shell editor (see above) and change the number of workers from two to three (please note: more workers are not possible with our current cluster configuration).</p>
-<p class="image-container"><img style="width: 342.12px" src="img\\fb92481025f14de6.png"></p>
-<p>Go back to the terminal and enter the following command to update the kubernetes cluster, i.e. add another worker:</p>
-<pre><code>helm upgrade pk-dask dask/dask -f values.yaml</code></pre>
-<p>You should see output similar to this:</p>
-<p class="image-container"><img style="width: 622.64px" src="img\\5aac787976d6210.png"></p>
-<p>You can check if your additional worker is ready by clicking onto the &#34;workloads&#34; page in the cloud console:</p>
-<p class="image-container"><img style="width: 215.50px" src="img\\dd8523b569f66919.png"></p>
-<p class="image-container"><img style="width: 624.00px" src="img\\cb83f9076719090b.png"></p>
-<p>When all three workers are running (called Pods by kubernetes), you should see this output:</p>
-<p>When clicking on &#34;Workers&#34; in the dask dashboard, you should see that one further worker is available for computation:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\8567100745e9b3cf.png"></p>
-<p>This example shows the advantages of kubernetes: we can manipulate our infrastructure very easily and container management (i.e. spinning up a new worker for example) is done completely in the background. </p>
-<p>We could do a short experiment and compare the calculation time of different configurations:</p>
-<p>One worker</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\5371deadded41e51.png"></p>
-<p>Two workers</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\27b2f940ea68e2d3.png"></p>
-<aside class="warning"><p><strong>Please note: </strong>Since we are working on pretty small data in the example, the advantage of parallelizing processing may be pretty low (if there&#39;s an advantage at all). However, with bigger volumes of data we will see the cluster computation advantages pretty clear.</p>
+      <google-codelab-step label="Varying the Cluster Size" duration="6">
+        <p>Now we want to add two further worker nodes (parameter &#34;--num-workers 4&#34;) and observe the cluster&#39;s performance. Please delete your cluster and generate a new one using the following command (please adapt your initials!):</p>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://pk-bigdata-material/dask.sh   --metadata dask-runtime=standalone --optional-components JUPYTER  --enable-component-gateway --num-workers 4 --worker-boot-disk-size 50 --master-boot-disk-size 50</code></pre>
+<p>Go to JupyterLab and open your saved notebook &#34;machine_learning_with_dask&#34;. </p>
+<p>Again, create a SSH connection via the cloud shell to the master node.</p>
+<aside class="warning"><p><strong>Please note: </strong>It may happen that you are working in a different zone instead of us-central1-a. Please go to DataProc → &#34;VM instances&#34; → click on pk-dask-cluster-m → check the &#34;Zone&#34; value.</p>
+</aside>
+<pre><code>gcloud compute ssh pk-dask-cluster-m --zone us-central1-a -- -NL 8787:localhost:8787 -4</code></pre>
+<p>Open the dask dashboard via web preview. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a60bd92f23c96fc9.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>In this case, further parallelization might not show large effects on total runtime. You might want to run the training with &#34;num_obs = 1e6&#34; instead and shut down successively workers (go to the &#34;VM instances&#34;, select a worker and delete it) and take a look at the training times with different numbers of workers.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You are now able to change cluster configuration &#34;on the fly&#34; and make use of kubernetes features in the context of big data processing with dask.</li>
-<li>You are now finished with this lab. Please make sure to shutdown your cluster since it is pretty costly.</li>
+<li>You are now able to change cluster configuration and make use of Dask&#39;s features in the context of big data processing.</li>
+<li>You are now finished with this lab. Please make sure to shutdown your cluster.</li>
 </ol>
 
 
@@ -171,7 +209,6 @@ reg.predict(pred_ddf).compute()
     
       <google-codelab-step label="Cluster Deletion" duration="1">
         <p>Please make sure to shutdown your cluster due to high costs of our setup.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3e1bfa8bcd81cab3.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You finished the lab and performed all necessary clean-up tasks.</li>
@@ -181,14 +218,8 @@ reg.predict(pred_ddf).compute()
       </google-codelab-step>
     
       <google-codelab-step label="Congratulations" duration="1">
-        <p>Congratulations, you used fairly complex technologies and a sophisticated setup (kubernetes with helm and dask) to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
-<aside class="warning"><p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
-</aside>
-<aside class="warning"><p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
-</aside>
-<aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the kubernetes cluster you should use dask via a local installation and use the kubernetes cluster only for deployment and scalability tests.</p>
-</aside>
-<p>Dask is one of the rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
+        <p>Congratulations, you used fairly complex technologies and a sophisticated setup to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
+<p>Dask is one of the most rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
 <aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
 </aside>
 
