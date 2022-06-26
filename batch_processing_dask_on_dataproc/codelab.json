@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2022-06-26T12:05:07Z",
+  "id": "batch_processing_dask_on_dataproc",
+  "duration": 33,
+  "title": "Lab \"Batch Processing: Dask on DataProc\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a DataProc cluster in GCP and run a Dask cluster in order to perform big data processing in a manner that comes very close to local data analytics in Python with Pandas.",
+  "source": "1lB_cDlDQWTesYdRE6jUFncrJEYG_2hU2-yJlJo11ofc",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_processing_dask_on_dataproc"
+}

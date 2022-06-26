@@ -1,0 +1,207 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Processing: Dask on DataProc&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_processing_dask_on_dataproc"
+                  title="Lab &#34;Batch Processing: Dask on DataProc&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product as well as train a simple machine learning model in a scalable (big data) manner using Dask.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3c3e14c0a31b3057.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Using data in the data lake for batch processing from a Jupyter Notebook, this time however relying on Dask.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a DataProc cluster for deployment and scaling of arbitrary processing jobs that can rely on YARN.</li>
+<li>&#34;Install&#34; the big data processing framework &#34;Dask&#34; on your DataProc cluster using an initialization action.</li>
+<li>Performing a big data-ready and scaling analysis as well as machine learning using Python and Dask.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Be careful to shut down your cluster after completing the lab due to high costs!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a &#34;Dask-ready&#34; DataProc Cluster" duration="6">
+        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+<p>This time, we will be using the cloud shell to create our cluster. Nevertheless, please navigate to DataProc already:</p>
+<p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
+<p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/dask/dask.sh   --metadata dask-runtime=yarn --optional-components JUPYTER --enable-component-gateway</code></pre>
+<p>The cluster is now created via the CLI (command line interface) to GCP and not the web console. The initialization action will take care of installing Dask on the master and worker nodes (see <a href="https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask" target="_blank">https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask</a> for further information).</p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a DataProc cluster that is capable of executing Dask source code..</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dask Programming - Part 1" duration="12">
+        <h2 is-upgraded><strong>Reading Data from GCS into a Dask DataFrame</strong></h2>
+<p>First, open the DataProc cluster&#39;s web interface and create a new &#34;pure Python&#34; Jupyter Notebook.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d3b8482427ddcb6a.png"></p>
+<p class="image-container"><img style="width: 199.45px" src="img\\e6650f86ca6f2a55.png"></p>
+<p>Call this notebook &#34;Dask Batch Processing&#34; and save it. </p>
+<h3 is-upgraded><strong>Package Imports</strong></h3>
+<p>Next, import the following two packages (copy &amp; paste into the first cell):</p>
+<pre><code>import gcsfs
+import dask.dataframe as dd</code></pre>
+<aside class="warning"><p><strong>Please note: </strong>If any package you want to use is missing you will need to edit the initialization action. If required throughout the project, please contact me.</p>
+</aside>
+<h3 is-upgraded><strong>Connecting the Notebook to the Dask Cluster</strong></h3>
+<p>As another setup step we&#39;ll need to connect our notebook to the dask scheduler as an entry point to the cluster. In our case, we will use a YARN-based cluster:</p>
+<pre><code>from dask_yarn import YarnCluster
+from dask.distributed import Client
+import dask.array as da
+
+import numpy as np
+
+cluster = YarnCluster()
+client = Client(cluster)</code></pre>
+<p>You can configure your Dask cluster by just setting the cluster as a cell output which allows you to configure the number of worker nodes for example:</p>
+<pre><code>cluster</code></pre>
+<p>As a default, the cluster will use two workers with one core of each worker (you can ignore the warnings!):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7d49e5658e01f90d.png"></p>
+<p>Under &#34;Manual Scaling&#34;, you can edit the number of workers (you&#39;ll have three workers available in the default configuration since the master is also treated as a worker in Dask):</p>
+<p class="image-container"><img style="width: 513.00px" src="img\\715ed9c39ebe4ee9.png"></p>
+<h3 is-upgraded><strong>DataFrame Definition</strong></h3>
+<p>Now it&#39;s time to inform your workers about the location of the source data you want to analyze:</p>
+<pre><code>ddf = dd.read_csv(&#39;gcs://pk-gcs/webshop_datalake/webshop_history.csv&#39;)
+ddf</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b976e7f5f06958c8.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The dask workers did not read the file yet (lazy evaluation). This is done as soon as you start calculations / operations as we&#39;ll see now.</p>
+</aside>
+<h3 is-upgraded><strong>Analytics on a Dask DataFrame</strong></h3>
+<p>Working with dask usually feels like working with pandas. The only difference is the lazy evaluation. The following command calculates the mean sales value per region, just like in pandas; however, to execute this command and let all your workers concurrently work on it, you&#39;ll need to add for example &#34;compute()&#34;:</p>
+<pre><code>ddf.groupby(&#34;region&#34;)[&#39;sales_value&#39;].mean().compute() # compute triggers the workers to start computation</code></pre>
+<p>This should be the output</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7596beccafb1c4a8.png"></p>
+<aside class="special"><p><strong>Congratulations: </strong>You can now handle dask and scale your analytics to big data using DataProc, Dask, and YARN.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dask Programming - Part 2 (including the scheduler)" duration="12">
+        <h2 is-upgraded><strong>Setup of a new DataProc instance</strong></h2>
+<p>We will now use Dask in a slightly different way by relying on its &#34;standalone&#34; scheduler, i.e. the dask master and worker connections and resource allocation will not be handled by YARN but by Dask internally. This allows us to use the insightful Dask Dashboard.</p>
+<h3 is-upgraded><strong>Checking the Dask Dashboard XXX</strong></h3>
+<p>When switching over to the dask dashboard, you&#39;ll notice that the cluster worked. In the dashboard, we can observe the parallel computation (in this case it&#39;s not too heavily parallelized; your output may vary depending on the cluster configuration):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1e4bb0920070c15f.png"></p>
+<h3 is-upgraded><strong>Machine Learning with Dask</strong></h3>
+<p>Dask provides some implementations of popular machine learning algorithms. Let&#39;s execute a very simple training of a model which is able to predict the sales_values based on the age of a customer. Copy &amp; paste this to a new cell:</p>
+<pre><code>import dask_lightgbm.core as dlgbm
+reg = dlgbm.LGBMRegressor()
+
+X = ddf[[&#39;age&#39;]]
+y = ddf[&#39;sales_value&#39;]
+reg.fit(X, y)</code></pre>
+<p>After executing the model training, you can check your worker&#39;s progress (your output may vary):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9645a0b2c12c33b.png"></p>
+<p>Afterwards, you can use the model for predictions:</p>
+<pre><code>import pandas as pd
+pred_df = pd.DataFrame([[10],[20],[30],[40],[50],[60]])
+pred_ddf = dd.from_pandas(pred_df, npartitions=1)
+reg.predict(pred_ddf).compute()
+</code></pre>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You successfully performed Python-based big data analytics with a dask cluster. Congratulations!</li>
+<li>In a next step, we&#39;ll vary the cluster configuration slightly.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Varying the Cluster Size" duration="1">
+        <p>Now we want to add a further worker node and observe the cluster&#39;s performance. Open the file &#34;values.yaml&#34; in the cloud shell editor (see above) and change the number of workers from two to three (please note: more workers are not possible with our current cluster configuration).</p>
+<p class="image-container"><img style="width: 342.12px" src="img\\fb92481025f14de6.png"></p>
+<p>Go back to the terminal and enter the following command to update the kubernetes cluster, i.e. add another worker:</p>
+<pre><code>helm upgrade pk-dask dask/dask -f values.yaml</code></pre>
+<p>You should see output similar to this:</p>
+<p class="image-container"><img style="width: 622.64px" src="img\\5aac787976d6210.png"></p>
+<p>You can check if your additional worker is ready by clicking onto the &#34;workloads&#34; page in the cloud console:</p>
+<p class="image-container"><img style="width: 215.50px" src="img\\dd8523b569f66919.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cb83f9076719090b.png"></p>
+<p>When all three workers are running (called Pods by kubernetes), you should see this output:</p>
+<p>When clicking on &#34;Workers&#34; in the dask dashboard, you should see that one further worker is available for computation:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8567100745e9b3cf.png"></p>
+<p>This example shows the advantages of kubernetes: we can manipulate our infrastructure very easily and container management (i.e. spinning up a new worker for example) is done completely in the background. </p>
+<p>We could do a short experiment and compare the calculation time of different configurations:</p>
+<p>One worker</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5371deadded41e51.png"></p>
+<p>Two workers</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\27b2f940ea68e2d3.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Since we are working on pretty small data in the example, the advantage of parallelizing processing may be pretty low (if there&#39;s an advantage at all). However, with bigger volumes of data we will see the cluster computation advantages pretty clear.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You are now able to change cluster configuration &#34;on the fly&#34; and make use of kubernetes features in the context of big data processing with dask.</li>
+<li>You are now finished with this lab. Please make sure to shutdown your cluster since it is pretty costly.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cluster Deletion" duration="1">
+        <p>Please make sure to shutdown your cluster due to high costs of our setup.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3e1bfa8bcd81cab3.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished the lab and performed all necessary clean-up tasks.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you used fairly complex technologies and a sophisticated setup (kubernetes with helm and dask) to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
+<aside class="warning"><p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
+</aside>
+<aside class="warning"><p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
+</aside>
+<aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the kubernetes cluster you should use dask via a local installation and use the kubernetes cluster only for deployment and scalability tests.</p>
+</aside>
+<p>Dask is one of the rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

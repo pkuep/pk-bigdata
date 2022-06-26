@@ -36,7 +36,10 @@
 
 [PySpark SQL, DataFrames and Machine Learning](https://pkuep.github.io/pk-bigdata/batch_processing_pyspark_advanced){:target="_blank" rel="noopener"}
 
-[Dask with Kubernetes](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
+[Dask on DataProc](https://pkuep.github.io/pk-bigdata/batch_processing_dask_on_dataproc){:target="_blank" rel="noopener"}
+
+[Dask with Kubernetes (not working anymore)](https://pkuep.github.io/pk-bigdata/batch_processing_dask){:target="_blank" rel="noopener"}
+
 
 ## Querying and Data Integration
 
