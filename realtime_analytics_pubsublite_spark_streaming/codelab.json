@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-06-26T10:03:16Z",
+  "updated": "2022-07-01T06:15:14Z",
   "id": "realtime_analytics_pubsublite_spark_streaming",
   "duration": 39,
   "title": "Lab \"Realtime Analytics: PubSubLite Data Aggregation with Spark Streaming\"",
