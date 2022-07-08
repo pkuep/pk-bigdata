@@ -114,7 +114,7 @@ ddf</code></pre>
 <p>Please delete the currently running cluster now.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\b447dfc2d08c608d.png"></p>
 <p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
-<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://pk-bigdata-material/dask.sh --metadata dask-runtime=standalone --optional-components JUPYTER --enable-component-gateway</code></pre>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster2 --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --image-version preview --initialization-actions gs://pk-bigdata-material/dask.sh --metadata dask-runtime=standalone --optional-components JUPYTER --enable-component-gateway</code></pre>
 <p>In this case, we use a slightly adapted version of the initialization action we used before. </p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>

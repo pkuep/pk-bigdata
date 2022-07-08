@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-06-26T15:15:47Z",
+  "updated": "2022-07-08T11:25:25Z",
   "id": "batch_processing_dask_on_dataproc",
   "duration": 38,
   "title": "Lab \"Batch Processing: Dask on DataProc\"",
