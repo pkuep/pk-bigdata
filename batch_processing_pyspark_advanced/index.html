@@ -150,7 +150,7 @@ model = reg.fit(train)</code></pre>
 predictions = model.transform(test)
 
 # select some example rows 
-predictions.toPandas().sample(10)</code></pre>
+predictions.sample(0.01).toPandas()</code></pre>
 <h3 is-upgraded><strong>Evaluating the model</strong></h3>
 <p>We can use the test data-predictions for model evaluation as follows:</p>
 <pre><code># evaluate the model
