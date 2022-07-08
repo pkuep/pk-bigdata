@@ -131,7 +131,7 @@ df.filter((df.age_group==&#39;18-29&#39;) | (df.age_group==&#39;30-49&#39;)).toP
 from pyspark.ml.feature import VectorAssembler
 va = VectorAssembler(inputCols=[&#39;age&#39;,&#39;product&#39;],outputCol=&#39;features&#39;)
 df_ml = va.transform(df).select(&#39;features&#39;,&#39;sales_value&#39;)
-df_ml.toPandas().head()</code></pre>
+df_ml.limit(10).toPandas()</code></pre>
 <p>This should be the output:</p>
 <p class="image-container"><img style="width: 421.36px" src="img\\17ed81d10f8d785d.png"></p>
 <h3 is-upgraded><strong>Train-test-split</strong></h3>
