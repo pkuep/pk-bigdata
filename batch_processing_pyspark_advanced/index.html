@@ -172,7 +172,7 @@ df_indexed = indexer.fit(df).transform(df)
 
 # encode weekday index (one-hot-encoding) and select only relevant columns
 encoder = OneHotEncoder(inputCol=&#39;weekday_idx&#39;, outputCol=&#39;weekday_encoded&#39;)
-encoded_df = encoder.transform(df_indexed).select(&#39;weekday_encoded&#39;,&#39;age&#39;,&#39;product&#39;,&#39;sales_value&#39;)
+encoded_df = encoder.fit(df_indexed).transform(df_indexed).select(&#39;weekday_encoded&#39;,&#39;age&#39;,&#39;product&#39;,&#39;sales_value&#39;)
 
 # create feature column
 va = VectorAssembler(inputCols=[&#39;age&#39;, &#39;product&#39;, &#39;weekday_encoded&#39;],outputCol=&#39;features&#39;)
