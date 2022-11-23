@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll access the data lake and integrate batch processing results back into an RDBMS using Data Fusion.",
   "source": "1OUeFRWJZTaxrKPXFY6TsY_SU7UeOlGRBhfgrVqw2Nns",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

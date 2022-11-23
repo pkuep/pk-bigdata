@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll set up a sqoop job from o a DataProc cluster that retrieves a table from a cloud SQL instance and stores the data in the data lake (HDFS/GCS) in the popular big data file formats \"Avro\" and \"Parquet\".",
   "source": "1H0BWTlnXDt0vSi_MDbz88TlNsZPmzlFIu2V_wlK7rpw",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

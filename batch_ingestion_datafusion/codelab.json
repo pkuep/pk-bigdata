@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll set up a GCP data fusion instance and create an ingestion job (implicitly running on DataProc) that retrieves a table from a cloud SQL instance and stores the data in the GCS data lake.",
   "source": "1ny2NVO-eH0pzHVIgc6LAvHU0JWeCx_RWDVQ6QPlbL_g",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

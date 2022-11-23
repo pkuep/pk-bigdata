@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll create a live connection between BigQuery and data in the GCS data lake.",
   "source": "1gqtt_j4eRxW2kVYPG8OvQj10g0TT7ioCSghcujjCDcE",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

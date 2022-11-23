@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll learn how to create an automatically scaling Ingestion pipeline using GCP's DataFlow technology. You'll historize PubSub-messages to cloud storage by using a template.",
   "source": "1H5qCQ8fs-QEC6LRn0csY3doZ4SZihcYKG7fPhlbLpuE",
-  "theme": "realtime-analytics",
+  "theme": "realtimeanalytics",
   "status": [
     "published"
   ],
   "category": [
-    "Realtime Analytics"
+    "realtimeanalytics"
   ],
   "tags": [
     "pk"

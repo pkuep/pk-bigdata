@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll set up a cloud function in GCP and implement an ingestion logic in Python which retrieves an image from a URL (webcam) and stores the image with a timestamp in the data lake (GCS).",
   "source": "1nBA4IRqpceoclmk3dHbl-6Tkn7UJDfToGIkOqhrA2B0",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

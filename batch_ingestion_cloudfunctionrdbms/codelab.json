@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll set up a cloud function in GCP and implement an ingestion logic in Python which retrieves a table from a cloud SQL instance and stores the data in the data lake (GCS).",
   "source": "11JzWbgDpQv6F3v7GkxllI7MH1jC9VYpnY9e8ilU9qFM",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

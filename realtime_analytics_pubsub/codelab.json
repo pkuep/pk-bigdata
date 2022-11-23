@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll learn how to create PubSub-topics and how to push messages to or retrieve messages from these. Furthermore, you'll learn what service accounts are and how to use them from Python.",
   "source": "1JkYs2spek0jN0iQ0ni7SW_fB8lmnYt8Qy9HvAfO797E",
-  "theme": "realtime-analytics",
+  "theme": "realtimeanalytics",
   "status": [
     "published"
   ],
   "category": [
-    "Realtime Analytics"
+    "realtimeanalytics"
   ],
   "tags": [
     "pk"

@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll access the data lake with a Hive metastore from PySpark SQL and store the ad-hoc query results back to the data lake.",
   "source": "1D6TxCqGZCdqSBM_7gpXDygAbmgz7OlClUcVRythWtp0",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"

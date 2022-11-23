@@ -10,12 +10,12 @@
   "authors": "Peer Küppers",
   "summary": "In this codelab, you'll set up a sqoop job from o a DataProc cluster that retrieves a table from a cloud SQL instance and stores the data in the data lake (HDFS) in the popular big data file format \"Parquet\" and imports it into the Hive meta warehouse.",
   "source": "1tiEdT5orlrUD7NaZdYj1BSnAqd7WSr2U6iyePqqrb8o",
-  "theme": "batch-ingestion",
+  "theme": "batchingestion",
   "status": [
     "published"
   ],
   "category": [
-    "Batch Ingestion"
+    "batchingestion"
   ],
   "tags": [
     "pk"
