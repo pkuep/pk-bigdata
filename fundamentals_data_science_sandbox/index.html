@@ -120,10 +120,12 @@ df = pd.read_csv(&#34;gs://pk-gcs/webshop_datalake/webshop_history.csv&#34;)
 df.head()</code></pre>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
 <p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Datalake Access&#34;). After executing the cells, your notebooks should look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\fbbdd8517e96f6e2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\54a54014425e1d0d.png"></p>
 <h2 is-upgraded><strong>Sample Aggregation</strong></h2>
 <p>A data scientist might now be interested in the mean value of sales per product. This would be the classical way in pandas:</p>
 <pre><code>df.groupby(&#34;product_name&#34;).sales_value.mean()</code></pre>
+<p>The output should look like this:</p>
+<p class="image-container"><img style="width: 379.00px" src="img\\12eafb166aa308f8.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>By calling read_csv we loaded the whole file&#39;s values into the memory of the virtual machine which hosts our Jupyter notebook (the master node in our DataProc cluster). This works for small files which fit into memory. However, for &#34;larger-than-memory&#34; (big data) files, this proceeding <strong>won&#39;t work anymore</strong>. Thus, we&#39;ll later learn how to use the cluster to load and process datasets in some kind of &#34;shared cluster memory&#34; which makes use of all worker nodes&#39; memory and is hence scalable to really large amounts of data.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
