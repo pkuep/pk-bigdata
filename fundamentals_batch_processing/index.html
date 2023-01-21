@@ -49,25 +49,21 @@
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
         <h2 is-upgraded><strong>Cluster Creation (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;)</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
-<p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
+<p class="image-container"><img style="width: 433.00px" src="img\\c49e1002f9c9377f.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
-<p class="image-container"><img style="width: 532.50px" src="img\\ae1bce8437c10990.png"></p>
-<p>You may want to use the following parameters:</p>
+<p class="image-container"><img style="width: 306.00px" src="img\\2f82c4f00a4b7fdb.png"></p>
+<p>Select &#34;Cluster on Compute Engine&#34;:</p>
+<p class="image-container"><img style="width: 435.00px" src="img\\9fbcf43bad53a736.png"></p>
+<p>You need to use the following parameters:</p>
 <ul>
 <li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
 <li>Region: leave the default region (us-central1)</li>
-<li>Cluster mode: leave the default mode (1 master, N workers)</li>
-<li>All other settings should also stay in the default</li>
+<li>Cluster mode: leave the default mode &#34;Standard (1 master, N workers)&#34;</li>
 </ul>
-<p>Scroll further down and (1) enable the checkbox &#34;Component gateway&#34; and (2) click on &#34;Advanced options&#34;:</p>
-<p class="image-container"><img style="width: 371.50px" src="img\\7a6fbcabe95b3274.png"></p>
-<p>Scroll down to the &#34;Optional components&#34; and click on &#34;Select component&#34;:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\\a5729b94c3c8ef5b.png"></p>
-<p>Select &#34;Anaconda&#34; and &#34;Jupyter Notebook&#34;:</p>
-<p class="image-container"><img style="width: 359.55px" src="img\\b1d43fd4f5049925.png"> </p>
-<p>Leave the rest as default and click on &#34;Create&#34;.</p>
-<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-1&#34; for your worker nodes.</p>
-</aside>
+<p>Scroll down and (1) enable the checkbox &#34;Component gateway&#34; and (2) select &#34;Jupyter Notebook&#34; in the section &#34;Optional components&#34;:</p>
+<p>Next, select &#34;Configure Nodes (optional)&#34; and switch to a smaller machine type for both, the &#34;Manager node&#34; as well as the &#34;Worker nodes&#34;. Please also reduce the size of the attached hard disks for both node types:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e9ca66f4be999bf.png"></p>
+<p>Leave the remaining fields with their default values and click on &#34;Create&#34;.</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
