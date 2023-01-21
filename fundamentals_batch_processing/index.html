@@ -79,20 +79,20 @@
 <p>Click onto the link to your cluster:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\fecef524aa90829.png"></p>
 <p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\221f964cc442eb76.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\79ab5e10fefde260.png"></p>
 <p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\aee2692ecefff786.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b528b442b9527da4.png"></p>
 <p>You should see a Jupyter Notebook environment:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\28ca01b8ce755e10.png"></p>
 <p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\b2d133db982c2d76.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2b48d49a613316c2.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
 </aside>
 <h2 is-upgraded>Connecting to the PySpark session and reading the data lake</h2>
 <p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
 <pre><code>sc</code></pre>
 <p>This should be the output: </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\19a9618f25082a01.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1476ff3e1650df0c.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
 </aside>
 <h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
@@ -114,18 +114,18 @@ df_batch_result = spark.sql(&#34;SELECT product_name, mean(sales_value) FROM sal
 # show results (interactive mode)
 df_batch_result.toPandas()</code></pre>
 <p>Your notebook should now look like this:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f4c3d18027951c2a.png"></p>
-<aside class="special"><p><strong>Please note: </strong>This time we did not load the data into the memory of the Jupyter Notebook machine. All processing (although not visible) has been conducted by the worker nodes. If the data volume grows, we could just add more workers and the computation time will stay stable (parallel processing). This is horizontally scalable big data processing.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\88030410fba6cb7e.png"></p>
+<aside class="special"><p><strong>Please note: </strong>This time we did not load the data into the memory of the Jupyter Notebook machine (except for the results table). All processing (although not visible) has been conducted by the worker nodes. If the data volume grows, we could just add more workers and the computation time will stay stable (parallel processing). This is horizontally scalable big data processing.</p>
 </aside>
 <h3 is-upgraded><strong>Creating the Batch View</strong></h3>
 <p>Finally, we don&#39;t want to stay in interactive mode, but write the batch processing results back to the cloud storage.</p>
 <pre><code># write results back to cloud GCS
 df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_per_product&#34;)</code></pre>
 <p>There is no output expected. However, in your bucket, you should see a folder &#34;average_sales_per_product&#34; containing multiple files which hold our batch processing results. We will later discuss why there is not only one results-file (do you already have an idea? Think about parallel processing.). This should be your bucket&#39;s content:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d3244d398e73f6ac.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cb6a4a22d18562df.png"></p>
 <h3 is-upgraded><strong>Examining the result (downloading one file)</strong></h3>
 <p>When downloading and opening one file (with more than 0 B size!), you&#39;ll see that it contains a partial result:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\7254da5eb1c0c28a.png"></p>
+<p class="image-container"><img style="width: 602.00px" src="img\\b51c458efda82fd6.png"></p>
 <p>Thus, batch processing may require a further step to consolidate the results into a &#34;batch view&#34;, e.g. by generating a BigQuery table. We will skip this step, which is however simply possible.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -153,11 +153,11 @@ df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_p
 </aside>
 <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
 <p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
-<p class="image-container"><img style="width: 541.50px" src="img\\677e2f89b3bae352.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d7e556be81ad1f6f.png"></p>
 <h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
 <p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
 <p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
-<p class="image-container"><img style="width: 233.65px" src="img\\6e9eb65f98ccca79.png"></p>
+<p class="image-container"><img style="width: 196.00px" src="img\\586afd89234d20f2.png"></p>
 <p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
 
 
