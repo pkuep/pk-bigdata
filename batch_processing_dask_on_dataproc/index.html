@@ -49,7 +49,7 @@
 <p>This time, we will be using the cloud shell to create our cluster. Nevertheless, please navigate to DataProc already:</p>
 <p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
 <p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
-<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --image-version preview --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/dask/dask.sh   --metadata dask-runtime=yarn --optional-components JUPYTER --enable-component-gateway</code></pre>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --image-version preview --initialization-actions gs://pk-bigdata/dask.sh --metadata dask-runtime=yarn --optional-components JUPYTER --enable-component-gateway</code></pre>
 <p>The cluster is now created via the CLI (command line interface) to GCP and not the web console. The initialization action will take care of installing Dask on the master and worker nodes (see <a href="https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask" target="_blank">https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask</a> for further information).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
