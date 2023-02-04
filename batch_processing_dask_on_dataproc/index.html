@@ -124,7 +124,7 @@ ddf</code></pre>
 <p>Please open the cloud shell. The following command will establish the SSH tunnel from this machine to the cluster&#39;s master node and forward the relevant port (8787) via this connection.</p>
 <aside class="warning"><p><strong>Please note: </strong>It may happen that you are working in a different zone instead of us-central1-a. Please go to DataProc → &#34;VM instances&#34; → click on pk-dask-cluster-m → check the &#34;Zone&#34; value.</p>
 </aside>
-<pre><code>gcloud compute ssh pk-dask-cluster-m --zone us-central1-a -- -NL 8787:localhost:8787 -4</code></pre>
+<pre><code>gcloud compute ssh pk-dask-cluster2-m --zone us-central1-a -- -NL 8787:localhost:8787 -4</code></pre>
 <p>This should result in a &#34;blocking&#34; shell:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\d851985891ee978b.png"></p>
 <h3 is-upgraded><strong>Opening the Dashboard</strong></h3>
