@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2022-07-07T12:03:00Z",
+  "updated": "2023-09-21T07:20:08Z",
   "id": "batch_ingestion_cloudfunctionrdbms",
   "duration": 19,
   "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with a Cloud Function\"",

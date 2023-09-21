@@ -88,7 +88,7 @@
 <p>Scroll down to the &#34;Optional components&#34; and select &#34;Jupyter Notebook&#34;:</p>
 <p class="image-container"><img style="width: 305.00px" src="img\\f05ab22c8930ff2d.png"></p>
 <p>Leave the rest as default and click on &#34;Create&#34;.</p>
-<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n2-standard-2&#34; for your worker nodes under the &#34;Configure nodes&#34; section.</p>
+<aside class="warning"><p><strong>Important: </strong>If you receive an error message indicating &#34;out of quota&#34; regarding vCPUs, please select the machine type &#34;n1-standard-2&#34; for your worker nodes under the &#34;Configure nodes&#34; section.</p>
 </aside>
 <p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>

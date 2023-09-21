@@ -40,8 +40,6 @@
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
 </aside>
-<aside class="warning"><p><strong>Please note:</strong> Please execute the steps in the lab &#34;HDFS&#34; since this lab relies on the file &#34;lorem_ipsum.txt&#34; being uploaded to the cluster&#39;s HDFS /tmp directory. </p>
-</aside>
 
 
       </google-codelab-step>
@@ -123,6 +121,7 @@ df_batch_result.toPandas()</code></pre>
 df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_per_product&#34;)</code></pre>
 <p>There is no output expected. However, in your bucket, you should see a folder &#34;average_sales_per_product&#34; containing multiple files which hold our batch processing results. We will later discuss why there is not only one results-file (do you already have an idea? Think about parallel processing.). This should be your bucket&#39;s content:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\cb6a4a22d18562df.png"></p>
+<p>Please note: You might see less than three part-files.</p>
 <h3 is-upgraded><strong>Examining the result (downloading one file)</strong></h3>
 <p>When downloading and opening one file (with more than 0 B size!), you&#39;ll see that it contains a partial result:</p>
 <p class="image-container"><img style="width: 602.00px" src="img\\b51c458efda82fd6.png"></p>

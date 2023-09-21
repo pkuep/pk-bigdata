@@ -104,7 +104,7 @@ print(sales)</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img\\5f13691be5670754.png"></p>
 <h2 is-upgraded><strong>Store table &#34;sales&#34; in cloud storage</strong></h2>
 <p>In case you are working in the cloud JupyterLab, you can access the cloud storage easily with the following code:</p>
-<pre><code>From datetime import datetime
+<pre><code>from datetime import datetime
 from google.cloud import storage
 filename = f&#34;webshop_sales_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.csv&#34;
 storage_client = storage.Client()
