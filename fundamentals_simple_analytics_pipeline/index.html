@@ -61,7 +61,10 @@
 <aside class="warning"><p><strong>Please note:</strong> Setting no or a weak root password is not a good practice (actually it&#39;s a no-go) for productive use. This will however simplify some later steps for us. The SQL server cannot be accessed externally so this setup is acceptable for our course (especially since we&#39;ll delete the SQL instance afterwards). </p>
 </aside>
 <p class="image-container"><img style="width: 589.00px" src="img\\fc81413ed471208f.png"></p>
-<aside class="warning"><p><strong>Important:</strong> Please select MySQL5.7, since MySQL8.0 automatically sets some options, e.g. instance deletion protection, which makes this lab more complicated. Furthermore, we should limit resource utilization (and costs) by choosing &#34;Sandbox&#34; as preset.</p>
+<p>Please also uncheck the box &#34;Enable deletion protection&#34; in the section &#34;Data Protection&#34; which is available by clicking on &#34;Show configuration options&#34;:</p>
+<p class="image-container"><img style="width: 304.00px" src="img\\d8cbf9539fdffc32.png"></p>
+<p class="image-container"><img style="width: 574.00px" src="img\\9f354ee367f982f4.png"></p>
+<aside class="warning"><p><strong>Important:</strong> You may also select MySQL8.0. We should limit resource utilization (and costs) by choosing &#34;Sandbox&#34; as preset.</p>
 </aside>
 <p>Instance creation will take some minutes. Please wait until you see the green arrow in front of the instance name and continue with the next step.</p>
 
@@ -196,6 +199,8 @@ sales_value float
       <google-codelab-step label="Stopping the SQL server" duration="2">
         <h2 is-upgraded><strong>Reasoning</strong></h2>
 <p>Within the cloud environment you pay by use. Since the SQL server costs ~1$ per day, we now want to tear down the instance and bring it up when needed. The data studio dashboard does not induce any costs.</p>
+<aside class="warning"><p><strong>Important:</strong> In case you don&#39;t continue with the upcoming labs, please DELETE your SQL server instance!</p>
+</aside>
 <h2 is-upgraded><strong>Shutting down the SQL server</strong></h2>
 <p>Go to the SQL overview page in the cloud console.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\e31b7bcf8d21fd2e.png"></p>

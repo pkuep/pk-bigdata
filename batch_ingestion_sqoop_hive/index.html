@@ -76,7 +76,7 @@
 <li>Set some &#34;scope&#34; properties (not available in the web UI) also being related to Hive, especially that our data lake (warehouse-dir) should be cloud storage and not HDFS.</li>
 </ul>
 <p>Please execute this command in the cloud shell (you may want to replace pk with your initials, make sure that all paths and the connection name to the SQL database copied before are correctly set):</p>
-<pre><code>gcloud dataproc clusters create pk-sqoop --region us-central1  --optional-components JUPYTER --enable-component-gateway --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse </code></pre>
+<pre><code>gcloud dataproc clusters create pk-sqoop --region us-central1  --optional-components JUPYTER --enable-component-gateway --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql-test&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse --master-machine-type n1-standard-2 --master-boot-disk-size 50 --num-workers 2 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50</code></pre>
 <aside class="special"><p><strong>Please note:</strong> In case your cluster should run in another region, you&#39;ll need to adapt the &#34;--region&#34; option as well as the path of the initialization actions (change &#34;us-central1&#34; to your region).</p>
 </aside>
 <p>Cluster creation will take 2-3 minutes.</p>
@@ -99,13 +99,13 @@
 <aside class="special"><p><strong>Please note:</strong> Within cluster creation, we provided some parameters to our Hadoop cluster in order to steer the Hive setup. The parameter &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; sets our cloud SQL server as the database to be used for the Hive metastore (i.e. Hive will create a database &#34;hive-metastore&#34; and store all metadata of our datalake there). The parameter &#34;hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse&#34; specifies that the Hive warehouse (i.e. Hive-based datalake) should be stored in cloud storage. The default location is in HDFS /user/hive which we want to avoid due to HDFS being bound to a DataProc cluster (we strictly want to disconnect long-term storage from computation!).</p>
 </aside>
 <p>Let&#39;s now start the sqoop job with a further parameter &#34;--hive-import&#34;:</p>
-<aside class="warning"><p><strong>Important:</strong> This command will unfortunately not work due to DataProc issues in providing the correct libraries. We will therefore use a workaround below and NOT execute the sqoop job.</p>
+<aside class="warning"><p><strong>Important:</strong> This command will unfortunately <strong>not </strong>work due to DataProc issues in providing the correct libraries. We will therefore use a workaround below and NOT execute the sqoop job.</p>
 </aside>
 <pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --as-parquetfile --hive-import</code></pre>
 <h2 is-upgraded><strong>WORKAROUND: Manual Interaction with Hive and Data Ingestion</strong></h2>
 <h3 is-upgraded><strong>Connecting to beeline</strong></h3>
 <p>Due to the mentioned issue we will now start interacting with Hive directly in order to ingest data via &#34;standard SQL&#34; (like in the lab &#34;Simple Analytics Pipeline&#34;). As stated in the lecture, there exists a command line interface (CLI) for Hive called &#34;beeline&#34;.</p>
-<aside class="special"><p><strong>Please note:</strong> There are more sophisticated Hive interfaces, e.g. as part of the Hue interface for Hadoop. We will use this later in the &#34;Data Extraction and Query Languages&#34; part of the course.</p>
+<aside class="special"><p><strong>Please note:</strong> There are more sophisticated Hive interfaces and Hive can also be accessed by almost all modern BI tools like PowerBI, Tableau etc.</p>
 </aside>
 <p>Please open the SSH connection to the master node and execute the following command in order to start Hive&#39;s CLI beeline and connect to our cluster&#39;s Hive metastore (running on the master node &#34;localhost&#34;):</p>
 <pre><code>beeline -u &#34;jdbc:hive2://localhost:10000&#34;</code></pre>
