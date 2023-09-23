@@ -49,7 +49,7 @@
 <p>This time, we will be using the cloud shell to create our cluster. Nevertheless, please navigate to DataProc already:</p>
 <p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
 <p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
-<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --initialization-actions gs://pk-bigdata/dask.sh --metadata dask-runtime=yarn --optional-components JUPYTER --enable-component-gateway</code></pre>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --initialization-actions gs://peer-bigdata-material/dask.sh --metadata dask-runtime=yarn --optional-components JUPYTER --enable-component-gateway</code></pre>
 <p>The cluster is now created via the CLI (command line interface) to GCP and not the web console. The initialization action will take care of installing Dask on the master and worker nodes (see <a href="https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask" target="_blank">https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/dask</a> for further information).</p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
@@ -114,7 +114,7 @@ ddf</code></pre>
 <p>Please delete the currently running cluster now.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\b447dfc2d08c608d.png"></p>
 <p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
-<pre><code>gcloud dataproc clusters create pk-dask-cluster2 --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --initialization-actions gs://pk-bigdata-material/dask.sh --metadata dask-runtime=standalone --optional-components JUPYTER --enable-component-gateway</code></pre>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster2 --region us-central1  --master-machine-type n1-standard-2 --master-boot-disk-size 50 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --initialization-actions gs://peer-bigdata-material/dask.sh --metadata dask-runtime=standalone --optional-components JUPYTER --enable-component-gateway</code></pre>
 <p>In this case, we use a slightly adapted version of the initialization action we used before. </p>
 <aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
 </aside>
@@ -188,7 +188,7 @@ reg.fit(X, y)</code></pre>
     
       <google-codelab-step label="Varying the Cluster Size" duration="6">
         <p>Now we want to add two further worker nodes (parameter &#34;--num-workers 4&#34;) and observe the cluster&#39;s performance. Please delete your cluster and generate a new one using the following command (please adapt your initials!):</p>
-<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://pk-bigdata-material/dask.sh   --metadata dask-runtime=standalone --optional-components JUPYTER  --enable-component-gateway --num-workers 4 --worker-boot-disk-size 50 --master-boot-disk-size 50</code></pre>
+<pre><code>gcloud dataproc clusters create pk-dask-cluster --region us-central1  --master-machine-type n1-standard-2 --worker-machine-type n1-standard-2 --image-version preview --initialization-actions gs://peer-bigdata-material/dask.sh   --metadata dask-runtime=standalone --optional-components JUPYTER  --enable-component-gateway --num-workers 4 --worker-boot-disk-size 50 --master-boot-disk-size 50</code></pre>
 <p>Go to JupyterLab and open your saved notebook &#34;machine_learning_with_dask&#34;. </p>
 <p>Again, create a SSH connection via the cloud shell to the master node.</p>
 <aside class="warning"><p><strong>Please note: </strong>It may happen that you are working in a different zone instead of us-central1-a. Please go to DataProc → &#34;VM instances&#34; → click on pk-dask-cluster-m → check the &#34;Zone&#34; value.</p>
