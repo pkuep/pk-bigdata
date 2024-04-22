@@ -69,7 +69,19 @@
       </google-codelab-step>
     
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
-        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+        <h2 is-upgraded><strong>Preparation</strong></h2>
+<p>Please make sure that the following settings are set:</p>
+<ol type="1" start="1">
+<li>Please navigate to the &#34;APIs&#34; page within the GCP web console and activate all recommended APIs (Management, Service Control etc.).</li>
+<li>Please navigate to &#34;VPC network&#34; and activate the recommended APIs (especially Networking but also the DNS API).</li>
+<li>Please navigate to &#34;VPC network&#34;</li>
+</ol>
+<ol type="1" start="1">
+<li>Select the &#34;default&#34; VPC network by clicking on it.</li>
+<li>Navigate to &#34;Subnets&#34; and select the first one (&#34;default&#34; in &#34;us-central1&#34;).</li>
+<li>Click on &#34;Edit&#34; and activate &#34;Private Google Access&#34;</li>
+</ol>
+<h2 is-upgraded><strong>Cluster Creation</strong></h2>
 <p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\91571fbdece59b6a.png"></p>
 <p>Hit &#34;create cluster&#34;:</p>
