@@ -46,10 +46,12 @@
       </google-codelab-step>
     
       <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="1">
-        <p><strong>See previous Lab!</strong></p>
+        <h2 is-upgraded><strong>CLI Command</strong></h2>
+<p>Please use the following command (changed to your project and initials) to crate a DataProc cluster that has some connectors (esp. BigQuery) readily installed:</p>
+<pre><code>gcloud dataproc clusters create pyspark-pk --enable-component-gateway --region us-central1 --no-address --master-machine-type n2-standard-2 --master-boot-disk-type pd-balanced --master-boot-disk-size 50 --num-workers 2 --worker-machine-type n2-standard-2 --worker-boot-disk-type pd-balanced --worker-boot-disk-size 50 --image-version 2.2-debian12 --optional-components JUPYTER</code></pre>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You configured and started your first big data system, a Hadoop cluster, called &#34;DataProc&#34; in GCP. DataProc is the basis for many big data ingestion, transformation, and processing tasks in GCP.</li>
+<li>You configured and started a Hadoop cluster in GCP with some additional connectors.</li>
 </ol>
 
 
@@ -195,6 +197,52 @@ print(&#34;Root Mean Squared Error (RMSE) on test data (with weekday column) = %
 <li>You used the PySpark with the ML-package to train a model, make predictions, and evaluate the model using our Dataproc cluster.</li>
 <li>This setup is big data machine learning ready!</li>
 </ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing BigQuery within PySpark" duration="6">
+        <h2 is-upgraded><strong>Creating a DataSet</strong></h2>
+<p>Please create a DataSet called bq_from_pyspark:</p>
+<p class="image-container"><img style="width: 563.00px" src="img\\d98057f492063c56.png"></p>
+<h2 is-upgraded><strong>Using the BiqQuery-Connector (writing to a table)</strong></h2>
+<p>Please perform the following simple analytical task and try to write the results to a BigQuery table called &#34;webshop_analysis&#34; using this code:</p>
+<pre><code># read raw data
+df = spark.read.csv(&#34;gs://dscb420-pk/webshop_history.csv&#34;, inferSchema=True, header=True)
+
+# perform aggregation - rename column (BigQuery can&#39;t handle the automatically generated column name &#34;SUM(sales_value)&#34;)
+result_df = df.groupby(&#34;weekday&#34;).agg({&#34;sales_value&#34;:&#34;sum&#34;}).withColumnRenamed(&#34;SUM(sales_value)&#34;, &#34;total_sales_value&#34;)
+
+
+# set a bucket for temporary storage
+gcs_bucket = &#39;dscb420-pk&#39;
+
+# set BigQuery dataset name
+bq_dataset = &#39;bq_from_pyspark&#39;
+
+# set BigQuery table name
+bq_table = &#39;webshop_analysis&#39;
+
+# write results to BigQuery
+result_df.write.format(&#34;bigquery&#34;) \
+    .option(&#34;table&#34;, f&#34;{bq_dataset}.{bq_table}&#34;) \
+    .option(&#34;temporaryGcsBucket&#34;, gcs_bucket) \
+    .mode(&#39;overwrite&#39;) \
+    .save()</code></pre>
+<p>You should see this result in BigQuery:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6940ecaa0993f6c1.png"></p>
+<h2 is-upgraded><strong>Using the BiqQuery-Connector (read)</strong></h2>
+<p>You can also access BigQuery datasets (here a public dataset) and perform Spark-based analytics (keep in mind that you could also formulate a simple BigQuery-SQL statement for this example):</p>
+<pre><code>table = &#34;bigquery-public-data.wikipedia.pageviews_2020&#34;
+df_wiki_pageviews = spark.read \
+  .format(&#34;bigquery&#34;) \
+  .option(&#34;table&#34;, table) \
+  .option(&#34;filter&#34;, &#34;datehour &gt;= &#39;2020-03-01&#39; AND datehour &lt; &#39;2020-03-02&#39;&#34;) \
+  .load()
+
+df_wiki_pageviews.groupby(&#34;wiki&#34;).sum(&#34;views&#34;).toPandas()
+</code></pre>
+<p>For further examples <a href="https://github.com/tfayyaz/cloud-dataproc/blob/master/notebooks/python/1.2.%20BigQuery%20Storage%20%26%20Spark%20SQL%20-%20Python.ipynb" target="_blank">https://github.com/tfayyaz/cloud-dataproc/blob/master/notebooks/python/1.2.%20BigQuery%20Storage%20%26%20Spark%20SQL%20-%20Python.ipynb</a>.</p>
 
 
       </google-codelab-step>
