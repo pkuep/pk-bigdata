@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2024-04-24T12:04:41Z",
+  "id": "fundamentals_data_science_sandbox",
+  "duration": 18,
+  "title": "Lab \"Fundamentals: Data Science Sandbox\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a Jupyter Notebook environment which is capable of accessing a data lake.",
+  "source": "1u9epU5jnnc2cS9R-eBhbj1R_ngQ2KeCFGQRxECx9q8w",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "fundamentals_data_science_sandbox"
+}

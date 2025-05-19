@@ -1,0 +1,186 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Processing: PySpark Wordcount&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_processing_pyspark_wordcount"
+                  title="Lab &#34;Batch Processing: PySpark Wordcount&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this simplified use case we want to start an interactive PySpark shell and perform the word count example.</p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Setup of a Dataproc cluster for further PySpark labs and execution of the map-reduce logic with spark..</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a Dataproc cluster including a Jupyter notebook.</li>
+<li>Opening</li>
+<li>Reading the data lake and counting the words</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<aside class="warning"><p><strong>Requirements:</strong> The previous labs on fundamentals and data ingestion need to be executed in order to have the analyzed files and data ready in the data lake.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
+        <h2 is-upgraded><strong>Preparation</strong></h2>
+<p>Please make sure that the following settings are set (if not done yet):</p>
+<ol type="1" start="1">
+<li>Please navigate to the &#34;APIs&#34; (API Gateway) page within the GCP web console and activate all recommended APIs (Management, Service Control etc.).</li>
+<li>Please navigate to &#34;VPC network&#34; and activate the recommended APIs (especially Networking but also the DNS API).</li>
+<li>Please navigate to &#34;VPC network&#34;</li>
+</ol>
+<ol type="1" start="1">
+<li>Select the &#34;default&#34; VPC network by clicking on it.</li>
+<li>Navigate to &#34;Subnets&#34; and select the first one (&#34;default&#34; in &#34;us-central1&#34;).</li>
+<li>Click on &#34;Edit&#34; and activate &#34;Private Google Access&#34;</li>
+</ol>
+<h2 is-upgraded><strong>Cluster Creation</strong></h2>
+<p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
+<p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
+<p>Hit &#34;create cluster&#34;:</p>
+<p class="image-container"><img style="width: 532.50px" src="img\\ae1bce8437c10990.png"></p>
+<p>Select &#34;Cluster on Compute Engine&#34;:</p>
+<p class="image-container"><img style="width: 454.00px" src="img\\7bc7bd3baabd0f74.png"></p>
+<p>You may want to use the following parameters:</p>
+<ul>
+<li>Name: &#34;your initals-hadoop&#34; (e.g. pk-hadoop)</li>
+<li>Region: leave the default region (us-central1)</li>
+<li>Cluster mode: leave the default mode (1 master, N workers)</li>
+<li>All other settings should also stay in the default</li>
+</ul>
+<p>Enable the checkbox &#34;Component gateway&#34; and select the &#34;Jupyter Notebook&#34; component:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\38e816c33f7ec2e1.png"></p>
+<p>Leave the rest as default and click on &#34;Create&#34;.</p>
+<p>GCP now spins up three virtual machines which together form a so-called Hadoop cluster. One machine is the master (some kind of coordinating unit) and two machines are workers. If you need more &#34;computational power&#34;, you&#39;d just add further worker nodes. We will learn how to use this kind of parallel big data processing later. For now, we just want to get to the Jupyter Notebook and access the data lake - later we&#39;ll use the notebook to make big data computations with Hadoop (and Spark).</p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You configured and started your first big data system, a Hadoop cluster, called &#34;DataProc&#34; in GCP. DataProc is the basis for many big data ingestion, transformation, and processing tasks in GCP.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Jupyter Notebook and Connecting to Spark" duration="8">
+        <h2 is-upgraded><strong>Opening the Jupyter Notebook</strong></h2>
+<p>Click onto the link to your cluster:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fecef524aa90829.png"></p>
+<p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\221f964cc442eb76.png"></p>
+<p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\aee2692ecefff786.png"></p>
+<p>You should see a Jupyter Notebook environment:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\28ca01b8ce755e10.png"></p>
+<p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34; (although we will not use the &#34;big data tool&#34; Spark now, let&#39;s try if this works):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b2d133db982c2d76.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
+</aside>
+<h2 is-upgraded><strong>Connecting to the PySpark session and reading the data lake</strong></h2>
+<p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
+<pre><code>sc</code></pre>
+<p>This should be the output: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\19a9618f25082a01.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
+</aside>
+<h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
+<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;BigData - Batch Processing  - PySpark Wordcount&#34;).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6560f85f78bcb61.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing.</li>
+<li>The code you ran is big data-ready and scalable. If you need more performance, just add more worker nodes in cluster creation and you are ready to process terabytes of data in a batch manner.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="&#34;Traditional&#34; PySpark Programming with RDDs" duration="8">
+        <h2 is-upgraded><strong>Uploading a sample text file to GCS</strong></h2>
+<p>Please upload the lorem_ipsum.txt file from the course folder (datasets) to your GCS bucket (e.g. pk-gcs).</p>
+<h2 is-upgraded><strong>Connecting to the text file in GCS</strong></h2>
+<p>The variable &#34;sc&#34; allows you to interact with the Spark cluster. &#34;sc.textFile&#34; lets you tell Spark that there is a file (on GCS) that you want to work with:</p>
+<pre><code># link to text file on GCS
+text = sc.textFile(&#34;gs://pk-gcs/lorem_ipsum.txt&#34;)
+text</code></pre>
+<p>For demo purposes, you can show the file contents in the notebook by &#34;collecting&#34; the RDD, i.e. transferring it to the programming environment (NEVER do this with big data).</p>
+<pre><code>text.collect() # only for demo purposes - remove for job submission</code></pre>
+<p class="image-container"><img style="width: 624.00px" src="img\\6006921382ed5e1c.png"></p>
+<h2 is-upgraded><strong>Applying the Wordcount logic on RDDs</strong></h2>
+<h3 is-upgraded><strong>Word split</strong></h3>
+<p>The first step in applying wordcount is to split based on the blank spaces between words:</p>
+<pre><code># split each line into words
+words = text.flatMap(lambda line: line.split(&#34; &#34;))
+words.collect()  # only for demo purposes - remove for job submission</code></pre>
+<h3 is-upgraded><strong>Mapping and reducing to count words</strong></h3>
+<p>Next, we want to apply the classical word count logic of MapReduce:</p>
+<pre><code># count the occurrence of each word (classical MapReduce logic)
+wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a,b:a+b)
+wordCounts.collect()</code></pre>
+<p>This should be the result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6616ba13dc9661ac.png"></p>
+<h3 is-upgraded><strong>Job deployment (outlook)</strong></h3>
+<p>The logic we implemented could be transferred to a &#34;real&#34; PySpark job and scheduled regularly:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\dfe36da878ebf19a.png"></p>
+<p>We won&#39;t execute this step here.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing to perform the classical word count example using a MapReduce logic.</li>
+</ol>
+<ol type="1" start="3">
+<li>The code you ran is big data-ready and scalable.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Shutting Down the Cluster" duration="1">
+        <h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
+<p>Go to the cluster details page and hit &#34;Delete&#34; (in the live lecture, please leave it running):</p>
+<p class="image-container"><img style="width: 541.50px" src="img\\677e2f89b3bae352.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you learned how to work with PySpark and the traditional &#34;RDD-based&#34; programming style. We won&#39;t learn how to program with RDDs in detail since there are more sophisticated libraries available for Spark (and PySpark).</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

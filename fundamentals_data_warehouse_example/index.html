@@ -1,0 +1,204 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Fundamentals: Data Warehouse Example&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="fundamentals_data_warehouse_example"
+                  title="Lab &#34;Fundamentals: Data Warehouse Example&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is again our use case: a simple webshop for which we now want to generate a very simple BI architecture, i.e. a data warehouse in the &#34;traditional&#34; manner.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3c3e14c0a31b3057.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Loading example source data from cloud storage to a DWH Staging area, transforming the data to a star schema and providing the results in a DWH-like manner.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Load sample data from cloud storage to BigQuery (could be automated in a batch run)</li>
+<li>Transform the data into a very simple star schema.</li>
+<li>Reading the DWH tables from Data Studio.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dataset Creation and Data Upload to Staging Area" duration="4">
+        <h2 is-upgraded><strong>Data upload and dataset creation</strong></h2>
+<p>Please go to BigQuery in the console:</p>
+<p class="image-container"><img style="width: 290.00px" src="img\\eea0ac8b27dca3f5.png"></p>
+<p>If not already selected, please select your project in the &#34;Explorer&#34;:</p>
+<p class="image-container"><img style="width: 617.00px" src="img\\79c1d8679eb887ba.png"></p>
+<p>We now want to &#34;Add Data&#34;:</p>
+<p class="image-container"><img style="width: 286.00px" src="img\\ea393eb0e0311bd8.png"></p>
+<p>Select &#34;Google Cloud Storage&#34; as data source:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3bd7908d86dfd54d.png"></p>
+<p>Select &#34;Browse&#34; to be able to navigate to your bucket:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b4fcd23a02082ff2.png"></p>
+<p>Navigate to the webshop_datalage and select the csv-file:</p>
+<p class="image-container"><img style="width: 399.00px" src="img\\40cb15be30d7c5ed.png"></p>
+<p>Now, we need to create a new dataset in our project, before being able to upload the data. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9984f0c0190c370.png"></p>
+<p>Please call the dataset &#34;example_dwh&#34; and make it a multi-regional dataset in the US. Leave all other settings as default and hit &#34;Create dataset&#34;: </p>
+<p class="image-container"><img style="width: 558.00px" src="img\\26dc2e21ef52d1a3.png"></p>
+<p>You should be able to select your dataset now and furthermore be allowed to enter a table name (sales_staging) as well as select &#34;Schema auto detection&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f5261d4ab143bab5.png"></p>
+<h2 is-upgraded><strong>First data inspection</strong></h2>
+<p>Please reload the &#34;Explorer&#34; page, such that the dataset becomes visible in your project when clicking on the arrow next to your project ID:</p>
+<p class="image-container"><img style="width: 362.00px" src="img\\d659f554d6168d78.png"></p>
+<p>You can take a look at the schema (check if the data types are as expected), preview data, or query the table by clicking on the table name:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8cd185c0611a409b.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a dataset for our sample data warehouse.</li>
+<li>You created a table from a csv file in the data lake. This step could be automated and new data, for example, be appended to the table.</li>
+<li>You took a look at the data via the &#34;preview&#34; function and inspected the table&#39;s schema for correctness.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Transformation (Star Schema - Product Dimension)" duration="8">
+        <aside class="warning"><p><strong>Please note: </strong>Due to simplification of the labs, our data are stored in the csv-file in a de-normalized manner, i.e. just a flat file that contains duplicates (e.g. the product_name is repeated several times). From a modeling point of view, we usually deal with normalized data structures in source systems, especially in OLTP-systems (like a sales system). Normalized data (=the relational model) avoid redundancies and inconsistencies, e.g. by putting the product master data into its own table. Actually, BigQuery performs better with de-normalized data and we could just leave the data as they are. However, for demonstration purposes we create a star schema based on our staging table.</p>
+</aside>
+<h2 is-upgraded><strong>Querying the staging table for products</strong></h2>
+<p>If not done in the previous step, please select the table &#34;sales_staging&#34; in your project&#39;s dataset &#34;example_dwh&#34; and hit &#34;Query → In new tab&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9e124be82a0d6862.png"></p>
+<p>A sample query is created:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a7865db78e3ddad4.png"></p>
+<p>Use this SQL code to derive the dimension table &#34;product&#34; and run the query.</p>
+<pre><code>-- derive the dimension table product from the source data
+SELECT DISTINCT product, product_name FROM `pk-bigdata.example_dwh.sales_staging`</code></pre>
+<p>You should see the results in the lower part of the window:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3f19639632c58da6.png"></p>
+<h2 is-upgraded><strong>Saving the results as a dimension table &#34;product&#34;</strong></h2>
+<p>Select &#34;Save results&#34; and save the query result as a new BigQuery table calles &#34;dwh_product&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f976998771f307eb.png"></p>
+<p>Store this new table in the same dataset:</p>
+<p class="image-container"><img style="width: 566.00px" src="img\\73621ff91c269f28.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>We could also save this product dimension table as a &#34;view&#34;. For demonstration purposes, we however want to &#34;move the data physically&#34; to a new DWH-table (just as we did it by saving the results).</p>
+</aside>
+<h2 is-upgraded><strong>Scheduling the query</strong></h2>
+<p>In order to set up a productive architecture, we&#39;d need to schedule the query to be executed, e.g. every night after uploading new data to the sales_staging table (which we&#39;ll not implement).</p>
+<p>Select &#34;Schedule&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2831eb197ad70fc3.png"></p>
+<p>Enable the required API:</p>
+<p class="image-container"><img style="width: 565.00px" src="img\\a9ddb15fe15bf251.png"></p>
+<p>Afterwards, take a look at the options you get when &#34;creating a new scheduled query&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c9ebb3e51d2d946f.png"></p>
+<p>We can set the repeats (e.g. daily), set the destination table (e.g. our &#34;dwh_product&#34;) and define, if we want to append or overwrite data (in our case overwrite would be necessary for the query).</p>
+<p>We won&#39;t set up the schedule now.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a query to derive a dimension table from a flat (de-normalized) table.</li>
+<li>You saved this table and thus built the first part of our exemplary simplified star schema.</li>
+<li>You learned how to schedule queries for operative use.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Your Task - Data Transformation (Star Schema - Sales Facts)" duration="4">
+        <h2 is-upgraded><strong>Querying the staging table for sales transactions (facts)</strong></h2>
+<p>Similar to the dimension table generation, your task is now to derive the sales facts from the staging table. Generate a new table dwh_sales which contains the date, product, and sales_value columns by querying the staging table.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>After having completed this task you added another part to our simple star schema.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Solution - Data Transformation (Star Schema - Sales Facts)" duration="4">
+        <h2 is-upgraded><strong>Query</strong></h2>
+<p>Your query should look like this:</p>
+<pre><code>-- derive the sales facts from the source data
+SELECT date, product, sales_value FROM `pk-bigdata.example_dwh.sales_staging`;</code></pre>
+<p>Your dataset &#34;example_dwh&#34; now should contain three tables.</p>
+<p class="image-container"><img style="width: 355.00px" src="img\\dc5d3b0d6f338ea3.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>BigQuery&#39;s pricing model is based on the amount of data your queries &#34;touch&#34;. Thus, you can estimate how expensive your ETL (extract, transform, load) architecture will be, e.g. using the GCP pricing calculator (<a href="https://cloud.google.com/products/calculator" target="_blank">https://cloud.google.com/products/calculator</a>). Under &#34;Execution Details&#34;, you will find some information on the &#34;Bytes shuffled&#34;.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now completed the simplified star schema.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Querying the DWH from Data Studio" duration="2">
+        <h2 is-upgraded><strong>Dashboard Generation and BigQuery connection</strong></h2>
+<p>Go to <a href="https://datastudio.google.com" target="_blank">https://datastudio.google.com</a> and create a new report. In the popup section &#34;add data&#34; select &#34;BigQuery&#34;. </p>
+<p class="image-container"><img style="width: 500.00px" src="img\\fa724c7f194d744a.png"></p>
+<p>You first need to authorize &#34;Looker Studio&#34; (which is datastudio):</p>
+<p class="image-container"><img style="width: 304.00px" src="img\\2baaa1bfed79cee5.png"></p>
+<p>Navigate via your project and dataset to the tables &#34;dwh_product&#34;. Add this to the report.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\72126a5cf3ed18b1.png"></p>
+<p>Allow adding the data to the report:</p>
+<p class="image-container"><img style="width: 569.00px" src="img\\f9522aa49eea0d56.png"></p>
+<p>Rename the report to &#34;BigData Course - Fundamentals - Sample DWH&#34;. You will notice that DataStudio added a visualization (table) already based on the input table:</p>
+<p class="image-container"><img style="width: 600.00px" src="img\\5b9d2fa2e60783e8.png"></p>
+<h2 is-upgraded><strong>Generation of a Join in Data Studio</strong></h2>
+<p>First, we want to add the previously generated dimension &#34;product&#34; to our datastudio data sources. Please add this BigQuery table by clicking on &#34;Daten hinzufügen&#34; and navigating to the product dimension table. Afterwards, you should see both tables on the right side of the screen:</p>
+<p class="image-container"><img style="width: 318.00px" src="img\\bd9bf7d042fc7bd1.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Usually, BI-tools (like PowerBI, Qlik, Tableau, etc.) allow simple identification and modeling of Joins in some kind of &#34;data modeler&#34;. Data Studio also offers these capabilities, however in a somewhat unusual way of defining one new data source per join. </p>
+</aside>
+<p>Select &#34;Resource&#34; and &#34;manage linked data&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f7f5e6839e3556ac.png"></p>
+<p>Add a join:</p>
+<p class="image-container"><img style="width: 622.00px" src="img\\7050517c977b79fe.png"></p>
+<p>First, add a further table to the modeler and define the fields to be used within the join as shown below:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\565131ff508fec74.png"></p>
+<p>Next, click on &#34;configure join&#34; and define the following join condition:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a03c3d825dbc5c71.png"></p>
+<p>Add this join to our data model by saving it (lower right part of the screen). You should see another data source:</p>
+<p class="image-container"><img style="width: 318.00px" src="img\\c0249fce90da844d.png"></p>
+<p>We can now use fields from both tables (dimension and fact) to, for example, create a line chart of sales over time:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\67b50f902c9dc3fe.png"></p>
+<p>Configure this visualization as follows:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\33bb9e1f989bb25.png"></p>
+<h2 is-upgraded><strong>Notes on costs for BigQuery</strong></h2>
+<p>You will probably not notice any costs for BigQuery throughout this course, since you&#39;ll stay below the threshold of queries that are for free. Also, we are storing such low data volumes in our use cases currently, that the storage costs will be negligible.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you completed the third lab in our big data fundamentals course. This lab focused on setting up components for a more &#34;traditional&#34; BI architecture. This is, however, very important since the big data architecture will augment the BI architecture, but not replace it completely. Knowing how to set up &#34;normal&#34; ETL processes is very important for all analytics-related projects.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab. You may keep all components since they do not induce huge costs or costs at all.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2023-01-21T17:24:48Z",
+  "id": "fundamentals_data_warehouse_example",
+  "duration": 23,
+  "title": "Lab \"Fundamentals: Data Warehouse Example\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll create a very simple data warehouse architecture in GCP BigQuery.",
+  "source": "1Jjfa2iUQRFVPpxfCxo5Esq1NNeR-j8r_i6aVHOjm0Og",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "fundamentals_data_warehouse_example"
+}

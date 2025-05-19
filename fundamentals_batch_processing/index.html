@@ -1,0 +1,182 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Fundamentals: Batch Processing&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="fundamentals_batch_processing"
+                  title="Lab &#34;Fundamentals: Batch Processing&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product in a scalable (big data) manner.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3c3e14c0a31b3057.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Using data in the data lake for batch processing from a Jupyter Notebook.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Setup a big data-ready computation environment (Hadoop in the cloud)</li>
+<li>Reading the data lake using PySpark (big data ready)</li>
+<li>Performing a simple analysis using standard SQL on top of Spark (the big data computation framework we will use multiple times)</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Hadoop Cluster with a Jupyter Notebook" duration="4">
+        <h2 is-upgraded><strong>Cluster Creation (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;)</strong></h2>
+<p>Please navigate to DataProc, which is GCP&#39;s Hadoop product:</p>
+<p class="image-container"><img style="width: 433.00px" src="img\\c49e1002f9c9377f.png"></p>
+<p>Hit &#34;create cluster&#34;:</p>
+<p class="image-container"><img style="width: 306.00px" src="img\\2f82c4f00a4b7fdb.png"></p>
+<p>Select &#34;Cluster on Compute Engine&#34;:</p>
+<p class="image-container"><img style="width: 435.00px" src="img\\9fbcf43bad53a736.png"></p>
+<p>You need to use the following parameters:</p>
+<ul>
+<li>Name: &#34;your initials-hadoop&#34; (e.g. pk-hadoop)</li>
+<li>Region: leave the default region (us-central1)</li>
+<li>Cluster mode: leave the default mode &#34;Standard (1 master, N workers)&#34;</li>
+</ul>
+<p>Scroll down and (1) enable the checkbox &#34;Component gateway&#34; and (2) select &#34;Jupyter Notebook&#34; in the section &#34;Optional components&#34;:</p>
+<p>Next, select &#34;Configure Nodes (optional)&#34; and switch to a smaller machine type for both, the &#34;Manager node&#34; as well as the &#34;Worker nodes&#34;. Please also reduce the size of the attached hard disks for both node types:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e9ca66f4be999bf.png"></p>
+<p>Leave the remaining fields with their default values and click on &#34;Create&#34;.</p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You configured and started a Hadoop cluster which is ready for our first batch processing job.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Jupyter Notebook and Reading the Data Lake" duration="8">
+        <h2 is-upgraded><strong>Opening the Jupyter Notebook  (identical to codelab &#34;Fundamentals - Data Science Sandbox&#34;) </strong></h2>
+<p>Click onto the link to your cluster:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fecef524aa90829.png"></p>
+<p>When clicking on &#34;VM instances&#34; one can see that the three virtual machines are running. We will later use this to connect to the master node. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\79ab5e10fefde260.png"></p>
+<p>For now, we only want to use the web interface of the Jupyter notebook. Click on &#34;Web Interfaces&#34; and &#34;Jupyter&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b528b442b9527da4.png"></p>
+<p>You should see a Jupyter Notebook environment:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\28ca01b8ce755e10.png"></p>
+<p>Let&#39;s create a notebook in Cloud Storage, i.e. navigate to GCS and click &#34;New&#34; → &#34;PySpark&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2b48d49a613316c2.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>With this method we work in an &#34;interactive mode&#34; with our big data cluster. Usually, one submits single jobs (especially in production mode) as source code files. However, for our purposes the interactive mode works well. We should, however, always close the PySpark interactive notebook by clicking on &#34;Running&#34; and shutting in down. <strong>Also remember: please open only one PySpark notebook in parallel!</strong></p>
+</aside>
+<h2 is-upgraded>Connecting to the PySpark session and reading the data lake</h2>
+<p>Although we don&#39;t know yet what Spark or PySpark is in general, we can use it quickly with our Python knowledge. The &#34;entry point&#34; to our big data cluster in PySpark is the so-called SparkContext. You can check if everything is fine and accessible by just entering &#34;sc&#34; in one cell. It may take some seconds until the cell shows the output.</p>
+<pre><code>sc</code></pre>
+<p>This should be the output: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1476ff3e1650df0c.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The indicator on the top-right should not be filled (see red box in the screenshot). Especially if you accidentally opened two PySpark notebooks, one will have this circle always filled in dark-grey.</p>
+</aside>
+<h2 is-upgraded><strong>Renaming the Notebook</strong></h2>
+<p>You may also now want to rename the notebook (click on &#34;Untitled&#34; and change the name to, e.g., &#34;Batch Processing 1 (Fundamentals)&#34;).</p>
+<h2 is-upgraded><strong>Sample Batch Task (this time calculated in &#34;big data mode&#34; by all nodes in the cluster)</strong></h2>
+<p>A batch job could be to read all csv-files in the webshop_datalake (we only have one file currently stored there) and calculate the average sales value per product. Note that we assume that all files in the webshop_datalake have the same structure.</p>
+<h3 is-upgraded><strong>Connecting to the data lake</strong></h3>
+<p>Let&#39;s start by defining the connection to the data lake for PySpark. Put the following code in a cell and execute it (no output is expected):</p>
+<pre><code># provide spark the link to the webshop history (datalake)
+df = spark.read.csv(&#34;gs://pk-gcs/webshop_datalake/*.csv&#34;, inferSchema=True, header=True)</code></pre>
+<h3 is-upgraded><strong>Batch Processing</strong></h3>
+<p>Next, let&#39;s define our batch processing by making use of one of Spark&#39;s great features: querying big data in a SQL manner. The cell should have a Pandas DataFrame as output.</p>
+<pre><code># create a temporary view on the data that we can simply query by SQL
+df.createOrReplaceTempView(&#34;sales&#34;)
+
+# this is our batch processing - calculate the mean sales_value per product_name
+df_batch_result = spark.sql(&#34;SELECT product_name, mean(sales_value) FROM sales GROUP BY product_name&#34;)
+
+# show results (interactive mode)
+df_batch_result.toPandas()</code></pre>
+<p>Your notebook should now look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\88030410fba6cb7e.png"></p>
+<aside class="special"><p><strong>Please note: </strong>This time we did not load the data into the memory of the Jupyter Notebook machine (except for the results table). All processing (although not visible) has been conducted by the worker nodes. If the data volume grows, we could just add more workers and the computation time will stay stable (parallel processing). This is horizontally scalable big data processing.</p>
+</aside>
+<h3 is-upgraded><strong>Creating the Batch View</strong></h3>
+<p>Finally, we don&#39;t want to stay in interactive mode, but write the batch processing results back to the cloud storage.</p>
+<pre><code># write results back to cloud GCS
+df_batch_result.write.csv(&#34;gs://pk-gcs/webshop_batch_results/average_sales_per_product&#34;)</code></pre>
+<p>There is no output expected. However, in your bucket, you should see a folder &#34;average_sales_per_product&#34; containing multiple files which hold our batch processing results. We will later discuss why there is not only one results-file (do you already have an idea? Think about parallel processing.). This should be your bucket&#39;s content:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cb6a4a22d18562df.png"></p>
+<p>Please note: You might see less than three part-files.</p>
+<h3 is-upgraded><strong>Examining the result (downloading one file)</strong></h3>
+<p>When downloading and opening one file (with more than 0 B size!), you&#39;ll see that it contains a partial result:</p>
+<p class="image-container"><img style="width: 602.00px" src="img\\b51c458efda82fd6.png"></p>
+<p>Thus, batch processing may require a further step to consolidate the results into a &#34;batch view&#34;, e.g. by generating a BigQuery table. We will skip this step, which is however simply possible.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You used a Jupyter Notebook as an interactive big data tool for batch processing.</li>
+<li>The code you ran is big data-ready and scalable. If you need more performance, just add more worker nodes in cluster creation and you are ready to process terabytes of data in a batch manner.</li>
+<li>We can now shut down our cluster in order to save money (see next step).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Shutting Down the Cluster" duration="2">
+        <h2 is-upgraded><strong>Reasoning</strong></h2>
+<p>Within the cloud environment you pay by use. Since the DataProc Cluster costs ~3$ per day, we now want to tear it down. Unfortunately, DataProc does not allow &#34;stopping&#34; the cluster (like cloud SQL did). Thus, we&#39;ll need to delete the cluster to avoid costs.</p>
+<h2 is-upgraded><strong>Saving, shutting down, and closing the notebooks</strong></h2>
+<p>Save your Jupyter Notebook. </p>
+<aside class="warning"><p><strong>Important: </strong>We should shut down our running Spark connection in order to free cluster resources (other jobs can be blocked if your Spark session is running). Thus, please execute the following steps in order to make sure that there are no running Spark jobs in the background!</p>
+</aside>
+<p>Open the Jupyter overview site and click on &#34;Running&#34;. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2abcce33b399536.png"></p>
+<p>Click on &#34;Shutdown&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cffa8bcea46551df.png"></p>
+<p>Now you can close all Jupyter Notebook browser tabs.</p>
+<aside class="special"><p><strong>Please note: </strong>The notebook will be available later on since it is also stored in GCS. You should see a bucket called &#34;dataproc-staging-...&#34; in your GCS storage which holds - among other files - the notebook (in the &#34;notebooks&#34; folder)..</p>
+</aside>
+<h2 is-upgraded><strong>Shutting down the DataProc Cluster</strong></h2>
+<p>Go to the cluster details page and hit &#34;Delete&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d7e556be81ad1f6f.png"></p>
+<h2 is-upgraded><strong>Checking the costs for the DataProc cluster (wait one day)</strong></h2>
+<p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
+<p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
+<p class="image-container"><img style="width: 196.00px" src="img\\586afd89234d20f2.png"></p>
+<p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on DataProc depending on how long the instance has been running. DataProc pricing consists of a DataProc fee and the fees for virtual machines (&#34;Compute Engine&#34;) and hard-drives (disks) attached to these machines as well as potential costs for network traffic.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you completed another lab in our big data journey. This lab was the first one in which you got in touch with big data tools and analytics. We will understand the applied technology in detail throughout this course.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

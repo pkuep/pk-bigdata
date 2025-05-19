@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-14T12:04:39Z",
+  "id": "batch_ingestion_datafusion_bigquery",
+  "duration": 11,
+  "title": "Lab \"Batch Ingestion: Cloud Data Fusion\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a GCP data fusion instance and create an ingestion job (implicitly running on DataProc) that retrieves a table from a cloud SQL instance and stores the data in BigQuery.",
+  "source": "1Je_l8XFxMprwQBR4i10DXXcP6rXb0QamhkgsZyglQF4",
+  "theme": "batchingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "batchingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_ingestion_datafusion_bigquery"
+}

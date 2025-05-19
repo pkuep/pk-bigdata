@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2022-05-04T19:48:33Z",
+  "id": "batch_ingestion_sqoop_avroparquet",
+  "duration": 24,
+  "title": "Lab \"Batch Ingestion: Ingest RDBMS Source with Sqoop to Avro/Parquet\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a sqoop job from o a DataProc cluster that retrieves a table from a cloud SQL instance and stores the data in the data lake (HDFS/GCS) in the popular big data file formats \"Avro\" and \"Parquet\".",
+  "source": "1H0BWTlnXDt0vSi_MDbz88TlNsZPmzlFIu2V_wlK7rpw",
+  "theme": "batchingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "batchingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_ingestion_sqoop_avroparquet"
+}

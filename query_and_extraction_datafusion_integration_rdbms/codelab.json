@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-16T14:59:22Z",
+  "id": "query_and_extraction_datafusion_integration_rdbms",
+  "duration": 15,
+  "title": "Lab \"Query and Extraction: Extracting Data with Data Fusion\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll access the data lake and integrate batch processing results back into an RDBMS using Data Fusion.",
+  "source": "1OUeFRWJZTaxrKPXFY6TsY_SU7UeOlGRBhfgrVqw2Nns",
+  "theme": "batchingestion",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "batchingestion"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "query_and_extraction_datafusion_integration_rdbms"
+}

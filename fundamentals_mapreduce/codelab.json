@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-09-15T20:19:53Z",
+  "id": "fundamentals_mapreduce",
+  "duration": 8,
+  "title": "Lab \"Fundamentals: MapReduce\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll use a DataProc cluster to execute a MapReduce job.",
+  "source": "1Ap90DCSzQGsGqhYR5ZrB1iYDfkKM4fDB0BCi0kUBRl0",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "fundamentals_mapreduce"
+}

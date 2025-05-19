@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2024-04-24T12:05:00Z",
+  "id": "batch_processing_pyspark_wordcount",
+  "duration": 22,
+  "title": "Lab \"Batch Processing: PySpark Wordcount\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll set up a Dataproc cluster including a Jupyter Notebook environment which is capable of accessing a data lake.",
+  "source": "1lz_lisVkUx8GJzW1PmvzFvawhink4HGeoWJDpKLPLjM",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_processing_pyspark_wordcount"
+}

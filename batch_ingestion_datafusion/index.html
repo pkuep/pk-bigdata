@@ -1,0 +1,257 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Ingestion: Cloud Data Fusion&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_ingestion_datafusion"
+                  title="Lab &#34;Batch Ingestion: Cloud Data Fusion&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract) using data fusion.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e8ab2156423ab70.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Ingesting structured relational data into the data lake for batch processing via a (horizontally) scalable solution underlying Cloud Data FUsion.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a Cloud Data Fusion instance in order to develop and deploy a basic ingestion pipeline.</li>
+<li>Learn about the different connector types for sources and sinks in data fusion.</li>
+<li>Deploy a data fusion job that extracts the relational data and ingests them into the data lake (GCS-based).</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
+</aside>
+<aside class="warning"><p><strong>Prerequisite:</strong> Your cloud SQL server needs to be running for this lab OR you have access to the provided open MySQL instance!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a Cloud Data Fusion Instance" duration="4">
+        <h2 is-upgraded><strong>Enabling the relevant APIs</strong></h2>
+<p>Make sure to have enabled the &#34;Cloud Data Fusion API&#34;, the &#34;Cloud Dataproc API&#34;, and the &#34;Cloud Storage API&#34; (all should be enabled if you followed the previous labs). You can find API settings by searching for the respective API name:</p>
+<h2 is-upgraded><img style="width: 624.00px" src="img\\25981cd225926247.png"></h2>
+<h2 is-upgraded><strong>Instance generation</strong></h2>
+<p>Please open &#34;Data Fusion&#34; in the cloud console:</p>
+<p class="image-container"><img style="width: 204.50px" src="img\\19ca9a2f6af8e738.png"></p>
+<p>Create a &#34;Basic&#34; instance and call it, e.g., &lt;your initials&gt;-datafusion:</p>
+<p class="image-container"><img style="width: 407.50px" src="img\\1ee1a6ac6896d04b.png"></p>
+<aside class="warning"><p><strong>Important:</strong> Please make sure that the data fusion instance will be set up in the same region as the cloud SQL server. The default of cloud SQL is us-central1 (which we used in the respective labs). Default of Data Fusion is us-west1 which would complicate access to the database and thus we&#39;ll select us-central1 here, too.</p>
+<p><strong>Please note</strong>:Setup will take several minutes (~10min).</p>
+</aside>
+<h2 is-upgraded><strong>Accessing the instance</strong></h2>
+<p>When the instance is ready, please click on &#34;View Instance&#34; to open the Data Fusion web UI:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1361b1b43608e84f.png"></p>
+<aside class="warning"><p><strong>Please note:</strong> This might also take some time (~5min).</p>
+</aside>
+<p>The UI should now look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\23f03a55f7a18633.png"></p>
+<p>Before proceeding in Data Fusion, please execute the following steps.</p>
+<h2 is-upgraded><strong>Enabling cloud SQL access</strong></h2>
+<aside class="warning"><p><strong>Please note:</strong> This is only necessary, in case you don&#39;t have access to the provided open MySQL database.</p>
+</aside>
+<p>Please open another browser tab and load the GCP console. Open &#34;IAM &amp; Admin → IAM&#34;.</p>
+<p class="image-container"><img style="width: 322.50px" src="img\\b6ed323444f1322.png"></p>
+<p>Enable the presentation of all roles, including automatically generated ones:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\35452461483a569b.png"></p>
+<p>Find the Data Fusion user. This is the user which Data Fusion utilizes when accessing project resources like GCS or our cloud SQL database. Please select &#34;edit&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a079bcc35f958f70.png"></p>
+<p>We want to provide this account the relevant rights in order to be able to read data from, e.g., cloud SQL and write data to, e.g., GCS. The most simple way is to grant this account &#34;Editor&#34; rights which allows access to all resources in the project. However, in an operational setting you should provide more fine-granular rights. Click on &#34;Add another role&#34;:</p>
+<p class="image-container"><img style="width: 312.50px" src="img\\279473df232c7acc.png"></p>
+<p>Select the &#34;Project Editor&#34; role:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3711eae5412bb62e.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a cloud data fusion instance and are now ready to set up ingestion pipelines in the graphical pipeline designer (Studio).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Ingestion Pipeline Step 1: Adding the Source" duration="10">
+        <aside class="warning"><p><strong>Please note:</strong> This is only necessary, in case you don&#39;t have access to the provided open MySQL database. Please install the MySQL JDBC Driver as shown below.</p>
+</aside>
+<h2 is-upgraded><strong>Adding the Cloud SQL Driver and Plugin</strong></h2>
+<p>Data Fusion provides a lot of connectors and many functions beyond simple data ingestion. For our purposes in this lab, we will only use &#34;Source&#34; and &#34;Sink&#34; elements which you&#39;ll find in the menu on the left hand side. Unfortunately, Data Fusion does not ship the cloud SQL driver per default. Thus, we&#39;ll open the Data Fusion &#34;Hub&#34; and add this connector to our instance:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\341579b39de1683a.png"></p>
+<p>Searching for &#34;CloudSQL&#34; shows all available connectors for cloud SQL instances:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\dfe8e4092abbc510.png"></p>
+<p>Please select &#34;CloudSQL MySQL JDBC Driver&#34;, since we selected MySQL as our cloud SQL server RDBMS. First, you need to download the driver file:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b014b4b8ca0aa982.png"></p>
+<p>Click on &#34;Download&#34; and follow the instructions to get the driver file from GitHub. When finished with this step, click on Deploy:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\530a1b7a15419615.png"></p>
+<p>Drag and drop your downloaded file:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e72d24f2ca6e44d9.png"></p>
+<p>Click &#34;Next&#34;. You can leave the default values in the following screen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\498bd0e8ad09287f.png"></p>
+<aside class="special"><p><strong>Please note:</strong> This will take some time. When finished, please do NOT select &#34;Create a Pipeline&#34; since we need to add another plugin. Just close the popup window.</p>
+</aside>
+<p>In the Hub, please also add the &#34;CloudSQL MySQL Plugins&#34; by clicking on &#34;Deploy&#34;. This will add the Cloud MySQL source to the Data Fusion Studio:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a931395640c402bc.png"></p>
+<p>Just click on finish in the next screen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\202a26ab111476d4.png"></p>
+<p>Please install the MySQL JDBC Driver in the Hub by downloading and deploying (the file &#34;mysql-connector-java-XYZ.jar&#34; within the zip file) it to your instance:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c052b5ae99b2aeda.png"></p>
+<aside class="special"><p><strong>Please note:</strong> When finished, you may select &#34;Create a Pipeline&#34; or close the popup window and follow the following steps.</p>
+</aside>
+<p>Please click on the &#34;burger menu&#34; and select &#34;Studio&#34; to open the graphical pipeline builder of Data Fusion:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1d748a13a19e6f73.png"></p>
+<h2 is-upgraded><strong>Adding the Cloud SQL Source to the Ingestion Pipeline</strong></h2>
+<h3 is-upgraded><strong>Creating a Pipeline</strong></h3>
+<p>After opening the &#34;Studio&#34;, you should see an empty pipeline builder. First, please name the pipeline, e.g. &#34;webshop_sales_to_gcs&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\89dc13eb1da5567.png"></p>
+<p>Next, please add a &#34;Source&#34; of type &#34;Database&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3747c7d84d31326a.png"></p>
+<p>Hover over the &#34;Database&#34; stage and select properties. Set the following properties:</p>
+<p>The Lablel could be &#34;Webshop-Sales-Source&#34; and the reference &#34;webshop_sales_source&#34;. </p>
+<p>The connection string should be the following (replace pk with your initials):</p>
+<pre><code>jdbc:mysql://google/webshop?cloudSqlInstance=pk-bigdata:us-central1:pk-sql&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory&amp;useSSL=False</code></pre>
+<p>The import query should be the following in order to select all rows from the sales table:</p>
+<pre><code>select * from sales</code></pre>
+<p>Don&#39;t forget to scroll down and set the right credentials (in our case username is root without password):</p>
+<p class="image-container"><img style="width: 354.57px" src="img\\e2bb934f32054b80.png"></p>
+<p class="image-container"><img style="width: 346.50px" src="img\\57f048a4017bec3.png"></p>
+<p>Hit &#34;Get schema&#34; located under the connection string. On the right side, you should see the columns of our table:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c4250cbd7a033912.png"></p>
+<p>Hit &#34;Validate&#34; on the top right and if no errors were found, you can close the properties using the &#34;X&#34;.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\76f39cfd7f55ecc8.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You added a driver for your cloud SQL server (MySQL-based) to your data fusion instance.</li>
+<li>You added the cloud SQL plugin such that it can be used in the data fusion &#34;Studio&#34;, i.e. the pipeline builder. (please note: due to errors we are using the &#34;traditional&#34; database stage)</li>
+<li>You created a source-object in the pipeline builder and configured the connection.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Ingestion Pipeline Step 2: Adding the Sink" duration="2">
+        <h2 is-upgraded><strong>Add a GCS sink</strong></h2>
+<p>We want to store our data in the GCS-based data lake. Thus, we&#39;ll add a sink &#34;GCS&#34; and connect the source with the sink:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b64e42b91b331fb4.png"></p>
+<p>Hover over the GCS-box and click on &#34;Properties&#34;. Set the following properties:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\49c131fe3b30e2fa.png"></p>
+<p>The reference name could be </p>
+<pre><code>webshop_sales_ingest</code></pre>
+<p>The cloud storage path could be (change to your initials)</p>
+<pre><code>gs://pk-gcs/sales_from_datafusion</code></pre>
+<p>We want to use the Parquet format since our data lake should be able to serve analytical workloads.</p>
+<p>Hit &#34;Validate&#34;, make sure that your configuration doesn&#39;t show any errors, and close the window.  </p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You added a sink (a folder in a cloud storage bucket) to the pipeline, configured it, and connected it with the source.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Ingestion Pipeline in the &#34;Data Fusion Studio&#34; - Step 3 (Previewing Data)" duration="4">
+        <h2 is-upgraded><strong>Loading preview data</strong></h2>
+<p>Next, we want to take a quick look at the data and validate that we are connecting the right source. Click on &#34;Preview&#34;: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c1db6e63c65662a3.png"></p>
+<p>Next, we need to run the pipeline once (in preview mode):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\891209dc448c085d.png"></p>
+<p>This will take some seconds. When hovering of any of the stages and selecting &#34;Preview Data&#34; you should see our source data:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\78bebb5accd0cee3.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>The ingestion pipeline is now complete and ready to be deployed.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exporting the Pipeline" duration="1">
+        <h2 is-upgraded><strong>Export and save pipeline</strong></h2>
+<p>In order to be able to reuse our specified pipeline, please export it to your local filesystem:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\625640c678f3edb.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You saved your pipeline as a json file on your local machine.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying and Running the Pipeline" duration="8">
+        <h2 is-upgraded>Save and Deploy the Pipeline</h2>
+<p>Please click &#34;Save&#34; and afterwards &#34;Deploy&#34; in the pipeline builder. The output should look like this (showing the pipeline in the lower part):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3a0614a37a6871c1.png"></p>
+<p>Please adapt the deployment options in order to avoid quota restrictions:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3b30a85cbaa52e66.png"></p>
+<p>The master node also needs to be adapted:</p>
+<p class="image-container"><img style="width: 333.00px" src="img\\62426e2b9a343dd0.png"></p>
+<h2 is-upgraded><strong>Execute the Pipeline</strong></h2>
+<p>Please click &#34;Run&#34;. The pipeline is now executed using a DataProc Hadoop cluster (i.e. <strong>it is horizontally scalable and big data-ready</strong>!). Our ingestion logic is transformed to a Spark job. One can see that a cluster is being generated by opening the DataProc overview page in the cloud console:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\49a8fb4f8932f705.png"></p>
+<p>The cluster is provisioned (i.e. set up) - in Data Fusion you can see the current status:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9c1cb0757ae5dd4b.png"></p>
+<aside class="special"><p><strong>Please note:</strong> Execution of the pipeline will take some minutes (~5min).</p>
+</aside>
+<p>If everything is fine you should see the following output. In case of errors, you need to check the &#34;Logs&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e736eb17e1f1e78d.png"></p>
+<h2 is-upgraded><strong>Checking the Data Lake</strong></h2>
+<p>When checking GCS, you should see the respective Parquet files in a folder named after the job&#39;s execution time:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\271a38cf90e1a8a.png"></p>
+<h2 is-upgraded><strong>Scaling out</strong></h2>
+<p>Please go back to the pipeline and hit the configure button. You can increase the performance of your cluster here:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ae7ccdcf9e524e66.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You deployed a pipeline which is now production-ready and could be scheduled regularly.</li>
+<li>This pipeline is big data-ready, however you need to check the costs for (1) pipeline development and (2) execution costs of Dataproc. You know how to configure it (partly).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="2">
+        <p>Please make sure to delete your data fusion instance in order to avoid high costs (in case of the live lecture please leave it running):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\37342bc50980d47a.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Pricing of cloud Data Fusion is quite special. See <a href="https://cloud.google.com/data-fusion/pricing" target="_blank">https://cloud.google.com/data-fusion/pricing</a> </p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished the lab and performed all necessary clean-up tasks.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>Congratulations, you set up a modern, cloud-based and horizontally scaling ingestion pipeline using GCP&#39;s data fusion with an automatically provisioned Hadoop cluster below (using Spark for the extraction / ingestion logic). Data Fusion is very powerful and would also allow for &#34;data wrangling&#34;. We skipped this part here since we are still concerned with data ingestion.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

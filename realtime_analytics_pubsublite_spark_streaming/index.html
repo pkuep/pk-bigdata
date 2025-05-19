@@ -1,0 +1,357 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Realtime Analytics: PubSubLite Data Aggregation with Spark Streaming&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="realtime_analytics_pubsublite_spark_streaming"
+                  title="Lab &#34;Realtime Analytics: PubSubLite Data Aggregation with Spark Streaming&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this lab, we want to make use of the PubSub service (in special PubSubLite since this is the product that has a pyspark-connector available) and learn how to analyze data in a realtime manner using Spark Streaming. We just want to count orders of products using a tumbling window scheme. This is the flow of data: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e9c75b9793a35c56.png"></p>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Create a DataProc cluster that provides Spark (pyspark) and a Juypter notebook as our interface for the showcase. </li>
+<li>The analytics results shall just be shown in the console - they could also be stored elsewhere.</li>
+<li>We will be using pyspark with structured streaming on DataProc.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Topic Creation and Sample Message Publishing" duration="10">
+        <h2 is-upgraded><strong>Creation of a new &#34;lite reservation&#34;</strong></h2>
+<p>In order to be able to generate a PubSub Lite topic, we first need a reservation. Please navigate to Pub/Sub → Lite Reservations:</p>
+<p class="image-container"><img style="width: 214.00px" src="img\\7511be04d137443b.png"></p>
+<p>Create a new lite reservation:</p>
+<p class="image-container"><img style="width: 401.00px" src="img\\8a60b2ede746975d.png"></p>
+<p>Please use us-central1 as the location. You can name your reservation for example &#34;pk-lite-res&#34;. We&#39;ll leave the throughput capacity with the default value of 1 and hit &#34;create&#34;.</p>
+<h2 is-upgraded><strong>Creation of a new topic &#34;pk-streaming&#34;</strong></h2>
+<p>Please navigate to &#34;Lite Topics&#34; and create a new Pub/Sub lite topic called &#34;&lt;initials&gt;-streaming&#34;. We&#39;ll use this topic for our simple &#34;Product-Buy&#34; string messages. </p>
+<p>It should be a regional topic - please select &#34;us-central1&#34; again.</p>
+<p>Hit continue and select your previously generated lite reservation. Do not alter the throughput parameters. &#34;Message storage&#34; will also be set to the default values.</p>
+<p>This should be the output of the review:</p>
+<p class="image-container"><img style="width: 511.00px" src="img\\21109f1b4404994a.png"></p>
+<h2 is-upgraded><strong>Creation of a new subscription &#34;pk-streaming-sub&#34;</strong></h2>
+<p>Please navigate to &#34;Lite Subscriptions&#34; and create a Lite Subscription that is called &#34;pk-streaming-sub&#34; and link it to the previously generated topic:</p>
+<p class="image-container"><img style="width: 553.00px" src="img\\14fa867f656571dd.png"></p>
+<h2 is-upgraded><strong>Publishing sample messages</strong></h2>
+<p>Pub/Sub Lite does not allow the manual publishing of messages. Thus, we&#39;ll create a Python-file in our cloud console shell that can be executed in order to publish messages. </p>
+<p>First, please open the cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3824ee91d51f5731.png"></p>
+<p>We need to install the pubsub-lite Python package on our cloud shell instance when it is running using this command (copy &amp; paste to the terminal):</p>
+<pre><code>pip install --upgrade google-cloud-pubsublite</code></pre>
+<p>Next, we swith to the Editor view in order to enter the code shown below:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3784c1db427de85f.png"></p>
+<p>Please create a new file:</p>
+<p class="image-container"><img style="width: 433.00px" src="img\\bc6a819811d503a8.png"></p>
+<p>and save it as send_messages.py:</p>
+<p class="image-container"><img style="width: 316.00px" src="img\\ec0162af3c90c498.png"></p>
+<p class="image-container"><img style="width: 521.00px" src="img\\f0ea7f1946389c88.png"></p>
+<p>Please add the following code snippet:</p>
+<pre><code>from google.cloud.pubsublite.cloudpubsub import PublisherClient
+from google.cloud.pubsublite.types import (
+    CloudRegion,
+    CloudZone,
+    MessageMetadata,
+    TopicPath,
+)
+import numpy as np
+
+project_number = number
+cloud_region = &#34;us-central1&#34;
+topic_id = &#34;pk-streaming&#34;
+
+location = CloudRegion(cloud_region)
+topic_path = TopicPath(project_number, location, topic_id)
+
+products = [&#39;Apple&#39;, &#39;Banana&#39;, &#39;Tomato&#39;]
+
+def send_messages(n):
+    for i in range(n):
+        with PublisherClient() as publisher_client:
+            data = f&#34;{np.random.choice(products)}&#34;
+            api_future = publisher_client.publish(
+                topic_path, data.encode(&#34;utf-8&#34;)
+            )
+            message_id = api_future.result()
+            print(f&#34;{data} sent with message id {message_id}&#34;)
+
+send_messages(10)</code></pre>
+<p>You&#39;ll need to adapt the values of two variables:</p>
+<ol type="1" start="1">
+<li>Change the topic-id to your previously created topic name.</li>
+<li>Change the project number which needs to be found out as shown below.</li>
+</ol>
+<p>In order to find your project number, please got to the project settings:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\60549631a587511b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c9efd6e8b04c1b4f.png"></p>
+<p>You will find your project number there:</p>
+<p class="image-container"><img style="width: 539.00px" src="img\\5849050c3cf0cd14.png"></p>
+<p>Copy and paste the project number into the editor and save the file. The topic name should also be changed already:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\587c55c2b5bb4401.png"></p>
+<p>Next, switch back to the terminal:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\78cf69ab96ae0353.png"></p>
+<p>Run your python program as follows:</p>
+<pre><code>python send_messages.py</code></pre>
+<p>You should see output similar to this (the products will differ and the numbers will be lower)</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\236b1bf5af7772c5.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You are now ready on the data source-side, i.e. able to publish messages to a Pub/Sub Lite topic.</li>
+<li>Next, we want to set up the streaming analytics architecture.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Spark Cluster with a Jupyter Notebook" duration="4">
+        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+<p>This time, we will be using the cloud shell to create our cluster. Nevertheless, please navigate to DataProc already:</p>
+<p class="image-container"><img style="width: 179.84px" src="img\\b22c0c295a63ca29.png"></p>
+<p>Run the following command in the cloud shell (but first, please change cluster-pk to your initials, e.g. in an editor):</p>
+<pre><code>gcloud dataproc clusters create cluster-pk --enable-component-gateway --region us-central1 --zone us-central1-a --master-machine-type n1-standard-2 --master-boot-disk-size 50 --num-workers 2 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 --scopes=https://www.googleapis.com/auth/cloud-platform --optional-components JUPYTER</code></pre>
+<p>The cluster is now created via the CLI (command line interface) to GCP and not the web console:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a7fc49b127ffaa20.png"></p>
+<p>You should see the cluster creation (&#34;provisioning&#34;) also in the list:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d78ccd9a71bf6301.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes. Don&#39;t forget to delete the cluster after finishing this lab.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You configured and started a Spark cluster which is capable of reading the Pub/Sub Lite topic&#39;s messages and analyzing these using Spark&#39;s structured streaming approach.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Opening JupyterHub and Running the Streaming Analysis" duration="14">
+        <h2 is-upgraded><strong>Opening JupyterHub</strong></h2>
+<p>Please click on the cluster name when it is finished provisioning:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2b8b19b7af9f77a3.png"></p>
+<p>Click on &#34;Web Interfaces&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6372379e60d3696a.png"></p>
+<p>Scroll down to JupyterLab and click on it. A new tab will appear which you might want to detach from your browser such that you can code in JupyterLab as well as use the cloud shell terminal in parallel.</p>
+<p>Please create a new &#34;Python 3&#34; notebook (not PySpark!):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bf4075d19559c3ce.png"></p>
+<h2 is-upgraded><strong>Connecting to the Spark Cluster</strong></h2>
+<p>Put the following code into the first cell:</p>
+<pre><code># connecting to pyspark and providing the spark streaming to pubsublite connector
+import os
+os.environ[&#39;PYSPARK_SUBMIT_ARGS&#39;] = &#39;--jars gs://spark-lib/pubsublite/pubsublite-spark-sql-streaming-LATEST-with-dependencies.jar pyspark-shell&#39;
+
+import pyspark
+
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StringType
+
+spark = SparkSession.builder.appName(&#34;read-app&#34;).master(&#34;yarn&#34;).getOrCreate()</code></pre>
+<p>Execute the cell. You should see output of the cell similar to this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\69bdef2b05c35c65.png"></p>
+<p>The variable &#34;spark&#34; is our &#34;entry point&#34; to the spark cluster.</p>
+<h2 is-upgraded><strong>Defining the Connection to our Pub/Sub-Lite Subscription and Converting the Data Field</strong></h2>
+<p>Put the following code into the second cell:</p>
+<pre><code># defining the subscription to be read from and converting &#34;data&#34; to a string
+from pyspark.sql.functions import window
+
+sdf = (
+    spark.readStream.format(&#34;pubsublite&#34;)
+    .option(
+        &#34;pubsublite.subscription&#34;,
+        f&#34;projects/projectnumber/locations/us-central1/subscriptions/pk-streaming-sub&#34;,
+    )
+    .load()
+)
+
+sdf = sdf.withColumn(&#34;data&#34;, sdf.data.cast(StringType()))</code></pre>
+<p>You will need to change two aspects (see below):</p>
+<ol type="1" start="1">
+<li>Change the project number to yours.</li>
+<li>Change the name of the subscription to yours.</li>
+</ol>
+<p class="image-container"><img style="width: 624.00px" src="img\\ade0f45b74756b3.png"></p>
+<p>Execute the cell.</p>
+<h2 is-upgraded><strong>Defining the Streaming Analytics</strong></h2>
+<p>Put the following code into a new cell:</p>
+<pre><code># defining the streaming analytics:
+# group all data based on a 10 second tumbling window (using the publish_timestamp)
+# as well as the incoming data string (i.e. Apple, Banana, Tomato etc.)
+# and count the occurances of the respective messages
+# --&gt; assumption: one message = one occurance of a product buy
+windowedCounts = sdf.groupBy(
+    window(sdf.publish_timestamp, &#34;10 seconds&#34;),
+    sdf.data
+).count()</code></pre>
+<p>Here, we&#39;ll define the counting using a 10-second tumbling window as well as the data field as group by criterion. Thus, we&#39;ll see per 10-second window and data-string the occurrences of buys (=number of messages).</p>
+<p>Please execute the cell. There&#39;s no output of the cell.</p>
+<h2 is-upgraded><strong>Starting the Streaming Analytics</strong></h2>
+<p>Put the following code into a new cell:</p>
+<pre><code># starting the streaming analytics query and
+# pushing the output to the console
+query = (
+    windowedCounts.writeStream.format(&#34;console&#34;)
+    .outputMode(&#34;complete&#34;)
+    .option(&#34;truncate&#34;, &#34;false&#34;)
+    .trigger(processingTime=&#34;0 seconds&#34;)
+    .start()
+)</code></pre>
+<p>Execute the cell. This will start the realtime analytics and output should be visible (meaningful results after approximately 30 seconds), especially when you start sending messages again:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\25cbd39c39add81b.png"></p>
+<p>There will be especially multiple &#34;batches&#34; - every time spark identifies new messages in the subscription, a new batch will be shown (with all data received).</p>
+<h2 is-upgraded><strong>Stopping the Streaming Analytics</strong></h2>
+<p>Put the following code into a new cell:</p>
+<pre><code>query.stop()</code></pre>
+<p>Execute the cell. This will stop the query.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a simple streaming analytics architecture using spark streaming.</li>
+<li>The programming model is comparable to that of &#34;normal&#34; spark applications.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the Streaming Analysis as a Job" duration="8">
+        <h2 is-upgraded>Conversion of the Code to a Python file</h2>
+<p>Please create a Python file called streaming_analytics_product_count.py in your cloud shell machine using the Editor view (see above section &#34;Publishing sample messages&#34;).</p>
+<p>Please adapt the following parts of the code:</p>
+<ol type="1" start="1">
+<li>Remove &#34;import os&#34; and &#34;os.environ[&#39;PYSPARK_SUBMIT_ARGS&#39;] = &#39;--jars gs://spark-lib/pubsublite/pubsublite-spark-sql-streaming-LATEST-with-dependencies.jar pyspark-shell&#39;&#34; since we are going to provide the necessary jar-files as a parameter to the job.</li>
+<li>Add the following three lines at the end of the file</li>
+</ol>
+<ol type="1" start="1">
+<li><code># Wait 60 seconds to start receiving messages.</code></li>
+<li><code>query.awaitTermination(60)</code></li>
+<li><code>query.stop()</code></li>
+</ol>
+<p>Your code should look similar to this:</p>
+<pre><code># connecting to pyspark and providing the spark streaming to pubsublite connector
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StringType
+
+spark = SparkSession.builder.appName(&#34;read-app&#34;).master(&#34;yarn&#34;).getOrCreate()
+
+# defining the subscription to be read from and converting &#34;data&#34; to a string
+from pyspark.sql.functions import window
+
+sdf = (
+    spark.readStream.format(&#34;pubsublite&#34;)
+    .option(
+        &#34;pubsublite.subscription&#34;,
+        f&#34;projects/projectnumber/locations/us-central1/subscriptions/pk-streaming-sub&#34;,
+    )
+    .load()
+)
+
+sdf = sdf.withColumn(&#34;data&#34;, sdf.data.cast(StringType()))
+
+# defining the streaming analytics:
+# group all data based on a 10 second tumbling window (using the publish_timestamp)
+# as well as the incoming data string (i.e. Apple, Banana, Tomato etc.)
+# and count the occurances of the respective messages
+# --&gt; assumption: one message = one occurance of a product buy
+windowedCounts = sdf.groupBy(
+    window(sdf.publish_timestamp, &#34;10 seconds&#34;),
+    sdf.data
+).count()
+
+
+# starting the streaming analytics query and
+# pushing the output to the console
+query = (
+    windowedCounts.writeStream.format(&#34;console&#34;)
+    .outputMode(&#34;complete&#34;)
+    .option(&#34;truncate&#34;, &#34;false&#34;)
+    .trigger(processingTime=&#34;0 seconds&#34;)
+    .start()
+)
+
+# test-mode: stop after 5 minutes
+query.awaitTermination(300)
+query.stop()
+
+</code></pre>
+<h2 is-upgraded><strong>Running the job</strong></h2>
+<p>Go back to the cloud shell. Submit your Python file as a job using the following command (adapt the cluster name):</p>
+<pre><code>gcloud dataproc jobs submit pyspark streaming_analytics_product_count.py \
+    --region=us-central1 \
+    --cluster=cluster-pk \
+    --jars=gs://spark-lib/pubsublite/pubsublite-spark-sql-streaming-LATEST-with-dependencies.jar \
+    --properties=spark.master=yarn
+
+</code></pre>
+<p>Wait some time until the job is up and running. Then send some example messages (e.g. in a second cloud shell tab) using our previously implemented send_messages.py tool:</p>
+<p class="image-container"><img style="width: 379.00px" src="img\\2e20cf5d16760db7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\634a18106cd31ecb.png"></p>
+<p>The job output should show some changes (further batches) when you generate new messages:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e4bd94f102820b0.png"></p>
+<p>The job should be finished after 5 minutes. You can monitor running jobs under &#34;Jobs&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\abda091816af5bb2.png"></p>
+<p>When selecting your job, you&#39;ll see some metrics of you job as well as the output we monitored in the shell before:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d7b533379d1b7e25.png"></p>
+<p>If you don&#39;t want to wait 5 minutes, you can stop the job here.</p>
+<p class="image-container"><img style="width: 579.00px" src="img\\7a92d8653ac933af.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a streaming analytics application and submitted this as a job to your cluster. This is the operational mode that comes closer to &#34;real-world&#34; big data architectures.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="1">
+        <h2 is-upgraded><strong>Cluster deletion</strong></h2>
+<p>Please delete your DataProc cluster:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bb5749c00f5fff36.png"></p>
+<h2 is-upgraded><strong>Topic, Subscription, and Capacity Reservation Deletion</strong></h2>
+<p>The PubSub-Lite-Reservation incurs cost for the reserved throughput capacity. Please delete delete the topic and afterwards the reservation in order to avoid high running costs.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished this lab by shutting down the running job in DataFlow and clearing the output table.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>You are now able to make use of a big data-ready realtime processing framework in the cloud. DataFlow can be used for various scenarios using the SQL-like syntax. However, natively programming DataFlow (=Apache Beam) is pretty tough but is also very powerful in terms of creating auto-scaling pipelines.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-10-02T15:14:44Z",
+  "id": "realtime_analytics_dataflow_sql",
+  "duration": 22,
+  "title": "Lab \"Realtime Analytics: PubSub Data Aggregation with SQL and DataFlow\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll learn how to create an automatically scaling realtime processing pipeline using GCP's DataFlow technology. You'll aggregate PubSub-messages using a tumbling window method, calculate metrics on your data and store the results in BigQuery.",
+  "source": "17O7Ejx9Lo0fvj_0JCergVFj_N0LrvtjBUm0AG3Fn13I",
+  "theme": "realtimeanalytics",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "realtimeanalytics"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "realtime_analytics_dataflow_sql"
+}

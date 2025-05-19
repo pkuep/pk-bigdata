@@ -1,0 +1,262 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Realtime Analytics: PubSub and Service Accounts&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="realtime_analytics_pubsub"
+                  title="Lab &#34;Realtime Analytics: PubSub and Service Accounts&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this lab, we want to get to know the messaging system PubSub as a representative of message brokers like Apache Kafka. </p>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a topic and subscription and push / pull some example messages in the cloud console.</li>
+<li>Create a service account that is allowed to push / pull messages from PubSub.</li>
+<li>Learn how to use the service account credentials from Python.</li>
+<li>Learn how to push/pull PubSub messages in Python.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creation of the Topic and Subscription, Sending Sample Messages" duration="5">
+        <h2 is-upgraded><strong>Creating an example topic &#34;pk-topic&#34;</strong></h2>
+<p>First, we need to create a topic. Please navigate to &#34;PubSub&#34; in the cloud console.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c30897d0ce10b263.png"></p>
+<p>Select &#34;Create topic&#34;. You might want to call it &lt;initials&gt;-pubsub. You may keep the selection to create &#34;a default subscription&#34; (see section below).</p>
+<p class="image-container"><img style="width: 341.78px" src="img\\1d67eb6dde2b0c5f.png"></p>
+<p>We cannot just &#34;listen&#34; to the topic (i.e. pulling data from it) but need to create a so-called subscription from which we can pull the messages. This structure allows different consumers on a topic each receiving all messages.</p>
+<p>Navigate to the &#34;subscription&#34; page and create a subscription:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6c7b258bcc329d8c.png"></p>
+<p>Call it, e.g., &lt;initials&gt;-subscription:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\eeff2524898133a3.png"></p>
+<p>Leave all other fields as default.</p>
+<h2 is-upgraded><strong>Publishing sample messages</strong></h2>
+<p>Please open another browser tab and navigate to the topics page. Select &#34;Publish recurring message&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bf6ebfb4c91728c2.png"></p>
+<p>Let&#39;s publish this simple message every 10s, 20 times:</p>
+<p class="image-container"><img style="width: 285.01px" src="img\\1a7d5ab47c5a33e2.png"></p>
+<h2 is-upgraded><strong>Pulling messages</strong></h2>
+<p>Please open the other browser tab with the subscription page. Open &#34;View messages&#34; (by the way: notice &#34;Replay messages&#34; - this is retention).</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3d1c9fdff50c5706.png"></p>
+<p>After hitting pull, you should see this screen with all messages being sent so far:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a8ff61cd9786e3ef.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You learned how to create PubSub topics and subscriptions as well as send and receive sample messages via the cloud console.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Service Account" duration="5">
+        <h2 is-upgraded>Service accounts</h2>
+<p>In order to allow software components to access specific services in the cloud, one way is to create a specific account for the component. Let&#39;s create a service account which has the rights to push and pull messages within PubSub in our project.</p>
+<p>Please navigate to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34;. Click on &#34;Create service account&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\81e7f665d871d25d.png"></p>
+<p>First, we need to give it a name, e.g. &#34;&lt;initials&gt;-pubsub&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d0923304432a933f.png"></p>
+<p>Next, we need to provide this service account the rights to publish and consume messages by adding the following two roles to it:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\40d70292c9cd68d2.png"></p>
+<aside class="warning"><p><strong>Please note:</strong> In case you want to add further roles later on, you need to navigate to the &#34;IAM&#34; page under &#34;IAM &amp; Admin&#34; and look for your service account. There you&#39;ll be able to add further roles, e.g. for cloud storage access.</p>
+</aside>
+<p>The third screen can be left empty:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\71e8f4257a6cc680.png"></p>
+<h2 is-upgraded><strong>Creating a key for application access</strong></h2>
+<p>Finally, we need a mechanism for our application / software component to authenticate against GCP (in special the PubSub service). Please &#34;Manage keys&#34; for our newly generated service account:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fe0bebbd7e381002.png"></p>
+<p>Click on &#34;Add key&#34; in the following screen. </p>
+<p class="image-container"><img style="width: 418.00px" src="img\\61de760624684911.png"></p>
+<p>Select JSON:</p>
+<p class="image-container"><img style="width: 549.00px" src="img\\2b8c981db8626893.png"></p>
+<p>A JSON file should be downloaded automatically.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now have a rough understanding of the service account concept and know how to create these. </li>
+<li>You know how to create JSON key files and download one for our newly created account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using the Service Account Key in Python" duration="5">
+        <h2 is-upgraded>Starting Colab as External Jupyter Notebook</h2>
+<p>Let&#39;s use a further interesting service offering: Google Colab. Please navigate to <a href="https://colab.research.google.com/" target="_blank">https://colab.research.google.com/</a> and provide the necessary access rights.</p>
+<p>If you don&#39;t want to use Colab, you can also rely on a local Juypter / Anaconda installation or a notebook in GCP.</p>
+<h2 is-upgraded><strong>Creating a New Notebook</strong></h2>
+<p>Please create a new notebook and call it &#34;PubSub-Access&#34;.</p>
+<h2 is-upgraded><strong>Uploading the JSON File</strong></h2>
+<p>We want to authenticate our notebook with the service account. Hence, it needs access to the JSON key file we just downloaded. Click on the &#34;folder&#34; icon on the left:</p>
+<p class="image-container"><img style="width: 393.50px" src="img\\8bdc1a80337acf54.png"></p>
+<p>There you can either upload your JSON file for the currently running Colab session or connect your Drive folders to this notebook. We&#39;ll try the former option:</p>
+<p class="image-container"><img style="width: 309.00px" src="img\\2b2ed617d15e192a.png"></p>
+<h2 is-upgraded><strong>Installing the pubsub package</strong></h2>
+<p>Unfortunately, Colab does not ship the PubSub Python package. We need to install it using:</p>
+<pre><code>!pip install --upgrade google-cloud-pubsub</code></pre>
+<p>You&#39;ll need to restart the session once.</p>
+<h2 is-upgraded><strong>Using the JSON File as Authentication in the Notebook</strong></h2>
+<p>Now we can use the pubsub client and initiate the connection to PubSub using our json key file</p>
+<pre><code>from google.cloud import pubsub_v1
+from google.oauth2 import service_account
+
+# set this to your initials
+project_id = &#34;pk-bigdata&#34;
+topic_id = &#34;pk-pubsub&#34;
+
+# the downloaded key filename which you uploaded to this Colab session
+key_path = &#34;&lt;FILENAME&gt;.json&#34;
+
+# create credentials
+credentials = service_account.Credentials.from_service_account_file(
+    key_path, scopes=[&#34;https://www.googleapis.com/auth/cloud-platform&#34;],
+)
+
+# create publisher and topic objects
+publisher = pubsub_v1.PublisherClient(credentials=credentials)
+topic_path = publisher.topic_path(project_id, topic_id)</code></pre>
+<aside class="warning"><p><strong>Please note:</strong> This model of service account access with credential generation works for most services (e.g. also BigQuery) that should be accessed programmatically, e.g. via Python.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You set up the connection from Python to PubSub via a service account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Publishing Messages" duration="3">
+        <h2 is-upgraded>Publishing a Message</h2>
+<p>You are now ready to publish messages to the PubSub service using these commands:</p>
+<pre><code>data = &#34;Message from Python&#34;
+data = data.encode(&#34;utf-8&#34;) # data must be a bytestring
+    
+future = publisher.publish(topic_path, data)
+print(f&#34;Published message with ID {future.result()}&#34;)</code></pre>
+<p>If everything works fine, you should see a message ID as confirmation.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You published messages from Python to the serverless message broker service &#34;PubSub&#34;.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Receiving Messages" duration="3">
+        <h2 is-upgraded><strong>Duplicating the Notebook</strong></h2>
+<p>Please create a copy of your notebook and call it &#34;PubSubAccess - Receiving Messages&#34;. </p>
+<p>You will unfortunately need to install the pubsub client and upload the json file again:</p>
+<pre><code>!pip install --upgrade google-cloud-pubsub</code></pre>
+<p>Execute the first cell and remove the second cell with the &#34;message sending&#34; code.</p>
+<h2 is-upgraded>Listening to Incoming Messages</h2>
+<p>Receiving messages is an asynchronous task, i.e. we need to define some kind of callback method that should be executed when a new message arrives. The following code implements this requirement (listening to messages times out after 50 seconds - you can adapt the variable timeout respectively):</p>
+<pre><code>subscription_id = &#34;pk-subscription&#34;
+timeout = 50.0  # number of seconds the subscriber should listen for messages
+
+subscriber = pubsub_v1.SubscriberClient(credentials=credentials)
+subscription_path = subscriber.subscription_path(project_id, subscription_id)
+
+def callback(message):
+    &#34;&#34;&#34; This is the method which is called when a message arrives &#34;&#34;&#34;
+    print(&#34;Received message: {}&#34;.format(message))
+    message.ack()  # we acknowledge the message
+
+# start the subscription
+streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+print(&#34;Listening for messages on {}..\n&#34;.format(subscription_path))
+
+# wrap subscriber in a &#39;with&#39; block to automatically call close() when done
+with subscriber:
+    try:
+        streaming_pull_future.result(timeout=timeout)
+    except TimeoutError:
+        streaming_pull_future.cancel()</code></pre>
+<p>This should be the output, depending on your message data:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a1ff32ae0a2ac44b.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now know how to retrieve messages from PubSub via Python.</li>
+<li>Remember: the serverless PubSub service is big data-ready since GCP copes for the auto-scaling of the PubSub infrastructure. You just pay by the number of messages being sent. Scalability is provided!</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="PubSub Scaling" duration="1">
+        <p>PK: Allow public access to the topic!</p>
+<p>Please add the following code to your message sending notebook &#34;PubSub-Access&#34;:</p>
+<pre><code># Public
+project_id_public = &#34;pk-bigdata&#34;
+topic_id_public = &#34;pk-pubsub-public&#34;
+
+# create publisher and topic objects
+publisher_public = pubsub_v1.PublisherClient(credentials=credentials)
+topic_path_public = publisher_public.topic_path(project_id_public, topic_id_public)
+
+data_public = &#34;My message in public&#34;
+data_public = data_public.encode(&#34;utf-8&#34;) # data must be a bytestring
+    
+future_public = publisher_public.publish(topic_path_public, data_public)
+print(f&#34;Published message with ID {future_public.result()}&#34;)
+</code></pre>
+<p>Change the value of variable data_public and hit send. We&#39;ll use this to show the purpose of systems like PubSub.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You published further messages, this time to a public topic.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="1">
+        <p>PK: Remove public access to the topic!</p>
+<p>You should de-activate your service account in order to avoid its unauthorized usage. Go to &#34;IAM &amp; Admin&#34; → &#34;Service Accounts&#34; and disable the account:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f21d089ad214673c.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished this lab by disallowing access to PubSub via the service account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>You are now able to make use of a big data-ready realtime message broker system in the cloud. PubSub can be used in a multitude of ways in various GCP products. Understanding this system is very useful for creating realtime-ready big data architectures.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Processing: Dask on Kubernetes&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_processing_dask"
+                  title="Lab &#34;Batch Processing: Dask on Kubernetes&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is again our use case: a simple webshop for which we want to calculate the average sales value per product as well as train a simple machine learning model in a scalable (big data) manner using Dask.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3c3e14c0a31b3057.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Using data in the data lake for batch processing from a Jupyter Notebook, this time however relying on Dask.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a Kubernetes cluster as a generic platform for automating the deployment, scaling, and management of containerized applications (i.e. modern IT architectures)</li>
+<li>Add the tool &#34;helm&#34; to this cluster as a management tool for Kubernetes applications.</li>
+<li>Install the big data processing framework &#34;Dask&#34; to your Kubernetes cluster (via helm).</li>
+<li>Performing a big data-ready and scaling analysis as well as machine learning using Python and Dask.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Be careful to shut down your cluster after completing the lab due to high costs!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Kubernetes Cluster" duration="8">
+        <h2 is-upgraded><strong>Cluster Creation</strong></h2>
+<p>Please navigate to Kubernetes:</p>
+<p class="image-container"><img style="width: 186.50px" src="img\\26b1a589f2c0fcbc.png"></p>
+<p>Enable the API if necessary. We will not deploy our kubernetes cluster using the console WebUI via &#34;create cluster&#34;, but the cloud shell. First, please open a cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9a773bbee9a1bca5.png"></p>
+<p>Make sure to have the right project set in cloud shell by executing this command first:</p>
+<pre><code>gcloud config set project pk-bigdata</code></pre>
+<p>Please copy and paste the following command into the cloud shell. This command creates a kubernetes cluster with specific settings, e.g. regarding virtual machine type or the cluster zone. You may want to change the cluster name (pk-k8s) to &#34;your initials&#34;-k8s (k8s is an abbreviation for kubernetes).</p>
+<pre><code>gcloud container clusters create \
+  --machine-type n1-standard-4 \
+  --num-nodes 2 \
+  --zone us-central1-a \
+  --cluster-version latest \
+  pk-k8s</code></pre>
+<aside class="special"><p><strong>Hint: </strong>The machine-type and num-nodes determine the performance of the cluster. In total, this cluster configuration will rely on 2 virtual machines (num-nodes) and have 2*4 vCPU cores and 2*15 GB RAM due to the n1-standard-4 setting. Details on machine types can be found here: <a href="https://cloud.google.com/compute/docs/machine-types" target="_blank">https://cloud.google.com/compute/docs/machine-types</a>.</p>
+</aside>
+<p>You can check this in the cluster overview when the cluster is created:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3d3089f72efe1d35.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Cluster creation takes a few minutes.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created your first Kubernetes cluster via the cloud shell. The Kubernetes platform allows you to deploy modern containerized applications. We won&#39;t go into detail on Kubernetes but rather use a Kubernetes management tool (helm) to easily add applications which we&#39;ll install in the next step.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding &#34;helm&#34; to your Kubernetes Cluster" duration="8">
+        <h2 is-upgraded><strong>Provide account permissions to your account </strong></h2>
+<p>Execute the following command (copy &amp; paste) in the cloud shell. Change &lt;GOOGLE-EMAIL-ACCOUNT&gt; to your mail account you are logged in with in the GCP cloud console.</p>
+<pre><code>kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole=cluster-admin \
+    --user=&lt;GOOGLE-EMAIL-ACCOUNT&gt;</code></pre>
+<p>This should be the shell output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a7a064176c37888f.png"></p>
+<h2 is-upgraded><strong>Install Helm in the Cloud Shell</strong></h2>
+<p>Install helm in the cloud shell as follows:</p>
+<pre><code>curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash</code></pre>
+<p>This should be the output:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8ce16d6a4182fbf6.png"></p>
+<h2 is-upgraded><strong>Configure Helm on the Kubernetes Cluster</strong></h2>
+<p>Please execute the following three commands (copy &amp; paste) such that we can use helm on our cluster:</p>
+<pre><code>kubectl --namespace kube-system create serviceaccount tiller
+
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+
+helm init --service-account tiller --history-max 100 --wait</code></pre>
+<p>This should be the output</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6064e21be2c2fa6b.png"></p>
+<h2 is-upgraded><strong>Finalize Helm Configuration</strong></h2>
+<p>We (unfortunately) need to add a security patch (in the current version). Please execute the following command:</p>
+<pre><code>kubectl patch deployment tiller-deploy \
+--namespace=kube-system --type=json \
+--patch=&#39;[{&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/command&#34;, &#34;value&#34;: [&#34;/tiller&#34;, &#34;--listen=localhost:44134&#34;]}]&#39;
+</code></pre>
+<p>Wait a few seconds and execute the following command:</p>
+<pre><code>helm version</code></pre>
+<p>This should show the following output indicating that the helm client and server are running:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\538b0a4b01b00064.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You added a kubernetes management system called helm to your cluster. </li>
+<li>Now we have the fundamental setup that allows you to install various applications via helm (e.g. a scalable web server, database systems, but also big data systems like Dask).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying Dask with JupyterHub via Helm to the Cluster" duration="2">
+        <h2 is-upgraded><strong>Add and Update Dask Chart to Helm</strong></h2>
+<pre><code>helm repo add dask https://helm.dask.org/
+helm repo update</code></pre>
+<h2 is-upgraded><strong>Configure Dask Scheduler and Worker Nodes</strong></h2>
+<h3 is-upgraded><strong>Background</strong></h3>
+<p>We could already deploy a dask cluster with default parameters. However, in order to be able to configure the cluster in further detail (e.g. number of nodes, additional Python packages we want to use, etc.), we will now learn how to overwrite the default configuration.</p>
+<h3 is-upgraded><strong>Downloading the sample configuration</strong></h3>
+<p>The configuration can be overridden by providing a file &#34;values.yaml&#34;. You can download a suggested configuration file in the cloud shell with the following command:</p>
+<pre><code>git clone https://github.com/pkuep/pk-bigdata-code.git</code></pre>
+<h3 is-upgraded><strong>Checking the configuration file</strong></h3>
+<p>After cloning the GitHub repository, you should be able to access the respective directory and take a look at the configuration file:</p>
+<pre><code>cd pk-bigdata-code
+ls</code></pre>
+<p>This should be the output</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\310c8d6ec28981be.png"></p>
+<p>Let&#39;s take a look at the file with the editor. Click on &#34;Open Editor&#34;, browse into the directory pk-bigdata-code and select the file &#34;values.yaml&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e583d72c7100941e.png"></p>
+<p>The most important part for us is the worker configuration:</p>
+<p class="image-container"><img style="width: 409.47px" src="img\\8ca783c0bb526c82.png"></p>
+<p>Here you&#39;ll be able to change your cluster setup when you need more performance for your big data computations (e.g. by adding CPUs or worker nodes).</p>
+<aside class="warning"><p><strong>Please note: </strong>The configuration needs to be manageable by your kubernetes cluster&#39;s machines. You potentially have to change the &#34;num-nodes&#34; parameter when creating the cluster (see above) in order to enable kubernetes to fulfill your resource requests.</p>
+</aside>
+<p>Please switch back to the cloud shell:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f78b969be98b42a0.png"></p>
+<p>Make sure that you stay in the directory &#34;pk-bigdata-code&#34;, i.e. where the file values.yaml is located.</p>
+<h2 is-upgraded>Deploy Dask to the Cluster</h2>
+<p>Next, we want to finalize our preparations and deploy the dask cluster, i.e. a dask master (scheduler), a Jupyter Notebook, as well as the workers as configured in the values.yaml file. You may want to rename pk-dask to &#34;your initials&#34;-dask in the following code snippet which is to be executed in the cloud shell:</p>
+<pre><code>helm install --name pk-dask dask/dask --version 4.4.2 \
+--set scheduler.serviceType=LoadBalancer \
+--set jupyter.serviceType=LoadBalancer \
+--values values.yaml</code></pre>
+<p>The output should look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9520398a4e80c60e.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You created a customized dask configuration.</li>
+<li>You deployed dask with this configuration to your running kubernetes cluster.</li>
+<li>You are now ready to access the web interfaces (when your dask deployment is finished, see next task).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the Web Interfaces" duration="2">
+        <h2 is-upgraded><strong>Checking the External Load Balancers for Web Access</strong></h2>
+<p>The deployment of dask will take few minutes. Take a look at the &#34;Services &amp; ingress&#34; page and wait until the endpoints are filled with IP addresses and the Pods column shows &#34;1/1&#34; per row:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\684c541459a3b70e.png"></p>
+<h2 is-upgraded><strong>Dask Status Page</strong></h2>
+<p>First, we&#39;ll take a look at the dask status page. Click on the IP address in the row &#34;dask-pk-scheduler&#34; with port 80 (see screenshot above). This will open the cluster overview page and should look like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d207717fc6d9f4b8.png"></p>
+<p>We&#39;ll come back to this page later to see our cluster working.</p>
+<h2 is-upgraded><strong>Jupyter Notebook</strong></h2>
+<p>Next, open the URL to the Jupyter Notebooks page (row dask-pk-scheduler). You should be prompted to enter a password which is &#34;dask&#34;:</p>
+<p class="image-container"><img style="width: 207.50px" src="img\\dea19ae5d62f289d.png"></p>
+<p>Aftwards, you should see a Jupyter Lab page like this:</p>
+<p class="image-container"><img style="width: 446.52px" src="img\\514709eb50895706.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>If you receive the following error, just click on the jupyter logo and you should be redirected to the correct URL.</p>
+</aside>
+<p class="image-container"><img style="width: 253.50px" src="img\\b453f37b8fdc4e65.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You opened the web interfaces that we need for interacting with and monitoring of the dask cluster.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dask Programming" duration="2">
+        <h2 is-upgraded><strong>Reading Data from GCS into a Dask DataFrame</strong></h2>
+<p>First, open a new Jupyter Notebook:</p>
+<p class="image-container"><img style="width: 199.45px" src="img\\e6650f86ca6f2a55.png"></p>
+<p>Call this notebook &#34;Dask Batch Processing&#34; and save it. </p>
+<h3 is-upgraded><strong>Package Imports</strong></h3>
+<p>Next, import the following two packages (copy &amp; paste into the first cell):</p>
+<pre><code>import gcsfs
+import dask.dataframe as dd</code></pre>
+<aside class="warning"><p><strong>Please note: </strong>If any package you want to use is missing you can edit the values.yaml file by adding these packages to EXTRA_CONDA_PACKAGES or EXTRA_PIP_PACKAGES and re-create your cluster (or update the cluster as we&#39;ll see later). Don&#39;t forget to add the package in the &#34;worker&#34; as well as in the &#34;jupyter&#34; section.</p>
+</aside>
+<h3 is-upgraded><strong>Connecting the Notebook to the Dask Cluster</strong></h3>
+<p>As another setup step we&#39;ll need to connect our notebook to the dask scheduler as an entry point to the cluster:</p>
+<pre><code>from dask.distributed import Client, progress
+c = Client()
+c</code></pre>
+<p>This should be the output (we&#39;ll ignore the warning):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8589585505c79eeb.png"></p>
+<h3 is-upgraded><strong>DataFrame Definition</strong></h3>
+<p>Now it&#39;s time to inform your workers about the location of the source data you want to analyze:</p>
+<pre><code>ddf = dd.read_csv(&#39;gcs://pk-gcs/webshop_datalake/webshop_history.csv&#39;)
+ddf</code></pre>
+<aside class="warning"><p><strong>Please note: </strong>The dask workers did not read the file yet (lazy evaluation). This is done as soon as you start calculations / operations as we&#39;ll see now.</p>
+</aside>
+<h3 is-upgraded><strong>Analytics on a Dask DataFrame</strong></h3>
+<p>Working with dask usually feels like working with pandas. The only difference is the lazy evaluation. The following command calculates the mean sales value per region, just like in pandas; however, to execute this command and let all your workers concurrently work on it, you&#39;ll need to add for example &#34;compute()&#34;:</p>
+<pre><code>ddf.groupby(&#34;region&#34;)[&#39;sales_value&#39;].mean().compute() # compute triggers the workers to start computation</code></pre>
+<p>Your notebook should look like this now:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3aa4856d68198b29.png"></p>
+<aside class="special"><p><strong>Congratulations: </strong>You can now handle dask and scale your analytics to big data.</p>
+</aside>
+<h3 is-upgraded><strong>Checking the Dask Dashboard</strong></h3>
+<p>When switching over to the dask dashboard, you&#39;ll notice that the cluster worked. In the dashboard, we can observe the parallel computation (in this case it&#39;s not too heavily parallelized; your output may vary depending on the cluster configuration):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1e4bb0920070c15f.png"></p>
+<h3 is-upgraded><strong>Machine Learning with Dask</strong></h3>
+<p>Dask provides some implementations of popular machine learning algorithms. Let&#39;s execute a very simple training of a model which is able to predict the sales_values based on the age of a customer. Copy &amp; paste this to a new cell:</p>
+<pre><code>import dask_lightgbm.core as dlgbm
+reg = dlgbm.LGBMRegressor()
+
+X = ddf[[&#39;age&#39;]]
+y = ddf[&#39;sales_value&#39;]
+reg.fit(X, y)</code></pre>
+<p>After executing the model training, you can check your worker&#39;s progress (your output may vary):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9645a0b2c12c33b.png"></p>
+<p>Afterwards, you can use the model for predictions:</p>
+<pre><code>import pandas as pd
+pred_df = pd.DataFrame([[10],[20],[30],[40],[50],[60]])
+pred_ddf = dd.from_pandas(pred_df, npartitions=1)
+reg.predict(pred_ddf).compute()
+</code></pre>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You successfully performed Python-based big data analytics with a dask cluster. Congratulations!</li>
+<li>In a next step, we&#39;ll vary the cluster configuration slightly.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Varying the Cluster Size" duration="1">
+        <p>Now we want to add a further worker node and observe the cluster&#39;s performance. Open the file &#34;values.yaml&#34; in the cloud shell editor (see above) and change the number of workers from two to three (please note: more workers are not possible with our current cluster configuration).</p>
+<p class="image-container"><img style="width: 342.12px" src="img\\fb92481025f14de6.png"></p>
+<p>Go back to the terminal and enter the following command to update the kubernetes cluster, i.e. add another worker:</p>
+<pre><code>helm upgrade pk-dask dask/dask -f values.yaml</code></pre>
+<p>You should see output similar to this:</p>
+<p class="image-container"><img style="width: 622.64px" src="img\\5aac787976d6210.png"></p>
+<p>You can check if your additional worker is ready by clicking onto the &#34;workloads&#34; page in the cloud console:</p>
+<p class="image-container"><img style="width: 215.50px" src="img\\dd8523b569f66919.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cb83f9076719090b.png"></p>
+<p>When all three workers are running (called Pods by kubernetes), you should see this output:</p>
+<p>When clicking on &#34;Workers&#34; in the dask dashboard, you should see that one further worker is available for computation:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8567100745e9b3cf.png"></p>
+<p>This example shows the advantages of kubernetes: we can manipulate our infrastructure very easily and container management (i.e. spinning up a new worker for example) is done completely in the background. </p>
+<p>We could do a short experiment and compare the calculation time of different configurations:</p>
+<p>One worker</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5371deadded41e51.png"></p>
+<p>Two workers</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\27b2f940ea68e2d3.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Since we are working on pretty small data in the example, the advantage of parallelizing processing may be pretty low (if there&#39;s an advantage at all). However, with bigger volumes of data we will see the cluster computation advantages pretty clear.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You are now able to change cluster configuration &#34;on the fly&#34; and make use of kubernetes features in the context of big data processing with dask.</li>
+<li>You are now finished with this lab. Please make sure to shutdown your cluster since it is pretty costly.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cluster Deletion" duration="1">
+        <p>Please make sure to shutdown your cluster due to high costs of our setup.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3e1bfa8bcd81cab3.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished the lab and performed all necessary clean-up tasks.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you used fairly complex technologies and a sophisticated setup (kubernetes with helm and dask) to deploy a state-of-the-art Python big data processing environment which you accessed via a Jupyter notebook being created and edited from the Jupyter Lab environment. </p>
+<aside class="warning"><p><strong>Warning 1: </strong>This setup is not intended for productive use (24/7) since we did not employ all necessary security and encryption steps. Especially the exposure of our Jupyter Lab with the default password is dangerous.</p>
+</aside>
+<aside class="warning"><p><strong>Warning 2: </strong>Kubernetes and especially the exposure of Jupyter Lab and Dask via a so-called LoadBalancer can result in high costs. Thus, please shut down the cluster now! Hint: for development purposes (e.g. in the project) you can </p>
+</aside>
+<aside class="special"><p><strong>Hint: </strong>in order to avoid high costs for the kubernetes cluster you should use dask via a local installation and use the kubernetes cluster only for deployment and scalability tests.</p>
+</aside>
+<p>Dask is one of the rapidly growing frameworks for big data processing and thus pretty interesting for big data architectures and data engineering.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2024-06-04T19:58:08Z",
+  "id": "batch_processing_pyspark_advanced",
+  "duration": 34,
+  "title": "Lab \"Batch Processing: PySpark SQL, DataFrames, and Machine Learning\"",
+  "authors": "Peer Küppers",
+  "summary": "In this codelab, you'll learn how to handle the PySpark SQL as well as DataFrame APIs.",
+  "source": "1_DADcz2CB3DUreOl5QVLntrWWWR5Ju1kxavUI3KHru8",
+  "theme": "fundamentals",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "fundamentals"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "batch_processing_pyspark_advanced"
+}

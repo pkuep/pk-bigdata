@@ -1,0 +1,234 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Fundamentals: Simple Analytics Pipeline&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="fundamentals_simple_analytics_pipeline"
+                  title="Lab &#34;Fundamentals: Simple Analytics Pipeline&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>This is our use case: a simple webshop for which we want to provide the management a sales report per region.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3c3e14c0a31b3057.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Loading example source data into a relational database (in the cloud) and aggregating these visually in a dashboard.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Setup of a cloud SQL server in GCP</li>
+<li>Connecting to the SQL server via the cloud shell.</li>
+<li>Inserting some sample data</li>
+<li>Retrieving these data from a dashboard application.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creation of the Cloud SQL server" duration="5">
+        <h2 is-upgraded><strong>Creation of a project</strong></h2>
+<p>Please create a new project in GCP for this course. Navigate to <a href="https://console.cloud.google.com" target="_blank">https://console.cloud.google.com</a> and log in with your Google account.</p>
+<p>Click onto the &#34;project selector&#34;:</p>
+<p class="image-container"><img style="width: 360.50px" src="img\\af39acc3de54dbce.png"></p>
+<p>Click on &#34;New Project&#34;.</p>
+<p class="image-container"><img style="width: 512.50px" src="img\\2a46639864193f82.png"></p>
+<p>Call the new project e.g. &#34;your initials-bigdata&#34;. It is recommended that the project ID does not contain any numbers (see column ID) for simplified access later on through this course.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4c8b43f7a63fd6d2.png"></p>
+<h2 is-upgraded><strong>Creation of the SQL instance</strong></h2>
+<p>Please navigate to the &#34;SQL&#34; service in GCP:</p>
+<p class="image-container"><img style="width: 270.50px" src="img\\5bcbf0ded98bb02e.png"></p>
+<p>Click on &#34;Create Instance&#34; and select &#34;MySQL&#34;. Call the instance e.g. &#34;your initials-sql&#34; and select &#34;No password&#34;. If the instance name is already in use, just alter the name slightly.</p>
+<aside class="warning"><p><strong>Please note:</strong> Setting no or a weak root password is not a good practice (actually it&#39;s a no-go) for productive use. This will however simplify some later steps for us. The SQL server cannot be accessed externally so this setup is acceptable for our course (especially since we&#39;ll delete the SQL instance afterwards). </p>
+</aside>
+<p class="image-container"><img style="width: 589.00px" src="img\\fc81413ed471208f.png"></p>
+<p>Please also uncheck the box &#34;Enable deletion protection&#34; in the section &#34;Data Protection&#34; which is available by clicking on &#34;Show configuration options&#34;:</p>
+<p class="image-container"><img style="width: 304.00px" src="img\\d8cbf9539fdffc32.png"></p>
+<p class="image-container"><img style="width: 574.00px" src="img\\9f354ee367f982f4.png"></p>
+<aside class="warning"><p><strong>Important:</strong> You may also select MySQL8.0. We should limit resource utilization (and costs) by choosing &#34;Sandbox&#34; as preset.</p>
+</aside>
+<p>Instance creation will take some minutes. Please wait until you see the green arrow in front of the instance name and continue with the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating and Connecting to the Database" duration="5">
+        <h2 is-upgraded><strong>Database creation</strong></h2>
+<p>Select &#34;Databases&#34; in the menu.</p>
+<p class="image-container"><img style="width: 162.36px" src="img\\860c2be09106a14a.png"></p>
+<p>Call it &#34;webshop&#34; and hit create.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\763fd65e1f346b0d.png"></p>
+<h2 is-upgraded><strong>Connecting to the database server</strong></h2>
+<p>Select &#34;Overview&#34; in the menu.</p>
+<p class="image-container"><img style="width: 159.50px" src="img\\fc0b6a03f5e2d559.png"></p>
+<p>Hit &#34;Connect using cloud shell&#34;</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a79dad78a27d711e.png"></p>
+<p>In the lower part of the browser window, a shell tab should appear with a command that you can execute by hitting &#34;enter&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9305e5a5e0ee735d.png"></p>
+<p>You can copy and paste the following commands (replacing your initials):</p>
+<pre><code>gcloud sql connect pk-sql --user=root --quiet</code></pre>
+<p>Setting up the connection will take some seconds (allowing the access). Just hit enter (since we did not set a root password) when you see this screen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2f5830162b045137.png"></p>
+<p>Now you&#39;re connected to the database server.</p>
+<h2 is-upgraded><strong>Creating the webshop database</strong></h2>
+<p>First, we need to create a database that will hold the webshop tables. Create the webshop by entering the following command into the shell:</p>
+<pre><code>create database webshop;</code></pre>
+<h2 is-upgraded>Switching to the webshop database</h2>
+<p>The following commands require some basic SQL understanding which is required for this course.</p>
+<p>Switch to the webshop database by entering the following command into the shell:</p>
+<pre><code>use webshop;</code></pre>
+<p>The shell should look like this now:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\168b4e0ea336b407.png"></p>
+<h2 is-upgraded><strong>Creating the sales table</strong></h2>
+<p>Create the sales table by executing the following code.</p>
+<aside class="special"><p><strong>Hint: </strong>You can copy this code and paste it using Ctrl-V into the shell window.</p>
+</aside>
+<pre><code>create table sales (
+sales_date date,
+weekday varchar(20),
+region varchar(20),
+age_group varchar(20),
+product_name varchar(30),
+product_group int,
+sales_value float
+);</code></pre>
+<p>You should see the following result:</p>
+<p class="image-container"><img style="width: 248.50px" src="img\\aabbf6706f42b05f.png"></p>
+<h2 is-upgraded><strong>Inserting data</strong></h2>
+<p>Fill the sales table by executing the following code.</p>
+<aside class="special"><p><strong>Hint: </strong>You can copy this code and paste it using Ctrl-V into the shell window.</p>
+</aside>
+<pre><code>insert into sales values
+(&#39;2020-04-03&#39;, &#39;Friday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 21.5),
+(&#39;2020-04-01&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 4.4),
+(&#39;2020-04-01&#39;, &#39;Wednesday&#39;, &#39;South&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 12.8),
+(&#39;2020-05-28&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;lager&#39;, &#39;2&#39;, 47.1),
+(&#39;2020-06-10&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;grappa&#39;, &#39;3&#39;, 14.4),
+(&#39;2020-06-11&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 13.5),
+(&#39;2020-03-11&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.0),
+(&#39;2020-05-07&#39;, &#39;Thursday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;grappa&#39;, &#39;3&#39;, 17.3),
+(&#39;2020-04-10&#39;, &#39;Friday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;red wine&#39;, &#39;1&#39;, 10.6),
+(&#39;2020-01-24&#39;, &#39;Friday&#39;, &#39;North&#39;, &#39;30-49&#39;, &#39;pils&#39;, &#39;2&#39;, 29.4),
+(&#39;2020-04-13&#39;, &#39;Monday&#39;, &#39;North&#39;, &#39;18-29&#39;, &#39;pils&#39;, &#39;2&#39;, 54.0),
+(&#39;2020-02-26&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.5),
+(&#39;2020-04-11&#39;, &#39;Saturday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;whiskey&#39;, &#39;3&#39;, 45.3),
+(&#39;2020-03-15&#39;, &#39;Sunday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 16.7),
+(&#39;2020-05-15&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;30-49&#39;, &#39;white wine&#39;, &#39;1&#39;, 32.7),
+(&#39;2020-03-04&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;pils&#39;, &#39;2&#39;, 33.2),
+(&#39;2020-05-10&#39;, &#39;Sunday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 5.6),
+(&#39;2020-02-19&#39;, &#39;Wednesday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 5.4),
+(&#39;2020-03-04&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 24.2),
+(&#39;2020-05-28&#39;, &#39;Thursday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 13.3),
+(&#39;2020-01-24&#39;, &#39;Friday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 14.9),
+(&#39;2020-02-19&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 34.9),
+(&#39;2020-05-27&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;whiskey&#39;, &#39;3&#39;, 45.6),
+(&#39;2020-01-23&#39;, &#39;Thursday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 73.0),
+(&#39;2020-03-06&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;30-49&#39;, &#39;rosé wine&#39;, &#39;1&#39;, 5.1),
+(&#39;2020-04-16&#39;, &#39;Thursday&#39;, &#39;North&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 4.4),
+(&#39;2020-01-17&#39;, &#39;Friday&#39;, &#39;South&#39;, &#39;50-&#39;, &#39;white wine&#39;, &#39;1&#39;, 23.2),
+(&#39;2020-01-12&#39;, &#39;Sunday&#39;, &#39;Middle&#39;, &#39;18-29&#39;, &#39;red wine&#39;, &#39;1&#39;, 4.0),
+(&#39;2020-01-27&#39;, &#39;Monday&#39;, &#39;Middle&#39;, &#39;50-&#39;, &#39;red wine&#39;, &#39;1&#39;, 30.2),
+(&#39;2020-01-01&#39;, &#39;Wednesday&#39;, &#39;Middle&#39;, &#39;30-49&#39;, &#39;red wine&#39;, &#39;1&#39;, 33.2);</code></pre>
+<p>When selecting all rows from the table you should see the following result:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f55c9f331e489bb9.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now created one very simple data source for our analytics architecture.</li>
+<li>You created a relational table and filled it with data by directly accessing the MySQL server via the command line interface (CLI) in the cloud shell.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting to the Database from Data Studio" duration="3">
+        <h2 is-upgraded><strong>Setting up data studio</strong></h2>
+<p>Navigate to <a href="https://datastudio.google.com/" target="_blank">https://datastudio.google.com</a> and create an empty report:</p>
+<p class="image-container"><img style="width: 307.50px" src="img\\65ef0a5474c1487d.png"></p>
+<p>Add the Cloud SQL connector:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\70d423a8a40425d9.png"></p>
+<p>You&#39;ll need to authorise data studio&#39;s access. Afterwards, we need to set the connection credentials. First, you&#39;ll need to know the connection name which you can find on the SQL overview page. By clicking on the respective button (marked red), you can copy it into the clipboard:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cc96c8384073936c.png"></p>
+<p>After hitting &#34;authenticate&#34;, you should be able to see our sales table:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2dccba118c498a81.png"></p>
+<p>Add this table to your dashboard.</p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You now set up the whole (very simple) analytics architecture: one source system which is directly queried by a dashboard solution.</li>
+<li>Now you are set to implement descriptive analytics requirements which we&#39;ll do in the next section.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a simple dashboard" duration="3">
+        <h2 is-upgraded><strong>Requirements</strong></h2>
+<p>Your task is to generate a simple overview showing the total sales value per Region and Product.</p>
+<h2 is-upgraded><strong>Sample Solution</strong></h2>
+<p>The requirement could be implemented in to charts like this:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ba0370d9aa90af7e.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>Our first very simple data architecture is set up.</li>
+<li>This architecture only allows descriptive analytics, no historization and is not capable of real &#34;big data&#34;.</li>
+<li>For Business Intelligence and Big Data analytics, we&#39;ll need more sophisticated architectures. Regarding &#34;traditional&#34; BI architectures, you know how to set these up (exemplary) from other courses.</li>
+<li>We will use this database as a data source for our big data analytics. Although the volume is currently very low, we&#39;ll assume that the data sources will increase in volume and/or velocity a lot, i.e. requiring &#34;real&#34; big data architectures.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stopping the SQL server" duration="2">
+        <h2 is-upgraded><strong>Reasoning</strong></h2>
+<p>Within the cloud environment you pay by use. Since the SQL server costs ~1$ per day, we now want to tear down the instance and bring it up when needed. The data studio dashboard does not induce any costs.</p>
+<aside class="warning"><p><strong>Important:</strong> In case you don&#39;t continue with the upcoming labs, please DELETE your SQL server instance!</p>
+</aside>
+<h2 is-upgraded><strong>Shutting down the SQL server</strong></h2>
+<p>Go to the SQL overview page in the cloud console.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e31b7bcf8d21fd2e.png"></p>
+<h2 is-upgraded><strong>Checking the costs for the SQL server (wait one day)</strong></h2>
+<p>You may want to make sure that there are no high running costs in GCP throughout this course. You could (tomorrow) check in the billing product, if there are really no running costs.</p>
+<p>Click on &#34;Billing&#34; in the menu and hit &#34;Go to linked billing account&#34;.</p>
+<p class="image-container"><img style="width: 233.65px" src="img\\6e9eb65f98ccca79.png"></p>
+<p>Select &#34;Reports&#34; and set &#34;Group by&#34; to &#34;SKU&#34; (on the right side). De-select &#34;Promotions and others&#34;. You should see (few) dollars spent on cloud SQL depending on how long the instance has been running:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7937683a83ef79e5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you succeeded in the first lab of our big data journey. This lab was not really big data related but was intended to deepen your cloud knowledge, take your fears of opening and using a command shell (which is very simple in GCP), and setting up some source data.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

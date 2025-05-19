@@ -1,0 +1,144 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Batch Ingestion: Cloud Data Fusion&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="batch_ingestion_datafusion_bigquery"
+                  title="Lab &#34;Batch Ingestion: Cloud Data Fusion&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p>In this use case we want to store the contents of our webshop table in the data lake (nightly full extract) using data fusion.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7021a29d93799271.png"></p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Ingesting structured relational data into the data lake for batch processing via a (horizontally) scalable solution underlying Cloud Data Fusion.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Set up a Cloud Data Fusion instance in order to develop and deploy a basic ingestion pipeline.</li>
+<li>Learn about the different connector types for sources and sinks in data fusion.</li>
+<li>Deploy a data fusion job that extracts the relational data and ingests them into a serverless data warehouse&#39;s (BigQuery) dataset.</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
+</aside>
+<aside class="warning"><p><strong>Prerequisite:</strong> Your cloud SQL server needs to be running for this lab! Please execute all steps of the previous lab &#34;Data Fusion&#34; and leave your data fusion instance running. Furthermore, it is required that you executed all steps of the lab &#34;Data Warehouse Example&#34;.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding the BigQuerySink" duration="2">
+        <h2 is-upgraded><strong>Importing the pipeline</strong></h2>
+<p>If necessary, please import the pipeline you created in the lab &#34;Data Fusion&#34;.</p>
+<h2 is-upgraded><strong>Adding the sink</strong></h2>
+<p>Please add a BigQuery sink to our process:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4c77815ee392497d.png"></p>
+<p>Connect the database source such that BigQuery becomes a second sink.</p>
+<p class="image-container"><img style="width: 316.59px" src="img\\1248a3709c5712c3.png"></p>
+<p>Select &#34;Properties&#34; of the BigQuery stage</p>
+<p>The reference name could be </p>
+<pre><code>webshop_sales_ingest_bq</code></pre>
+<p>If you executed the lab &#34;Data Warehouse Example&#34;, you already created a BigQuery dataset:</p>
+<p class="image-container"><img style="width: 243.50px" src="img\\a0aaf25f6ed3b545.png"></p>
+<p>We will ingest our data into this dataset &#34;example_dwh&#34;. The table name could be</p>
+<pre><code>sales_from_datafusion_bq</code></pre>
+<p>All other parameters can stay default. </p>
+<p>Finally, you should rename your pipeline, e.g. by appending a &#34;_bq&#34; to the name, save and export it:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ac0534ca1d646a43.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You added a sink (a table in a BigQuery dataset) to the pipeline, configured it, and connected it with the source.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exporting the Pipeline" duration="1">
+        <h2 is-upgraded><strong>Export and save pipeline</strong></h2>
+<p>In order to be able to reuse our specified pipeline, please export it to your local filesystem:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d1f6c4b6410fe513.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You saved your pipeline as a json file on your local machine.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying and Running the Pipeline" duration="4">
+        <h2 is-upgraded>Save and Deploy the Pipeline</h2>
+<p>Please click &#34;Save&#34; and afterwards &#34;Deploy&#34; in the pipeline builder. The output should look like this (showing the pipeline in the lower part):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3a0614a37a6871c1.png"></p>
+<h2 is-upgraded><strong>Execute the Pipeline</strong></h2>
+<p>Please click &#34;Run&#34;. The pipeline is now executed using a DataProc Hadoop cluster (i.e. <strong>it is horizontally scalable and big data-ready</strong>!). Our ingestion logic is transformed to a Spark job. One can see that a cluster is being generated by opening the DataProc overview page in the cloud console:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\49a8fb4f8932f705.png"></p>
+<p>The cluster is provisioned (i.e. set up) - in Data Fusion you can see the current status:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9c1cb0757ae5dd4b.png"></p>
+<aside class="special"><p><strong>Please note:</strong> Execution of the pipeline will take some minutes (~5min).</p>
+</aside>
+<p>If everything is fine you should see the following output. In case of errors, you need to check the &#34;Logs&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fe2c67bd5877b0a0.png"></p>
+<h2 is-upgraded><strong>Checking BigQuery</strong></h2>
+<p>When opening BigQuery you should see the newly created table filled with the raw data:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ea996e3dd52e121d.png"></p>
+<aside class="warning"><p><strong>Please note:</strong> This setup may not make sense since we just duplicated the raw data to being stored twice in our big data architecture. Since BigQuery&#39;s storage costs are comparable to that of GCS, an option might be to remove the GCS stage. This, however, requires an in-depth requirements analysis and cost evaluation.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You deployed a pipeline with a further sink which is now production-ready and could be scheduled regularly.</li>
+<li>This pipeline is big data-ready, however you need to check the costs for (1) pipeline development and (2) execution costs of Dataproc.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Up" duration="2">
+        <p>Please make sure to delete your data fusion instance in order to avoid high costs (in case of the live lecture please leave it running):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\37342bc50980d47a.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>Pricing of cloud Data Fusion is quite special. See <a href="https://cloud.google.com/data-fusion/pricing" target="_blank">https://cloud.google.com/data-fusion/pricing</a> </p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You finished the lab and performed all necessary clean-up tasks.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="2">
+        <p>Congratulations, you set up a modern, cloud-based and horizontally scaling ingestion pipeline using GCP&#39;s data fusion with an automatically provisioned Hadoop cluster below (using Spark for the extraction / ingestion logic). Data Fusion is very powerful and would also allow for &#34;data wrangling&#34;. We skipped this part here since we are still concerned with data ingestion.</p>
+<aside class="special"><p><strong>Please note: </strong>You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
