@@ -66,7 +66,7 @@
 from IPython.display import Image  # will be used to show one exemplary image in the notebook
 from datetime import datetime  # will be used to format the filename</code></pre>
 <p>Show the current image of this webcam using the following code in another cell:</p>
-<pre><code>url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39; # image url
+<pre><code>url = &#39;https://images-webcams.windy.com/public/61/1641222661/current/full/1641222661.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3ZWJjYW1faWQiOjE2NDEyMjI2NjEsInVzZXJfdHlwZSI6MSwiYXZhaWxhYmxlX3NpemVzIjoidGVhc2VyYmcsaWNvbix0aHVtYm5haWwscHJldmlldyxub3JtYWwsZnVsbCxwYW5vcmFtYSIsImlhdCI6MTc0NzY4NzQxNSwiZXhwIjoxNzQ3NzczODE1fQ.fwNTevkH3J2c6i0snxWd4FVR1WNmTZQugc4G0zodl-M&#39; # image url
 Image(url=url, width=300)  # show image in notebook</code></pre>
 <p>Now, let&#39;s download the current image to the local disk (of our JupyterLab machine):</p>
 <pre><code>filename = f&#34;webcam_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;
@@ -123,7 +123,7 @@ def ingest_image(request):
     &#34;&#34;&#34;Pull an image from the webcam and store it in GCS &#34;&#34;&#34;
 
     # pull the image
-    url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39;
+    url = &#39;https://images-webcams.windy.com/public/61/1641222661/current/full/1641222661.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3ZWJjYW1faWQiOjE2NDEyMjI2NjEsInVzZXJfdHlwZSI6MSwiYXZhaWxhYmxlX3NpemVzIjoidGVhc2VyYmcsaWNvbix0aHVtYm5haWwscHJldmlldyxub3JtYWwsZnVsbCxwYW5vcmFtYSIsImlhdCI6MTc0NzY4NzQxNSwiZXhwIjoxNzQ3NzczODE1fQ.fwNTevkH3J2c6i0snxWd4FVR1WNmTZQugc4G0zodl-M&#39;
     filename = f&#34;webcam_fromfunction_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;  # add a timestamp
     response = requests.get(url)
 
