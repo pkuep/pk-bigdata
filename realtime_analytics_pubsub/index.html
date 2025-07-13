@@ -46,7 +46,7 @@
         <h2 is-upgraded><strong>Creating an example topic &#34;pk-topic&#34;</strong></h2>
 <p>First, we need to create a topic. Please navigate to &#34;PubSub&#34; in the cloud console.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\c30897d0ce10b263.png"></p>
-<p>Select &#34;Create topic&#34;. You might want to call it &lt;initials&gt;-pubsub.</p>
+<p>Select &#34;Create topic&#34;. You might want to call it &lt;initials&gt;-pubsub. You may keep the selection to create &#34;a default subscription&#34; (see section below).</p>
 <p class="image-container"><img style="width: 341.78px" src="img\\1d67eb6dde2b0c5f.png"></p>
 <p>We cannot just &#34;listen&#34; to the topic (i.e. pulling data from it) but need to create a so-called subscription from which we can pull the messages. This structure allows different consumers on a topic each receiving all messages.</p>
 <p>Navigate to the &#34;subscription&#34; page and create a subscription:</p>
@@ -86,10 +86,12 @@
 <p>The third screen can be left empty:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\71e8f4257a6cc680.png"></p>
 <h2 is-upgraded><strong>Creating a key for application access</strong></h2>
-<p>Finally, we need a mechanism for our application / software component to authenticate against GCP (in special the PubSub service). Please &#34;Create key&#34; for our newly generated service account:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f3d0f89c0f06e76f.png"></p>
-<p>Click on &#34;Create&#34; in the following screen. </p>
-<p class="image-container"><img style="width: 410.42px" src="img\\1dd6705d921ee95b.png"></p>
+<p>Finally, we need a mechanism for our application / software component to authenticate against GCP (in special the PubSub service). Please &#34;Manage keys&#34; for our newly generated service account:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fe0bebbd7e381002.png"></p>
+<p>Click on &#34;Add key&#34; in the following screen. </p>
+<p class="image-container"><img style="width: 418.00px" src="img\\61de760624684911.png"></p>
+<p>Select JSON:</p>
+<p class="image-container"><img style="width: 549.00px" src="img\\2b8c981db8626893.png"></p>
 <p>A JSON file should be downloaded automatically.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">

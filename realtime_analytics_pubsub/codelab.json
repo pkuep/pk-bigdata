@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-09-19T12:40:30Z",
+  "updated": "2024-06-04T20:06:34Z",
   "id": "realtime_analytics_pubsub",
   "duration": 25,
   "title": "Lab \"Realtime Analytics: PubSub and Service Accounts\"",

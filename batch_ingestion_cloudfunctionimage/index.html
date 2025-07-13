@@ -28,8 +28,8 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Introduction" duration="0">
-        <p>In this use case we want to store the regularly updated image of a webcam in our data lake (based on GCS) in order to, e.g., let a machine learning algorithm identify whether it&#39;s cloudy or not. We want to achieve this task in a scalable manner, i.e. be able to add potentially thousands of webcams and still be able to guarantee performance. See <a href="https://www.livebeaches.com/webcams/san-francisco-observatory-webcam/" target="_blank">https://www.livebeaches.com/webcams/san-francisco-observatory-webcam/</a> (or <a href="https://qt.exploratorium.edu/roofcam/Observatory/image.jpg" target="_blank">https://qt.exploratorium.edu/roofcam/Observatory/image.jpg</a>) and check the webcam.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\7e6940fa7de82839.png"></p>
+        <p>In this use case we want to store the regularly updated image of a webcam in our data lake (based on GCS) in order to, e.g., let a machine learning algorithm identify whether it&#39;s cloudy or not. We want to achieve this task in a scalable manner, i.e. be able to add potentially thousands of webcams and still be able to guarantee performance. See and check the webcam.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fb27a11a4a492891.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Ingesting unstructured image data into the data lake for batch processing via a (vertically) scalable cloud function.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
@@ -66,7 +66,7 @@
 from IPython.display import Image  # will be used to show one exemplary image in the notebook
 from datetime import datetime  # will be used to format the filename</code></pre>
 <p>Show the current image of this webcam using the following code in another cell:</p>
-<pre><code>url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39; # image url
+<pre><code>url = &#39;https://www.kite-connection.at/weatherstation/webcam/rohrspitz.jpg&#39; # image url
 Image(url=url, width=300)  # show image in notebook</code></pre>
 <p>Now, let&#39;s download the current image to the local disk (of our JupyterLab machine):</p>
 <pre><code>filename = f&#34;webcam_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;
@@ -123,7 +123,7 @@ def ingest_image(request):
     &#34;&#34;&#34;Pull an image from the webcam and store it in GCS &#34;&#34;&#34;
 
     # pull the image
-    url = &#39;https://qt.exploratorium.edu/roofcam/Observatory/image.jpg&#39;
+    url = &#39;https://www.kite-connection.at/weatherstation/webcam/rohrspitz.jpg&#39;
     filename = f&#34;webcam_fromfunction_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.png&#34;  # add a timestamp
     response = requests.get(url)
 
