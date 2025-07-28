@@ -2,8 +2,6 @@
 ## Fundamentals
 [Simple Analytics Pipeline](https://pkuep.github.io/pk-bigdata/fundamentals_simple_analytics_pipeline){:target="_blank" rel="noopener"}
 
-[Data Science Sandbox](https://pkuep.github.io/pk-bigdata/fundamentals_data_science_sandbox){:target="_blank" rel="noopener"}
-
 [Data Warehouse Example](https://pkuep.github.io/pk-bigdata/fundamentals_data_warehouse_example){:target="_blank" rel="noopener"}
 
 [Batch Processing](https://pkuep.github.io/pk-bigdata/fundamentals_batch_processing){:target="_blank" rel="noopener"}
@@ -57,9 +55,9 @@
 
 [Using PubSub from Python and the Service Account Concept](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsub){:target="_blank" rel="noopener"}
 
-[PubSub to Cloud Storage with DataFlow](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_cloudstorage){:target="_blank" rel="noopener"}
+[PubSub to Cloud Storage with DataFlow (GCP product not used widely)](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_cloudstorage){:target="_blank" rel="noopener"}
 
-[PubSubLite Streaming Analytics with Spark Streaming](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsublite_spark_streaming){:target="_blank" rel="noopener"}
+[PubSubLite Streaming Analytics with Spark Streaming (GCP product at 'end of life')](https://pkuep.github.io/pk-bigdata/realtime_analytics_pubsublite_spark_streaming){:target="_blank" rel="noopener"}
 
 [PubSub Analytics with SQL-based DataFlow (GCP product not available anymore)](https://pkuep.github.io/pk-bigdata/realtime_analytics_dataflow_sql){:target="_blank" rel="noopener"}
 

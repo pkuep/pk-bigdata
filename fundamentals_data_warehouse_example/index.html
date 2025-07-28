@@ -36,39 +36,45 @@
 <ul>
 <li>Load sample data from cloud storage to BigQuery (could be automated in a batch run)</li>
 <li>Transform the data into a very simple star schema.</li>
-<li>Reading the DWH tables from Data Studio.</li>
+<li>Reading the DWH tables from Jupyter Notebook.</li>
 </ul>
-<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
-</aside>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dataset Creation and Data Upload to Staging Area" duration="4">
+      <google-codelab-step label="Data Upload to Staging Area" duration="2">
+        <p>Please navigate to &#34;Cloud Storage&#34; in the console and create a bucket (name it &#34;hdm-yourlastname&#34;, change to your last name):</p>
+<p class="image-container"><img style="width: 337.50px" src="img\\1649b2c0c8f1e695.png"></p>
+<p>Click on &#34;Create&#34;:</p>
+<p class="image-container"><img style="width: 383.74px" src="img\\ed9ab83ecbb09dc3.png"></p>
+<p>Upload the file webshop_history.csv (see Moodle) to your bucket:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9ec596108a852515.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="BigQuery Dataset Creation and Staging Area" duration="4">
         <h2 is-upgraded><strong>Data upload and dataset creation</strong></h2>
 <p>Please go to BigQuery in the console:</p>
 <p class="image-container"><img style="width: 290.00px" src="img\\eea0ac8b27dca3f5.png"></p>
-<p>If not already selected, please select your project in the &#34;Explorer&#34;:</p>
+<p>If not already selected, please select our project in the &#34;Explorer&#34;:</p>
 <p class="image-container"><img style="width: 617.00px" src="img\\79c1d8679eb887ba.png"></p>
 <p>We now want to &#34;Add Data&#34;:</p>
-<p class="image-container"><img style="width: 286.00px" src="img\\ea393eb0e0311bd8.png"></p>
-<p>Select &#34;Google Cloud Storage&#34; as data source:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3bd7908d86dfd54d.png"></p>
-<p>Select &#34;Browse&#34; to be able to navigate to your bucket:</p>
+<p class="image-container"><img style="width: 605.00px" src="img\\99e572efcbe54c7d.png"></p>
+<p>Call it wh_yourlastname. Next, select &#34;Create table&#34; using the menu next to your dataset&#39;s name:</p>
+<p class="image-container"><img style="width: 404.00px" src="img\\ff858057cd36bdea.png"></p>
+<p>Select &#34;Google Cloud Storage&#34; as data source and set the path to your webshop_history.csv in your bucket:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\51c196b0226154b5.png"></p>
+<p>You can use &#34;Browse&#34; to be able to navigate to your bucket:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\b4fcd23a02082ff2.png"></p>
-<p>Navigate to the webshop_datalage and select the csv-file:</p>
+<p>Navigate to the webshop_datalake and select the csv-file:</p>
 <p class="image-container"><img style="width: 399.00px" src="img\\40cb15be30d7c5ed.png"></p>
-<p>Now, we need to create a new dataset in our project, before being able to upload the data. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9984f0c0190c370.png"></p>
-<p>Please call the dataset &#34;example_dwh&#34; and make it a multi-regional dataset in the US. Leave all other settings as default and hit &#34;Create dataset&#34;: </p>
-<p class="image-container"><img style="width: 558.00px" src="img\\26dc2e21ef52d1a3.png"></p>
-<p>You should be able to select your dataset now and furthermore be allowed to enter a table name (sales_staging) as well as select &#34;Schema auto detection&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f5261d4ab143bab5.png"></p>
+<p>Please do not forget to set Schema auto detection.</p>
 <h2 is-upgraded><strong>First data inspection</strong></h2>
-<p>Please reload the &#34;Explorer&#34; page, such that the dataset becomes visible in your project when clicking on the arrow next to your project ID:</p>
-<p class="image-container"><img style="width: 362.00px" src="img\\d659f554d6168d78.png"></p>
-<p>You can take a look at the schema (check if the data types are as expected), preview data, or query the table by clicking on the table name:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\8cd185c0611a409b.png"></p>
+<p>You should be able to click on the table sales in the navigation menu:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d56d79061232c5f1.png"></p>
+<p>You can execute a sample SQL query by clicking on the Query button:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b713428c00b2e184.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a dataset for our sample data warehouse.</li>
@@ -83,31 +89,24 @@
         <aside class="warning"><p><strong>Please note: </strong>Due to simplification of the labs, our data are stored in the csv-file in a de-normalized manner, i.e. just a flat file that contains duplicates (e.g. the product_name is repeated several times). From a modeling point of view, we usually deal with normalized data structures in source systems, especially in OLTP-systems (like a sales system). Normalized data (=the relational model) avoid redundancies and inconsistencies, e.g. by putting the product master data into its own table. Actually, BigQuery performs better with de-normalized data and we could just leave the data as they are. However, for demonstration purposes we create a star schema based on our staging table.</p>
 </aside>
 <h2 is-upgraded><strong>Querying the staging table for products</strong></h2>
-<p>If not done in the previous step, please select the table &#34;sales_staging&#34; in your project&#39;s dataset &#34;example_dwh&#34; and hit &#34;Query → In new tab&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9e124be82a0d6862.png"></p>
-<p>A sample query is created:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\a7865db78e3ddad4.png"></p>
 <p>Use this SQL code to derive the dimension table &#34;product&#34; and run the query.</p>
 <pre><code>-- derive the dimension table product from the source data
-SELECT DISTINCT product, product_name FROM `pk-bigdata.example_dwh.sales_staging`</code></pre>
+SELECT DISTINCT product, product_name FROM sales</code></pre>
 <p>You should see the results in the lower part of the window:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3f19639632c58da6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\392d63b208064009.png"></p>
 <h2 is-upgraded><strong>Saving the results as a dimension table &#34;product&#34;</strong></h2>
 <p>Select &#34;Save results&#34; and save the query result as a new BigQuery table calles &#34;dwh_product&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f976998771f307eb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\64223b0aca31e078.png"></p>
 <p>Store this new table in the same dataset:</p>
-<p class="image-container"><img style="width: 566.00px" src="img\\73621ff91c269f28.png"></p>
+<p class="image-container"><img style="width: 577.00px" src="img\\37f207c971a8471e.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>We could also save this product dimension table as a &#34;view&#34;. For demonstration purposes, we however want to &#34;move the data physically&#34; to a new DWH-table (just as we did it by saving the results).</p>
 </aside>
 <h2 is-upgraded><strong>Scheduling the query</strong></h2>
 <p>In order to set up a productive architecture, we&#39;d need to schedule the query to be executed, e.g. every night after uploading new data to the sales_staging table (which we&#39;ll not implement).</p>
 <p>Select &#34;Schedule&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\2831eb197ad70fc3.png"></p>
-<p>Enable the required API:</p>
-<p class="image-container"><img style="width: 565.00px" src="img\\a9ddb15fe15bf251.png"></p>
-<p>Afterwards, take a look at the options you get when &#34;creating a new scheduled query&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\c9ebb3e51d2d946f.png"></p>
-<p>We can set the repeats (e.g. daily), set the destination table (e.g. our &#34;dwh_product&#34;) and define, if we want to append or overwrite data (in our case overwrite would be necessary for the query).</p>
+<p class="image-container"><img style="width: 566.00px" src="img\\28cecda245400080.png"></p>
+<p>We can set the repeats (e.g. daily), set the destination table (e.g. our &#34;dim_product&#34;) and define, if we want to append or overwrite data (in our case overwrite would be necessary for the query).</p>
 <p>We won&#39;t set up the schedule now.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
@@ -134,9 +133,9 @@ SELECT DISTINCT product, product_name FROM `pk-bigdata.example_dwh.sales_staging
         <h2 is-upgraded><strong>Query</strong></h2>
 <p>Your query should look like this:</p>
 <pre><code>-- derive the sales facts from the source data
-SELECT date, product, sales_value FROM `pk-bigdata.example_dwh.sales_staging`;</code></pre>
-<p>Your dataset &#34;example_dwh&#34; now should contain three tables.</p>
-<p class="image-container"><img style="width: 355.00px" src="img\\dc5d3b0d6f338ea3.png"></p>
+SELECT date, product, sales_value FROM `hdm-bi-bigdata.wh_kueppers.sales`;</code></pre>
+<p>After creating the fact_sales as a table &#34;wh_kueppers&#34; you should see three tables:</p>
+<p class="image-container"><img style="width: 284.00px" src="img\\e8a54f5c982ab84d.png"></p>
 <aside class="warning"><p><strong>Please note: </strong>BigQuery&#39;s pricing model is based on the amount of data your queries &#34;touch&#34;. Thus, you can estimate how expensive your ETL (extract, transform, load) architecture will be, e.g. using the GCP pricing calculator (<a href="https://cloud.google.com/products/calculator" target="_blank">https://cloud.google.com/products/calculator</a>). Under &#34;Execution Details&#34;, you will find some information on the &#34;Bytes shuffled&#34;.</p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
@@ -147,39 +146,25 @@ SELECT date, product, sales_value FROM `pk-bigdata.example_dwh.sales_staging`;</
 
       </google-codelab-step>
     
-      <google-codelab-step label="Querying the DWH from Data Studio" duration="2">
-        <h2 is-upgraded><strong>Dashboard Generation and BigQuery connection</strong></h2>
-<p>Go to <a href="https://datastudio.google.com" target="_blank">https://datastudio.google.com</a> and create a new report. In the popup section &#34;add data&#34; select &#34;BigQuery&#34;. </p>
-<p class="image-container"><img style="width: 500.00px" src="img\\fa724c7f194d744a.png"></p>
-<p>You first need to authorize &#34;Looker Studio&#34; (which is datastudio):</p>
-<p class="image-container"><img style="width: 304.00px" src="img\\2baaa1bfed79cee5.png"></p>
-<p>Navigate via your project and dataset to the tables &#34;dwh_product&#34;. Add this to the report.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\72126a5cf3ed18b1.png"></p>
-<p>Allow adding the data to the report:</p>
-<p class="image-container"><img style="width: 569.00px" src="img\\f9522aa49eea0d56.png"></p>
-<p>Rename the report to &#34;BigData Course - Fundamentals - Sample DWH&#34;. You will notice that DataStudio added a visualization (table) already based on the input table:</p>
-<p class="image-container"><img style="width: 600.00px" src="img\\5b9d2fa2e60783e8.png"></p>
-<h2 is-upgraded><strong>Generation of a Join in Data Studio</strong></h2>
-<p>First, we want to add the previously generated dimension &#34;product&#34; to our datastudio data sources. Please add this BigQuery table by clicking on &#34;Daten hinzufügen&#34; and navigating to the product dimension table. Afterwards, you should see both tables on the right side of the screen:</p>
-<p class="image-container"><img style="width: 318.00px" src="img\\bd9bf7d042fc7bd1.png"></p>
-<aside class="warning"><p><strong>Please note: </strong>Usually, BI-tools (like PowerBI, Qlik, Tableau, etc.) allow simple identification and modeling of Joins in some kind of &#34;data modeler&#34;. Data Studio also offers these capabilities, however in a somewhat unusual way of defining one new data source per join. </p>
-</aside>
-<p>Select &#34;Resource&#34; and &#34;manage linked data&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f7f5e6839e3556ac.png"></p>
-<p>Add a join:</p>
-<p class="image-container"><img style="width: 622.00px" src="img\\7050517c977b79fe.png"></p>
-<p>First, add a further table to the modeler and define the fields to be used within the join as shown below:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\565131ff508fec74.png"></p>
-<p>Next, click on &#34;configure join&#34; and define the following join condition:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\a03c3d825dbc5c71.png"></p>
-<p>Add this join to our data model by saving it (lower right part of the screen). You should see another data source:</p>
-<p class="image-container"><img style="width: 318.00px" src="img\\c0249fce90da844d.png"></p>
-<p>We can now use fields from both tables (dimension and fact) to, for example, create a line chart of sales over time:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\67b50f902c9dc3fe.png"></p>
-<p>Configure this visualization as follows:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\33bb9e1f989bb25.png"></p>
-<h2 is-upgraded><strong>Notes on costs for BigQuery</strong></h2>
+      <google-codelab-step label="Querying the DWH from the Jupyter Notebook" duration="2">
+        <h2 is-upgraded><strong>BigQuery connection</strong></h2>
+<p>Please open your sample notebook from the last lab. Since the notebook is running in the same project as our bigquery dataset, we can immediately connect to the dataset:</p>
+<pre><code>import pandas_gbq
+
+# Parameter
+PROJECT_ID = &#39;hdm-bi-bigdata&#39;
+QUERY = &#34;&#34;&#34;
+    SELECT *
+    FROM `hdm-bi-bigdata.wh_kueppers.sales`
+    LIMIT 10
+&#34;&#34;&#34;
+
+df = pandas_gbq.read_gbq(QUERY, project_id=PROJECT_ID)
+
+df</code></pre>
+<h2 is-upgraded><strong>Notes on BigQuery</strong></h2>
 <p>You will probably not notice any costs for BigQuery throughout this course, since you&#39;ll stay below the threshold of queries that are for free. Also, we are storing such low data volumes in our use cases currently, that the storage costs will be negligible.</p>
+<p>Furthermore you might have noticed that we are not connecting BigQuery to our MySQL database. BigQuery is a serverless data warehouse — it doesn&#39;t actively pull data from other systems but instead loads data from sources like Google Cloud Storage (GCS), Cloud SQL (via federated queries), other BigQuery datasets, or external sources through External Tables, BigLake Tables, or Connections. There is no native direct connection for MySQL running on a VM. To use that data in BigQuery, you need to build an intermediate step like exporting to GCS or using a data pipeline.</p>
 
 
       </google-codelab-step>
