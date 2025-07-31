@@ -29,8 +29,6 @@
 
 [PySpark SQL, DataFrames, Machine Learning and BigQuery-Access](https://pkuep.github.io/pk-bigdata/batch_processing_pyspark_advanced){:target="_blank" rel="noopener"}
 
-[Dask on DataProc](https://pkuep.github.io/pk-bigdata/batch_processing_dask_on_dataproc){:target="_blank" rel="noopener"}
-
 
 ## Querying and Data Integration
 

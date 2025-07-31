@@ -53,6 +53,8 @@
 <p class="image-container"><img style="width: 624.00px" src="img\\5525d562c232cf7f.png"></p>
 <p>This is the initialization action that needs to be added:</p>
 <pre><code> --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh</code></pre>
+<p>Full command:</p>
+<pre><code>gcloud dataproc clusters create cluster-b1cb --enable-component-gateway --region us-central1 --no-address --master-machine-type n2-standard-2 --master-boot-disk-size 50 --num-workers 2 --worker-machine-type n2-standard-2 --worker-boot-disk-size 50 --image-version 2.2-debian12 --optional-components JUPYTER --project hdm-bi-bigdata --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh</code></pre>
 <p>Please open the GCP Cloud Shell (top right in the web console) and insert the cluster creation command there:</p>
 <p class="image-container"><img style="width: 293.00px" src="img\\9a2028815601d75f.png"></p>
 <p class="image-container"><img style="width: 624.00px" src="img\\290a17746baddc8e.png"></p>

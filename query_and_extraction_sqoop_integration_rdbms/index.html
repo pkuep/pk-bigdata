@@ -32,7 +32,6 @@
 <p class="image-container"><img style="width: 624.00px" src="img\\74b3d1ebf9ffa90.png"></p>
 <h3 is-upgraded><strong>Goal</strong></h3>
 <p>Writing data from the data lake back into operational systems, e.g. an RDBMS.</p>
-<p>DUE TO TECHNICAL ISSUES, THIS LAB DOES NOT WORK COMPLETELY!</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
 <li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). SEE PREREQUISITES!</li>
@@ -42,8 +41,6 @@
 </aside>
 <aside class="warning"><p><strong>Prerequisites: </strong>The lab &#34;Big Data Course - Codelab - Query and Extraction - Data Lake Queries from Spark SQL&#34; needs to be executed first. There, we set up a cluster as follows and performed some simple batch computations.</p>
 </aside>
-<pre><code>gcloud dataproc clusters create pk-hadoop --region us-central1 --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse --enable-component-gateway --optional-components ANACONDA,JUPYTER --project pk-bigdata</code></pre>
-<p>Cluster creation will take 2-3 minutes.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the Jupyter notebook components being necessary for PySpark..</li>
@@ -54,12 +51,7 @@
     
       <google-codelab-step label="Integration of Downstream Systems" duration="5">
         <h2 is-upgraded><strong>Creating the sales_statistics_region table in the RDBMS</strong></h2>
-<p>First, we need to create the table </p>
-<p>Please open the cloud SQL page in the cloud console and establish a connection to your relational database via the cloud shell:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3477dca4835d4caf.png"></p>
-<p>First, we need to switch to the webshop database:</p>
-<pre><code>use webshop;</code></pre>
-<p>Afterwards, please create the table as follows such that we can let sqoop push data into it:</p>
+<p>First, we need to create the table in DBeaver for your user. Please create it as follows such that we can let sqoop push data into it:</p>
 <pre><code>CREATE TABLE sales_statistics_region (
 region VARCHAR(20),
 average_sales FLOAT
@@ -68,7 +60,8 @@ average_sales FLOAT
 <p>Please navigate to the cluster&#39;s master node and open an SSH connection:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\a64e86bda4c2944b.png"></p>
 <p>This will again be our &#34;entry point&#34; to the sqoop tool (remember: we added it via the initialization action). With the following command, we can write the results back to the SQL server:</p>
-<pre><code>sqoop export --connect jdbc:mysql://localhost/webshop --username root --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
+<pre><code>sqoop export jdbc:mysql://&lt;db-IP see Moodle&gt;/&lt;dbname, see Moodle&gt; --userna
+me &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
 <p>The parameter &#34;hcatalog-table&#34; determines which table from the data lake should be read. The parameter &#34;table&#34; directs towards the RDBMS&#39;s target table.</p>
 <aside class="warning"><p><strong>Important: </strong>Due to configuration issues of DataProc (especially regarding Parquet), this command will not work. We will not go further into details on this here.</p>
 </aside>
