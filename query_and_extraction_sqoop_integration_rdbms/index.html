@@ -34,16 +34,14 @@
 <p>Writing data from the data lake back into operational systems, e.g. an RDBMS.</p>
 <h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
 <ul>
-<li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). SEE PREREQUISITES!</li>
+<li>Set up a DataProc cluster which is capable of executing the sqoop job (sqoop is used for the next lab). </li>
 <li>Writing the results of our batch processing back into the source system (RDBMS).</li>
 </ul>
-<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
-</aside>
-<aside class="warning"><p><strong>Prerequisites: </strong>The lab &#34;Big Data Course - Codelab - Query and Extraction - Data Lake Queries from Spark SQL&#34; needs to be executed first. There, we set up a cluster as follows and performed some simple batch computations.</p>
+<aside class="warning"><p><strong>Prerequisites:</strong> Please use the same cluster configuration as described in the lab <a href="https://pkuep.github.io/pk-bigdata/batch_ingestion_sqoop/" target="_blank">RDBMS to HDFS/GCS with sqoop</a> </p>
 </aside>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the Jupyter notebook components being necessary for PySpark..</li>
+<li>You created a Hadoop cluster (DataProc) which provides functionality for sqoop and Jupyter Notebooks with spark.</li>
 </ol>
 
 
@@ -51,20 +49,18 @@
     
       <google-codelab-step label="Integration of Downstream Systems" duration="5">
         <h2 is-upgraded><strong>Creating the sales_statistics_region table in the RDBMS</strong></h2>
-<p>First, we need to create the table in DBeaver for your user. Please create it as follows such that we can let sqoop push data into it:</p>
+<p>First, we need to create the table in DBeaver for your user (hint: the hdm user already has this table set up, you can insert/delete with the hdm-user into this table). Please create it as follows such that we can let sqoop push data into it:</p>
 <pre><code>CREATE TABLE sales_statistics_region (
 region VARCHAR(20),
 average_sales FLOAT
 );</code></pre>
+<p><strong>Important: </strong>If you haven&#39;t executed the lab that writes the table sales_statistics_region to the Hive data warehouse, you can use the same command within beeline and insert sample data manually.</p>
 <h2 is-upgraded><strong>Opening the master node&#39;s shell</strong></h2>
 <p>Please navigate to the cluster&#39;s master node and open an SSH connection:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\a64e86bda4c2944b.png"></p>
 <p>This will again be our &#34;entry point&#34; to the sqoop tool (remember: we added it via the initialization action). With the following command, we can write the results back to the SQL server:</p>
-<pre><code>sqoop export jdbc:mysql://&lt;db-IP see Moodle&gt;/&lt;dbname, see Moodle&gt; --userna
-me &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
-<p>The parameter &#34;hcatalog-table&#34; determines which table from the data lake should be read. The parameter &#34;table&#34; directs towards the RDBMS&#39;s target table.</p>
-<aside class="warning"><p><strong>Important: </strong>Due to configuration issues of DataProc (especially regarding Parquet), this command will not work. We will not go further into details on this here.</p>
-</aside>
+<pre><code>sqoop export –connect jdbc:mysql://&lt;db-IP see Moodle&gt;/&lt;dbname, see Moodle&gt; --username &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales_statistics_region --hcatalog-table sales_statistics_region</code></pre>
+<p>The parameter &#34;hcatalog-table&#34; determines which table from the Hive data lake should be read. The parameter &#34;table&#34; directs towards the RDBMS&#39;s target table.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
 <li>You learned how to extract data from the data lake via sqoop and push it back into RDBMS.</li>
@@ -74,7 +70,7 @@ me &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales_statistics_reg
       </google-codelab-step>
     
       <google-codelab-step label="Cleaning Up" duration="1">
-        <p>Please do not delete your cluster and SQL instances!</p>
+        <p>Please delete your cluster.</p>
 
 
       </google-codelab-step>
