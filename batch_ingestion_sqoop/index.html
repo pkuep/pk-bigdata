@@ -36,55 +36,34 @@
 <ul>
 <li>Set up a DataProc cluster which is capable of executing the sqoop job and act as a data lake (HDFS).</li>
 <li>Learn about initialization actions for Hadoop DataProc clusters and especially use the sqoop initialization action.</li>
-<li>Start a sqoop job to transfer data from cloud SQL to the data lake (HDFS-based and cloud storage)</li>
+<li>Start a sqoop job to transfer data from SQL to the data lake (HDFS-based and cloud storage)</li>
 </ul>
 <aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed. Remember to shut down the running cloud function after completing!</p>
-</aside>
-<aside class="warning"><p><strong>Prerequisite:</strong> Your cloud SQL server needs to be running for this lab!</p>
 </aside>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Setting up the Hadoop DataProc Cluster" duration="7">
-        <h2 is-upgraded><strong>Enabling the SQL cloud admin API (for the cloud SQL proxy)</strong></h2>
-<p>For this use case, we need to enable a cloud API that allows the simple connection of different services to cloud SQL databases in GCP. Please enter &#34;cloud sql admin api&#34; in the search bar:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\896d13d28ab2747e.png"></p>
-<p>Please enable this API! We will use it to establish connections from our DataProc cluster&#39;s worker nodes (running the sqoop MapReduce job) to the cloud SQL database (webshop).</p>
-<h2 is-upgraded><strong>Retrieving the cloud SQL connection name</strong></h2>
-<p>Please navigate to your cloud SQL instance which needs to be running and copy the connection name into the clipboard (overview page):</p>
-<p class="image-container"><img style="width: 372.46px" src="img\\89ba4b7e2e99a086.png"></p>
-<p>In my case it is:</p>
-<pre><code>pk-bigdata:us-central1:pk-sql</code></pre>
-<h2 is-upgraded><strong>Creating the DataProc cluster with initialization actions and further settings</strong></h2>
-<h3 is-upgraded><strong>Opening DataProc</strong></h3>
-<p>Please navigate to the DataProc service in the cloud console.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\cc801c0a63a16d52.png"></p>
-<p>This time we will NOT (!) create the cluster via the web interface but via the cloud shell since we need some extra options that are not available in the web UI. </p>
-<h3 is-upgraded><strong>Opening the cloud shell and creating the cluster</strong></h3>
-<p>Open a cloud shell:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\f05287e4c7092df9.png"></p>
-<p>Make sure that your project is set correctly. If not, execute the following command with your initials:</p>
-<pre><code>gcloud config set project pk-bigdata</code></pre>
-<p>We will now create a cluster from the command line in order to:</p>
-<ul>
-<li>Set &#34;Initialization actions&#34;. Here we can define shell scripts that are executed when the cluster is set up. The purpose is to automatically install necessary components via these scripts, in our case we want to use sqoop. Luckily, we don&#39;t have to implement these scripts ourselves but can rely on many predefined ones being maintained here: <a href="https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/" target="_blank">https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/</a> </li>
-<li>Set some &#34;metadata&#34; which will be discussed later in the lecture on Hive.</li>
-<li>Set some &#34;scope&#34; properties (not available in the web UI) also being related to Hive, especially that our data lake (warehouse-dir) should be cloud storage and not HDFS.</li>
-</ul>
-<p>Please execute this command in the cloud shell (you may want to replace pk with your initials, make sure that all paths and the connection name to the SQL database copied before are correctly set):</p>
-<pre><code>gcloud dataproc clusters create pk-sqoop --region us-central1  --optional-components JUPYTER --enable-component-gateway --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/cloud-sql-proxy/cloud-sql-proxy.sh,gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh --metadata &#34;hive-metastore-instance=pk-bigdata:us-central1:pk-sql-test&#34; --scopes sql-admin --properties=hive:hive.metastore.warehouse.dir=gs://pk-gcs/hive-warehouse --master-machine-type n1-standard-2 --master-boot-disk-size 50 --num-workers 2 --worker-machine-type n1-standard-2 --worker-boot-disk-size 50</code></pre>
-<aside class="special"><p><strong>Please note:</strong> In case your cluster should run in another region, you&#39;ll need to adapt the &#34;--region&#34; option as well as the path of the initialization actions (change &#34;us-central1&#34; to your region).</p>
-</aside>
-<p>Cluster creation will take 2-3 minutes.</p>
-<h3 is-upgraded><strong>Connecting to the Hadoop master node</strong></h3>
+        <h2 is-upgraded><strong>Creating the DataProc cluster </strong></h2>
+<p>Please configure a cluster (enable Jupyter Notebook, select compute family &#34;N2&#34; with standard persistent disks limited to 50GB for worker and master nodes). <strong>Do not hit create, since we&#39;ll need a further step!</strong></p>
+<p>We&#39;ll need to activate the sqoop initialization action, which is not selectable via the WebUI. Thus, please click &#34;Equivalent Command Line&#34; and copy/paste the CLI call for cluster creation in a text editor:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\39b41cb5f61b1115.png"></p>
+<p>We&#39;ll need to add the following CLI arguments, in order to install sqoop on the master and worker nodes:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5525d562c232cf7f.png"></p>
+<p>This is the initialization action that needs to be added:</p>
+<pre><code> --initialization-actions gs://goog-dataproc-initialization-actions-us-central1/sqoop/sqoop.sh</code></pre>
+<p>Please open the GCP Cloud Shell (top right in the web console) and insert the cluster creation command there:</p>
+<p class="image-container"><img style="width: 293.00px" src="img\\9a2028815601d75f.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\290a17746baddc8e.png"></p>
+<p>Cluster creation will take some minutes.</p>
 <p>When cluster creation is finished, you can select the cluster in the web UI:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\a80f5f7db4d71775.png"></p>
 <p>Open a connection to the master node which is able to start sqoop jobs:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\5f8b49055e3e4dfb.png"></p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
-<li>You created a Hadoop cluster (DataProc) which provides functionality for accessing cloud SQL (initialization action &#34;cloud-sql-proxy&#34;) as well as the sqoop component for batch ingestion of relational data into our data lake.</li>
+<li>You created a Hadoop cluster (DataProc) as well as the sqoop component for batch ingestion of relational data into our data lake.</li>
 <li>You learned how to set up a DataProc cluster via the cloud shell.</li>
 <li>Next, we&#39;ll use the connection to the master node and execute our sqoop data ingestion job.</li>
 </ol>
@@ -94,13 +73,13 @@
     
       <google-codelab-step label="Creating the Sqoop Ingestion Job" duration="4">
         <h2 is-upgraded><strong>Executing the job (with HDFS import)</strong></h2>
-<p>Please open the SSH connection to the master node:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\add5ea2caabeacd1.png"></p>
+<p>Please open the SSH connection to the master node.</p>
 <p>The following command starts the sqoop job (the &#34;--m 1&#34; option is necessary since there is no primary key defined on our table).</p>
-<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1</code></pre>
+<pre><code>sqoop import --connect jdbc:mysql://&lt;db-IP see Moodle&gt;/&lt;dbname, see Moodle&gt; --userna
+me &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales --m 1</code></pre>
 <p>You now should see a lot of output since a MapReduce (horizontally scaling!) job is running and retrieving the data from the relational database.</p>
 <p>When finished, the output should look like this:</p>
-<h2 is-upgraded><img style="width: 624.00px" src="img\\7987367d24bb70b9.png"></h2>
+<h2 is-upgraded><img style="width: 624.00px" src="img\\42c50b23861edf94.png"></h2>
 <p>We ingested 30 rows into our data lake.</p>
 <h2 is-upgraded><strong>Checking the results</strong></h2>
 <p>The sqoop job puts its data into HDFS by default (it is a &#34;traditional&#34; tool). You can check this by executing the following command on the master node:</p>
@@ -113,7 +92,8 @@
 <p class="image-container"><img style="width: 624.00px" src="img\\6ac27ae8ae569662.png"></p>
 <h2 is-upgraded><strong>Executing the job (with GCS import)</strong></h2>
 <p>In order to import the relational data into our GCS-based data lake, we need to set the target directory explicitly to avoid HDFS. This command will ingest the input from our database into a GCS bucket (pk-gcs) and therein a folder &#34;sales_from_sqoop&#34; (make sure to change your initials if applicable):</p>
-<pre><code>sqoop import --connect jdbc:mysql://localhost/webshop --username root --table sales --m 1 --target-dir gs://pk-gcs/sales_from_sqoop</code></pre>
+<pre><code>sqoop import --connect jdbc:mysql://&lt;db-IP see Moodle&gt;/&lt;dbname, see Moodle&gt; --userna
+me &lt;see Moodle&gt; --password &lt;see Moodle&gt; --table sales --m 1 --target-dir gs://hdm-kueppers/sales_from_sqoop</code></pre>
 <p>This should yield the same shell output, however your GCS bucket should now contain folder &#34;sales_from_sqoop&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\d24810c5071ee266.png"></p>
 <p>The folder contains the same files as the HDFS folder sqoop created in our first job run.</p>
@@ -133,8 +113,6 @@
       <google-codelab-step label="Cleaning Up" duration="2">
         <p>Please make sure to delete your cluster (in the live-lecture, please leave your cluster running):</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\be443522e927f2d8.png"></p>
-<p>You should also delete or at least shut down your cloud SQL instance (in the live-lecture, please leave your SQL server running!):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\21abda122deede7c.png"></p>
 <p>You may also want to clean up your GCS bucket. However, especially in the live lecture please leave the files in place.</p>
 <h2 is-upgraded><strong>Results</strong></h2>
 <ol type="1" start="1">
