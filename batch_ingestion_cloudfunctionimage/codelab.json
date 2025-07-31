@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-05-19T20:49:20Z",
+  "updated": "2025-07-30T14:33:42Z",
   "id": "batch_ingestion_cloudfunctionimage",
   "duration": 24,
   "title": "Lab \"Batch Ingestion: Image to GCS with Cloud Functions\"",
